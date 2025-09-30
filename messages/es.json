@@ -1,0 +1,47 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "welcome": "Bienvenido a La Arena de Campeones",
+  "quiz": {
+    "start": "Comenzar Cuestionario",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "question": "Pregunta {number}",
+    "greeting": {
+      "title": "POR FAVOR AGREGUE DATOS ADICIONALES",
+      "subtitle": "PARA ACCEDER A LA EVALUACIÓN",
+      "licenseCodePlaceholder": "CÓDIGO DE LICENCIA*",
+      "firstNamePlaceholder": "NOMBRE*",
+      "lastNamePlaceholder": "APELLIDO*",
+      "emailPlaceholder": "CORREO ELECTRÓNICO*",
+      "agreeToEmail": "Acepto recibir los resultados del cuestionario por correo electrónico",
+      "startQuiz": "COMENZAR CUESTIONARIO",
+      "validation": {
+        "licenseRequired": "El código de licencia es requerido",
+        "licenseInvalid": "Este código de licencia es inválido o ya fue utilizado.",
+        "licenseLength": "El código de licencia debe tener exactamente 6 caracteres.",
+        "licenseError": "Error al validar el código de licencia. Por favor intente nuevamente.",
+        "firstNameRequired": "El nombre es requerido",
+        "lastNameRequired": "El apellido es requerido",
+        "emailRequired": "El correo electrónico es requerido",
+        "emailInvalid": "Por favor ingrese un correo electrónico válido"
+      }
+    },
+    "results": {
+      "title": "Tus Resultados",
+      "archetype": "Tu Arquetipo",
+      "download": "Descargar Resultados"
+    }
+  },
+  "navigation": {
+    "home": "Inicio",
+    "quiz": "Cuestionario",
+    "about": "Acerca de",
+    "contact": "Contacto"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "tryAgain": "Intentar de Nuevo"
+  }
+}

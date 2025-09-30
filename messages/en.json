@@ -1,0 +1,47 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "welcome": "Welcome to The Arena of Champions",
+  "quiz": {
+    "start": "Start Quiz",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "question": "Question {number}",
+    "greeting": {
+      "title": "PLEASE ADD ADDITIONAL DATA",
+      "subtitle": "TO ACCESS THE ASSESSMENT",
+      "licenseCodePlaceholder": "REDEEM LICENSE CODE*",
+      "firstNamePlaceholder": "FIRST NAME*",
+      "lastNamePlaceholder": "LAST NAME*",
+      "emailPlaceholder": "EMAIL*",
+      "agreeToEmail": "I agree to receive my quiz results via email provided in the form",
+      "startQuiz": "START QUIZ",
+      "validation": {
+        "licenseRequired": "Redeem code is required",
+        "licenseInvalid": "This license code is invalid or already used.",
+        "licenseLength": "License code must be exactly 6 characters.",
+        "licenseError": "Error validating license code. Please try again.",
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email"
+      }
+    },
+    "results": {
+      "title": "Your Results",
+      "archetype": "Your Archetype",
+      "download": "Download Results"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "quiz": "Quiz",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "tryAgain": "Try Again"
+  }
+}

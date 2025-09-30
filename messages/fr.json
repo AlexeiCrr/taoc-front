@@ -1,0 +1,47 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "welcome": "Bienvenue à L'Arène des Champions",
+  "quiz": {
+    "start": "Commencer le Quiz",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "question": "Question {number}",
+    "greeting": {
+      "title": "VEUILLEZ AJOUTER DES DONNÉES SUPPLÉMENTAIRES",
+      "subtitle": "POUR ACCÉDER À L'ÉVALUATION",
+      "licenseCodePlaceholder": "CODE DE LICENCE*",
+      "firstNamePlaceholder": "PRÉNOM*",
+      "lastNamePlaceholder": "NOM DE FAMILLE*",
+      "emailPlaceholder": "EMAIL*",
+      "agreeToEmail": "J'accepte de recevoir mes résultats de quiz par email",
+      "startQuiz": "COMMENCER LE QUIZ",
+      "validation": {
+        "licenseRequired": "Le code de licence est requis",
+        "licenseInvalid": "Ce code de licence est invalide ou déjà utilisé.",
+        "licenseLength": "Le code de licence doit contenir exactement 6 caractères.",
+        "licenseError": "Erreur lors de la validation du code de licence. Veuillez réessayer.",
+        "firstNameRequired": "Le prénom est requis",
+        "lastNameRequired": "Le nom de famille est requis",
+        "emailRequired": "L'email est requis",
+        "emailInvalid": "Veuillez entrer un email valide"
+      }
+    },
+    "results": {
+      "title": "Vos Résultats",
+      "archetype": "Votre Archétype",
+      "download": "Télécharger les Résultats"
+    }
+  },
+  "navigation": {
+    "home": "Accueil",
+    "quiz": "Quiz",
+    "about": "À propos",
+    "contact": "Contact"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "tryAgain": "Réessayer"
+  }
+}

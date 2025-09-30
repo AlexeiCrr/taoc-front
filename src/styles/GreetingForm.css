@@ -1,0 +1,159 @@
+/* ===========================
+   GREETING FORM STYLES
+   =========================== */
+
+/* Base input styles for quiz forms */
+.quiz-input {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	background-color: transparent;
+	border: 1px solid rgba(33, 33, 33, 0.3);
+	font-family: var(--font-family-sans);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	transition: border-color 0.3s ease;
+	outline: none;
+
+	@apply text-black text-sm;
+}
+
+.quiz-input::placeholder {
+	color: rgba(33, 33, 33, 0.6);
+	text-transform: uppercase;
+}
+
+.quiz-input:focus {
+	/* border-color: #212121; */
+	@apply border-black;
+}
+
+.quiz-input:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Error state for inputs */
+.quiz-input-error {
+	border-color: #dc2626;
+}
+
+/* Success state for inputs */
+.quiz-input.border-green-500 {
+	border-color: #10b981 !important;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.animate-spin {
+	animation: spin 1s linear infinite;
+}
+
+/* Checkbox styles */
+.quiz-checkbox {
+	border: 2px solid rgba(33, 33, 33, 0.3);
+	appearance: none;
+	position: relative;
+	transition: all 0.3s ease;
+
+	@apply w-4 h-4 cursor-pointer bg-transparent rounded-none;
+}
+
+.quiz-checkbox:checked {
+	background-color: var(--color-primary);
+	border-color: var(--color-primary);
+}
+
+.quiz-checkbox:checked::after {
+	content: '';
+	left: 3px;
+	width: 6px;
+	border: solid white;
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg);
+
+	@apply absolute block h-2.5;
+}
+
+.quiz-checkbox:focus {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+}
+
+/* Label for checkbox */
+.quiz-checkbox-label {
+	color: #212121;
+	font-family: var(--font-family-helvetica);
+	letter-spacing: 0.05em;
+	cursor: pointer;
+	user-select: none;
+
+	@apply text-xs;
+}
+
+/* Submit button styles */
+.quiz-submit-btn {
+	width: 100%;
+	padding: 1rem 2rem;
+	font-size: 0.875rem;
+	font-family: var(--font-family-pompei);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	border: none;
+}
+
+.quiz-submit-btn:enabled {
+	background-color: var(--color-primary);
+	color: var(--color-off-white);
+}
+
+.quiz-submit-btn:enabled:hover {
+	opacity: 0.9;
+}
+
+.quiz-submit-btn:disabled {
+	background-color: rgba(33, 33, 33, 0.1);
+	color: rgba(33, 33, 33, 0.4);
+	cursor: not-allowed;
+}
+
+/* Error message styles */
+.quiz-error-message {
+	color: #dc2626;
+	font-size: 0.75rem;
+	margin-top: 0.25rem;
+	font-family: var(--font-family-helvetica);
+}
+
+.form-wrapper {
+	max-width: 420px;
+}
+
+/* Form container styles */
+.quiz-form-container {
+	width: 100%;
+	margin: 0 auto;
+	background-color: var(--color-off-white);
+	@apply flex justify-center flex-col items-center;
+}
+
+@media (min-width: 768px) {
+	.quiz-form-container {
+	}
+}
+
+/* Form title styles */
+.quiz-form-title {
+	font-family: var(--font-family-pompei);
+
+	@apply text-black text-3xl text-center mb-12;
+}

@@ -4,6 +4,8 @@
 
 @layer components {
 	@import './GreetingForm.css';
+	@import './QuestionCard.css';
+	@import './QuizProgressBar.css';
 }
 
 /* ===========================
@@ -19,50 +21,78 @@
 	font-display: swap;
 }
 
-/* ===========================
-   TAILWIND CSS v4 THEME
-   =========================== */
+/* Helvetica Font Family */
+@font-face {
+	font-family: 'Helvetica';
+	src: url('/fonts/helvetica_regular.otf') format('opentype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Helvetica';
+	src: url('/fonts/helvetica_bold.otf') format('opentype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
 
 @theme {
 	/* Custom colors */
 	--color-primary: #5e6153;
 	--color-off-white: #f3f0e8;
 	--color-black: #212121;
+	--color-error: #dc2626;
+	--color-success: #10b981;
 
 	/* Secondary color shades */
 	--color-secondary-50: #f0f9ff;
 	--color-secondary-500: #06b6d4;
 	--color-secondary-700: #0e7490;
 
+	/* Border colors */
+	--color-border-input: rgba(33, 33, 33, 0.3);
+	--color-border-input-hover: #212121;
+
+	/* Background colors */
+	--color-bg-disabled: rgba(33, 33, 33, 0.1);
+
+	/* Text colors */
+	--color-text-placeholder: rgba(33, 33, 33, 0.6);
+	--color-text-disabled: rgba(33, 33, 33, 0.4);
+
 	/* Custom Font Families - PompeiPro as base */
-	--font-family-sans:
-		'PompeiPro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-		Roboto, sans-serif;
+
 	--font-family-display: 'PompeiPro', Georgia, serif;
 	--font-family-mono: 'Courier New', monospace;
 	--font-family-pompei: 'PompeiPro', system-ui, sans-serif;
-	--font-family-helvetica: 'Helvetica', system-ui, sans-serif;
+	--font-family-helvetica: 'Helvetica', Arial, sans-serif;
+
+	/* Letter spacing */
+	--letter-spacing-form: 0.05em;
+	--letter-spacing-wide: 0.1em;
 }
 
 /* ===========================
    GLOBAL STYLES
    =========================== */
 
-:root {
-	font-family: var(--font-family-sans);
-	line-height: 1.5;
-	font-weight: 400;
-	letter-spacing: 0.0125em;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
+@layer base {
+	:root {
+		font-family: var(--font-family-pompei);
+		line-height: 1.5;
+		font-weight: 400;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
 
-body {
-	margin: 0;
-	min-width: 320px;
-	min-height: 100vh;
-	font-family: var(--font-family-sans);
-	letter-spacing: 0.0125em;
+	body {
+		margin: 0;
+		min-width: 320px;
+		min-height: 100vh;
+		font-family: var(--font-family-pompei);
+	}
 }
 
 /* ===========================
@@ -114,7 +144,6 @@ h3 {
 	line-height: 48px;
 	text-align: center;
 	margin-bottom: 48px;
-	letter-spacing: 0.0125em;
 }
 
 /* Responsive h3 sizing */
@@ -148,27 +177,12 @@ h5 {
 	text-align: center;
 	text-transform: uppercase;
 	font-weight: 400;
-	letter-spacing: 0.0125em;
-}
-
-/* Default styles for other text elements */
-h2,
-h4,
-h6,
-p,
-span,
-div,
-input,
-textarea,
-select {
-	letter-spacing: 0.0125em;
 }
 
 /* Specific styles for buttons and links */
 button,
 a {
-	font-family: var(--font-family-sans);
-	letter-spacing: 0.0125em !important;
+	font-family: var(--font-family-pompei);
 }
 
 /* ===========================
@@ -176,22 +190,31 @@ a {
    =========================== */
 
 /* Font family utility classes */
-.font-sans {
-	font-family: var(--font-family-sans);
-}
+@layer utilities {
+	.font-sans {
+		font-family: var(--font-family-pompei);
+	}
 
-.font-display {
-	font-family: var(--font-family-display);
-}
+	.font-display {
+		font-family: var(--font-family-display);
+	}
 
-.font-mono {
-	font-family: var(--font-family-mono);
-}
+	.font-mono {
+		font-family: var(--font-family-mono);
+	}
 
-.font-pompei {
-	font-family: var(--font-family-pompei);
-}
+	.font-pompei {
+		font-family: var(--font-family-pompei);
+	}
 
-.font-helvetica {
-	font-family: var(--font-family-helvetica);
+	.font-helvetica {
+		font-family: var(--font-family-helvetica);
+	}
+
+	/* Container width override */
+	@media (min-width: 768px) and (max-width: 1023.99px) {
+		.container {
+			max-width: 50rem;
+		}
+	}
 }

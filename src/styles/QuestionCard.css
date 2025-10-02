@@ -1,0 +1,210 @@
+@reference "tailwindcss";
+
+.question-transition-wrapper {
+	transition: all 0.2s ease-in-out;
+
+	@apply w-full;
+}
+
+.question-transition-wrapper.enter {
+	@apply opacity-100 translate-x-0;
+}
+
+.question-transition-wrapper.exit-left {
+	@apply opacity-0 -translate-x-8;
+}
+
+.question-transition-wrapper.exit-right {
+	@apply opacity-0 translate-x-8;
+}
+
+.question-card {
+	font-family: var(--font-family-pompei);
+	background-color: var(--color-off-white);
+
+	@apply w-full mx-auto py-16 px-8;
+	@apply flex flex-col items-center gap-12;
+	@apply min-h-[600px] justify-center;
+}
+
+.frequency-id {
+	font-family: var(--font-family-pompei);
+
+	@apply text-5xl text-black font-normal;
+}
+
+.question-counter {
+	font-family: var(--font-family-helvetica);
+	@apply text-lg text-black/50 uppercase;
+}
+
+.question-text {
+	font-family: var(--font-family-pompei);
+
+	@apply text-3xl text-black text-center uppercase font-normal;
+	@apply leading-snug max-w-[700px] m-0;
+}
+
+.rating-container {
+	@apply flex items-center gap-8 w-full;
+	@apply justify-center;
+}
+
+.rating-buttons-wrapper {
+	@apply flex flex-col items-center gap-6;
+}
+
+.rating-label {
+	font-family: var(--font-family-helvetica);
+	color: #a0a29a;
+
+	@apply text-xl uppercase whitespace-nowrap;
+}
+
+.rating-label-desktop {
+	@apply block;
+}
+
+.rating-labels-mobile {
+	@apply hidden;
+}
+
+.rating-label-mobile {
+	font-family: var(--font-family-helvetica);
+	color: #a0a29a;
+
+	@apply text-xs uppercase;
+}
+
+.rating-buttons {
+	@apply flex gap-4;
+}
+
+.rating-button {
+	font-family: var(--font-family-pompei);
+	border-color: #e1e1e1;
+
+	@apply w-[60px] h-[60px] border-2 bg-transparent;
+	@apply text-xl text-black cursor-pointer transition-all duration-300;
+	@apply flex items-center justify-center;
+}
+
+.rating-button:hover:not(:disabled):not(.selected) {
+	border-color: var(--color-primary);
+}
+
+.rating-button.selected {
+	border-color: var(--color-primary);
+	background-color: transparent;
+	color: #212121;
+}
+
+.rating-button:disabled {
+	@apply opacity-30 cursor-not-allowed;
+}
+
+.navigation-buttons {
+	@apply flex gap-4 mt-8;
+}
+
+.nav-button {
+	font-family: var(--font-family-pompei);
+	border-color: var(--color-primary);
+
+	@apply py-4 px-12 text-base uppercase border-2;
+	@apply cursor-pointer transition-all duration-300 min-w-[120px];
+}
+
+.back-button {
+	@apply bg-transparent text-black;
+}
+
+.back-button:hover:not(:disabled) {
+	background-color: var(--color-primary);
+	@apply opacity-20;
+}
+
+.back-button:disabled {
+	@apply opacity-30 cursor-not-allowed;
+	border-color: var(--color-primary);
+}
+
+.next-button {
+	background-color: var(--color-primary);
+	color: var(--color-off-white);
+}
+
+.next-button:hover:not(:disabled) {
+	@apply opacity-90;
+}
+
+.next-button:disabled {
+	@apply opacity-30 cursor-not-allowed;
+	background-color: var(--color-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+	.rating-label {
+		@apply text-base;
+	}
+}
+@media (max-width: 768px) {
+	.question-card {
+		@apply py-12 gap-8 min-h-0;
+	}
+
+	.frequency-id {
+		@apply text-3xl;
+	}
+
+	.question-text {
+		@apply text-2xl;
+	}
+
+	.rating-container {
+		@apply flex-col gap-6;
+	}
+
+	/* Hide desktop labels on mobile */
+	.rating-label-desktop {
+		@apply hidden;
+	}
+
+	/* Show mobile labels */
+	.rating-labels-mobile {
+		@apply flex justify-between w-full;
+	}
+
+	.rating-buttons {
+		@apply gap-4;
+	}
+
+	.rating-button {
+		@apply w-[50px] h-[50px] text-base;
+	}
+
+	.rating-label {
+		@apply text-[0.65rem];
+	}
+	.nav-button {
+		@apply w-full py-3.5 px-8;
+	}
+}
+
+@media (max-width: 480px) {
+	.question-card {
+		@apply p-0 gap-6;
+	}
+
+	.question-counter {
+		@apply mb-4;
+	}
+
+	.question-text {
+		@apply text-2xl leading-7;
+	}
+	.navigation-buttons {
+		@apply mt-4;
+	}
+}

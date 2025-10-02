@@ -1,13 +1,29 @@
 import { useNavigate } from 'react-router-dom'
 import GreetingForm from '../components/quiz/GreetingForm'
+import useQuizStore from '../stores/quizStore'
+
+interface FormData {
+	licenseCode: string
+	firstName: string
+	lastName: string
+	email: string
+	agreeToEmail: boolean
+}
 
 const QuizStart = () => {
 	const navigate = useNavigate()
+	const setUserData = useQuizStore((state) => state.setUserData)
 
-	const handleFormSubmit = (data: unknown) => {
-		console.log('Form submitted with data:', data)
-		// Store the user data in your state management solution (e.g., Zustand store)
-		// Then navigate to the actual quiz
+	const handleFormSubmit = (data: FormData) => {
+		// Map form data to UserData type and store in zustand
+		setUserData({
+			firstName: data.firstName,
+			lastName: data.lastName,
+			email: data.email,
+			licenseCode: data.licenseCode,
+		})
+
+		// Navigate to the actual quiz
 		navigate('/quiz')
 	}
 

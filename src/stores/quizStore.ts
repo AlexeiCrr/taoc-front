@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
 import { apiService } from '../services/api'
 import type {
 	Answer,
@@ -37,15 +37,16 @@ interface QuizState {
 
 const useQuizStore = create<QuizState>()(
 	devtools(
-		(set, get) => ({
-			// Initial state
-			questions: [],
-			currentQuestionIndex: 0,
-			answers: [],
-			userData: null,
-			quizResponse: null,
-			isLoading: false,
-			error: null,
+		persist(
+			(set, get) => ({
+				// Initial state
+				questions: [],
+				currentQuestionIndex: 0,
+				answers: [],
+				userData: null,
+				quizResponse: null,
+				isLoading: false,
+				error: null,
 
 			// Actions
 			fetchQuestions: async () => {
@@ -116,6 +117,8 @@ const useQuizStore = create<QuizState>()(
 						answers,
 					})
 					set({ quizResponse: response, isLoading: false })
+					// Clear persisted data after successful submission
+					localStorage.removeItem('quiz-storage')
 				} catch (error) {
 					set({
 						error:
@@ -133,6 +136,8 @@ const useQuizStore = create<QuizState>()(
 					quizResponse: null,
 					error: null,
 				})
+				// Clear persisted data when resetting
+				localStorage.removeItem('quiz-storage')
 			},
 
 			// Computed values
@@ -162,7 +167,18 @@ const useQuizStore = create<QuizState>()(
 				const { currentQuestionIndex, answers } = get()
 				return answers[currentQuestionIndex] !== undefined
 			},
-		}),
+			}),
+			{
+				name: 'quiz-storage',
+				partialize: (state) => ({
+					userData: state.userData,
+					questions: state.questions,
+					currentQuestionIndex: state.currentQuestionIndex,
+					answers: state.answers,
+					quizResponse: state.quizResponse,
+				}),
+			}
+		),
 		{
 			name: 'quiz-store',
 		}

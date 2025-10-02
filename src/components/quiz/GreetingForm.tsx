@@ -13,7 +13,7 @@ interface GreetingFormProps {
 }
 
 interface FormData {
-	redeemCode: string
+	licenseCode: string
 	firstName: string
 	lastName: string
 	email: string
@@ -22,7 +22,7 @@ interface FormData {
 
 const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 	const [formData, setFormData] = useState<FormData>({
-		redeemCode: '',
+		licenseCode: '',
 		firstName: '',
 		lastName: '',
 		email: '',
@@ -39,7 +39,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 	const isFormValid = () => {
 		return (
 			licenseStatus === 'valid' &&
-			formData.redeemCode.trim() !== '' &&
+			formData.licenseCode.trim() !== '' &&
 			formData.firstName.trim() !== '' &&
 			formData.lastName.trim() !== '' &&
 			formData.email.trim() !== '' &&
@@ -52,29 +52,29 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 			clearTimeout(validationTimeoutRef.current)
 		}
 
-		if (formData.redeemCode.length < 6) {
+		if (formData.licenseCode.length < 6) {
 			setLicenseStatus('idle')
 			setLicenseMessage('')
 			return
 		}
 
 		// If code is exactly 6 characters, validate after a short delay
-		if (formData.redeemCode.length === 6) {
+		if (formData.licenseCode.length === 6) {
 			setLicenseStatus('loading')
 
 			validationTimeoutRef.current = setTimeout(async () => {
 				try {
-					const result = await validateLicenseCode(formData.redeemCode)
+					const result = await validateLicenseCode(formData.licenseCode)
 
 					if (result.isValid) {
 						setLicenseStatus('valid')
-						setErrors((prev) => ({ ...prev, redeemCode: undefined }))
+						setErrors((prev) => ({ ...prev, licenseCode: undefined }))
 					} else {
 						setLicenseStatus('invalid')
 						setLicenseMessage(m['quiz.greeting.validation.licenseInvalid']())
 						setErrors((prev) => ({
 							...prev,
-							redeemCode: m['quiz.greeting.validation.licenseInvalid'](),
+							licenseCode: m['quiz.greeting.validation.licenseInvalid'](),
 						}))
 					}
 				} catch (error) {
@@ -82,7 +82,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 					setLicenseMessage(m['quiz.greeting.validation.licenseError']())
 					setErrors((prev) => ({
 						...prev,
-						redeemCode: m['quiz.greeting.validation.licenseError'](),
+						licenseCode: m['quiz.greeting.validation.licenseError'](),
 					}))
 				}
 			}, 500)
@@ -94,7 +94,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 				clearTimeout(validationTimeoutRef.current)
 			}
 		}
-	}, [formData.redeemCode])
+	}, [formData.licenseCode])
 
 	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { name, value, type, checked } = e.target
@@ -111,8 +111,8 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 	const validateForm = (): boolean => {
 		const newErrors: Partial<FormData> = {}
 
-		if (!formData.redeemCode.trim()) {
-			newErrors.redeemCode = m['quiz.greeting.validation.licenseRequired']()
+		if (!formData.licenseCode.trim()) {
+			newErrors.licenseCode = m['quiz.greeting.validation.licenseRequired']()
 		}
 		if (!formData.firstName.trim()) {
 			newErrors.firstName = m['quiz.greeting.validation.firstNameRequired']()
@@ -155,13 +155,13 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 						<div className="relative">
 							<input
 								type="text"
-								name="redeemCode"
-								value={formData.redeemCode}
+								name="licenseCode"
+								value={formData.licenseCode}
 								onChange={handleInputChange}
 								placeholder={m['quiz.greeting.licenseCodePlaceholder']()}
 								maxLength={6}
 								className={`quiz-input pr-12 ${
-									licenseStatus === 'invalid' || errors.redeemCode
+									licenseStatus === 'invalid' || errors.licenseCode
 										? 'quiz-input-error'
 										: ''
 								} ${licenseStatus === 'valid' ? 'border-green-500' : ''}`}
@@ -212,8 +212,8 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 						)}
 
 						{/* Error message */}
-						{licenseStatus === 'invalid' && errors.redeemCode && (
-							<p className="quiz-error-message">{errors.redeemCode}</p>
+						{licenseStatus === 'invalid' && errors.licenseCode && (
+							<p className="quiz-error-message">{errors.licenseCode}</p>
 						)}
 					</div>
 

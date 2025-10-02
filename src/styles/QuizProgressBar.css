@@ -1,0 +1,23 @@
+@reference "tailwindcss";
+
+/* Quiz Progress Bar Container */
+.quiz-progress-bar-container {
+	background-color: var(--color-off-white);
+
+	@apply fixed bottom-0 left-0 right-0 w-full;
+}
+
+/* Progress Bar Track */
+.quiz-progress-bar-track {
+	background-color: #c8c8c8;
+
+	@apply w-full h-2.5 relative overflow-hidden;
+}
+
+/* Progress Bar Fill */
+.quiz-progress-bar-fill {
+	background-color: #a0a29a;
+	transition: width 0.3s ease-in-out;
+
+	@apply h-full absolute top-0 left-0;
+}

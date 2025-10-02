@@ -1,11 +1,10 @@
+import { useState } from 'react'
 import useQuizStore from '../../stores/quizStore'
-// import GreetingForm from './GreetingForm';
-// import QuestionCard from './QuestionCard';
-// import ResultsView from './ResultsView';
 import ErrorMessage from '../common/ErrorMessage'
 import LoadingSpinner from '../common/LoadingSpinner'
-import ProgressBar from '../common/ProgressBar'
 import GreetingForm from './GreetingForm'
+import QuestionCard from './QuestionCard'
+import QuizProgressBar from './QuizProgressBar'
 
 export default function QuizContainer() {
 	const {
@@ -27,6 +26,27 @@ export default function QuizContainer() {
 		questions,
 		answers,
 	} = useQuizStore()
+
+	const [isTransitioning, setIsTransitioning] = useState(false)
+	const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
+
+	const handleNext = () => {
+		setDirection('forward')
+		setIsTransitioning(true)
+		setTimeout(() => {
+			goToNextQuestion()
+			setIsTransitioning(false)
+		}, 200)
+	}
+
+	const handlePrevious = () => {
+		setDirection('backward')
+		setIsTransitioning(true)
+		setTimeout(() => {
+			goToPreviousQuestion()
+			setIsTransitioning(false)
+		}, 200)
+	}
 
 	// Show loading state
 	if (isLoading && !userData) {
@@ -63,6 +83,15 @@ export default function QuizContainer() {
 		// return <ResultsView response={quizResponse} />;
 	}
 
+	// Show loading state while fetching questions
+	if (isLoading || questions.length === 0) {
+		return (
+			<div className="flex items-center justify-center min-h-[400px]">
+				<LoadingSpinner message="Loading questions..." />
+			</div>
+		)
+	}
+
 	// Check if quiz is complete and needs submission
 	if (isComplete()) {
 		submitQuiz()
@@ -77,37 +106,44 @@ export default function QuizContainer() {
 	const currentAnswer = answers[currentQuestionIndex]
 
 	return (
-		<div className="max-w-4xl mx-auto">
-			<div className="mb-8">
-				<div className="flex justify-between items-center mb-4">
-					<h2 className="text-2xl font-bold text-gray-800">
-						Question {currentQuestionIndex + 1} of {questions.length}
-					</h2>
-					<span className="text-sm text-gray-600">
-						{Math.round(progress())}% Complete
-					</span>
+		<>
+			<div className="w-full relative overflow-hidden">
+				<div
+					className={`question-transition-wrapper ${
+						isTransitioning
+							? direction === 'forward'
+								? 'exit-left'
+								: 'exit-right'
+							: 'enter'
+					}`}
+				>
+					{currentQuestion() && (
+						<QuestionCard
+							question={currentQuestion()!}
+							currentValue={currentAnswer?.value}
+							onAnswer={answerQuestion}
+							onNext={handleNext}
+							onPrevious={handlePrevious}
+							canGoBack={canGoBack()}
+							canGoForward={canGoForward()}
+							isLastQuestion={currentQuestionIndex === questions.length - 1}
+							currentQuestionNumber={currentQuestionIndex + 1}
+							totalQuestions={questions.length}
+						/>
+					)}
 				</div>
-				<ProgressBar value={progress()} />
+
+				{error && (
+					<div className="mt-4 max-w-2xl mx-auto">
+						<ErrorMessage message={error} />
+					</div>
+				)}
 			</div>
 
-			{/* {currentQuestion() && (
-        <QuestionCard
-          question={currentQuestion()!}
-          currentValue={currentAnswer?.value}
-          onAnswer={answerQuestion}
-          onNext={goToNextQuestion}
-          onPrevious={goToPreviousQuestion}
-          canGoBack={canGoBack()}
-          canGoForward={canGoForward()}
-          isLastQuestion={currentQuestionIndex === questions.length - 1}
-        />
-      )} */}
-
-			{error && (
-				<div className="mt-4">
-					<ErrorMessage message={error} />
-				</div>
-			)}
-		</div>
+			<QuizProgressBar
+				currentQuestion={currentQuestionIndex + 1}
+				totalQuestions={questions.length}
+			/>
+		</>
 	)
 }

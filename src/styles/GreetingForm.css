@@ -1,69 +1,58 @@
-/* ===========================
-   GREETING FORM STYLES
-   =========================== */
+@reference "tailwindcss";
 
 /* Base input styles for quiz forms */
 .quiz-input {
-	width: 100%;
-	padding: 0.75rem 1rem;
-	background-color: transparent;
-	border: 1px solid rgba(33, 33, 33, 0.3);
-	font-family: var(--font-family-sans);
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	transition: border-color 0.3s ease;
-	outline: none;
+	font-family: var(--font-family-helvetica);
+	letter-spacing: var(--letter-spacing-form);
 
-	@apply text-black text-sm;
+	@apply w-full py-3 px-4 bg-transparent border border-border-input;
+	@apply outline-none text-black text-sm transition-colors;
 }
 
 .quiz-input::placeholder {
-	color: rgba(33, 33, 33, 0.6);
-	text-transform: uppercase;
+	@apply text-text-placeholder;
 }
 
 .quiz-input:focus {
-	/* border-color: #212121; */
-	@apply border-black;
+	@apply border-border-input-hover;
 }
 
 .quiz-input:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
+	@apply opacity-50 cursor-not-allowed;
+}
+
+/* Remove autofill background */
+.quiz-input:-webkit-autofill,
+.quiz-input:-webkit-autofill:hover,
+.quiz-input:-webkit-autofill:focus,
+.quiz-input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 30px transparent inset !important;
+	-webkit-text-fill-color: #000000 !important;
+	transition: background-color 5000s ease-in-out 0s;
+}
+
+.quiz-input:-internal-autofill-selected {
+	background-color: transparent !important;
+	background-image: none !important;
+	color: #000000 !important;
 }
 
 /* Error state for inputs */
 .quiz-input-error {
-	border-color: #dc2626;
+	@apply border-error;
 }
 
 /* Success state for inputs */
 .quiz-input.border-green-500 {
-	border-color: #10b981 !important;
-}
-
-/* Loading spinner animation */
-@keyframes spin {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
-	}
-}
-
-.animate-spin {
-	animation: spin 1s linear infinite;
+	@apply border-success;
 }
 
 /* Checkbox styles */
 .quiz-checkbox {
-	border: 2px solid rgba(33, 33, 33, 0.3);
-	appearance: none;
-	position: relative;
-	transition: all 0.3s ease;
+	font-family: var(--font-family-helvetica);
 
-	@apply w-4 h-4 cursor-pointer bg-transparent rounded-none;
+	@apply w-4 h-4 border-2 border-border-input appearance-none relative;
+	@apply cursor-pointer bg-transparent rounded-none transition-all duration-300;
 }
 
 .quiz-checkbox:checked {
@@ -73,13 +62,10 @@
 
 .quiz-checkbox:checked::after {
 	content: '';
-	left: 3px;
-	width: 6px;
-	border: solid white;
-	border-width: 0 2px 2px 0;
 	transform: rotate(45deg);
 
-	@apply absolute block h-2.5;
+	@apply absolute block h-2.5 left-[3px] w-1.5;
+	@apply border-white border-r-2 border-b-2 border-t-0 border-l-0;
 }
 
 .quiz-checkbox:focus {
@@ -89,26 +75,19 @@
 
 /* Label for checkbox */
 .quiz-checkbox-label {
-	color: #212121;
 	font-family: var(--font-family-helvetica);
-	letter-spacing: 0.05em;
-	cursor: pointer;
-	user-select: none;
+	letter-spacing: var(--letter-spacing-form);
 
-	@apply text-xs;
+	@apply text-xs text-black cursor-pointer select-none;
 }
 
 /* Submit button styles */
 .quiz-submit-btn {
-	width: 100%;
-	padding: 1rem 2rem;
-	font-size: 0.875rem;
 	font-family: var(--font-family-pompei);
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	transition: all 0.3s ease;
-	cursor: pointer;
-	border: none;
+	letter-spacing: var(--letter-spacing-form);
+
+	@apply w-full py-4 px-8 text-sm uppercase transition-all duration-300;
+	@apply cursor-pointer border-none;
 }
 
 .quiz-submit-btn:enabled {
@@ -117,38 +96,30 @@
 }
 
 .quiz-submit-btn:enabled:hover {
-	opacity: 0.9;
+	@apply opacity-90;
 }
 
 .quiz-submit-btn:disabled {
-	background-color: rgba(33, 33, 33, 0.1);
-	color: rgba(33, 33, 33, 0.4);
-	cursor: not-allowed;
+	@apply bg-bg-disabled text-text-disabled cursor-not-allowed;
 }
 
 /* Error message styles */
 .quiz-error-message {
-	color: #dc2626;
-	font-size: 0.75rem;
-	margin-top: 0.25rem;
 	font-family: var(--font-family-helvetica);
+
+	@apply text-error text-xs mt-1;
 }
 
+/* Form wrapper */
 .form-wrapper {
-	max-width: 420px;
+	@apply max-w-[420px];
 }
 
 /* Form container styles */
 .quiz-form-container {
-	width: 100%;
-	margin: 0 auto;
 	background-color: var(--color-off-white);
-	@apply flex justify-center flex-col items-center;
-}
 
-@media (min-width: 768px) {
-	.quiz-form-container {
-	}
+	@apply w-full mx-auto flex justify-center flex-col items-center;
 }
 
 /* Form title styles */

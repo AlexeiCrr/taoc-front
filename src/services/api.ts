@@ -1,14 +1,20 @@
 import ky from 'ky'
-import type {
-	AdminResponse,
-	ResendEmailResult,
-	UpdateUserDataParams,
-} from '../types/admin.types'
+import type { AdminResponse, UpdateUserDataParams } from '../types/admin.types'
 import type {
 	Question,
 	QuizResponse,
 	QuizResponseCreate,
 } from '../types/quiz.types'
+
+interface LicenseValidationResponse {
+	isValid: boolean
+	message: string
+	usageInfo: {
+		maxUses: number
+		currentUses: number
+		remainingUses: number
+	}
+}
 
 const API_URL =
 	import.meta.env.VITE_API_URL ||
@@ -34,9 +40,11 @@ const api = ky.create({
 			async (_request, _options, response) => {
 				// Handle API errors
 				if (!response.ok) {
-					const error = await response
+					const error = (await response
 						.json()
-						.catch(() => ({ message: 'An error occurred' }))
+						.catch(() => ({ message: 'An error occurred' }))) as {
+						message?: string
+					}
 					throw new Error(error.message || `HTTP ${response.status}`)
 				}
 			},
@@ -59,7 +67,7 @@ export const apiService = {
 	submitQuizResponse: async (
 		data: QuizResponseCreate
 	): Promise<QuizResponse> => {
-		return await api.post('response', { json: data }).json()
+		return await api.post('responses', { json: data }).json()
 	},
 
 	// Admin endpoints
@@ -78,22 +86,24 @@ export const apiService = {
 		return await api.put(`response/${responseId}`, { json: userData }).json()
 	},
 
-	resendEmail: async (responseId: number): Promise<ResendEmailResult> => {
-		const response = await api
-			.post('send-response', { json: { responseId } })
-			.json<any>()
-		// Parse the body if it's a string (Lambda response format)
-		if (response.body && typeof response.body === 'string') {
-			return JSON.parse(response.body)
-		}
-		return response
-	},
+	// resendEmail: async (responseId: number): Promise<ResendEmailResult> => {
+	// 	const response = await api
+	// 		.post('send-response', { json: { responseId } })
+	// 		.json<any>()
+	// 	// Parse the body if it's a string (Lambda response format)
+	// 	if (response.body && typeof response.body === 'string') {
+	// 		return JSON.parse(response.body)
+	// 	}
+	// 	return response
+	// },
 
 	// License code endpoints (if needed)
 	validateLicenseCode: async (code: string): Promise<boolean> => {
 		try {
-			const response = await api.get(`code/${code}`).json<any>()
-			return response.valid === true
+			const response = await api
+				.get(`code/${code}`)
+				.json<LicenseValidationResponse>()
+			return response.isValid === true
 		} catch {
 			return false
 		}

@@ -1,10 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import './App.css'
-import Home from './pages/Home'
-import QuizStart from './pages/QuizStart'
-import Quiz from './pages/Quiz'
 import { LanguageProvider } from './components/LanguageProvider'
+import Home from './pages/Home'
+import Quiz from './pages/Quiz'
+import QuizStart from './pages/QuizStart'
 // import Admin from './pages/Admin';
 // import Response from './pages/Response';
 
@@ -19,7 +19,7 @@ function App() {
 					{/* <Route 
             path="/admin" 
             element={
-              <ProtectedRoute> 
+              <ProtectedRoute>
                 <Admin />
               </ProtectedRoute>
             } 

@@ -21,6 +21,8 @@ const QuizStart = () => {
 			lastName: data.lastName,
 			email: data.email,
 			licenseCode: data.licenseCode,
+			hasSubscribed: data.agreeToEmail,
+			quizStartedAt: new Date().toISOString(),
 		})
 
 		// Navigate to the actual quiz
@@ -29,7 +31,7 @@ const QuizStart = () => {
 
 	return (
 		<div
-			className={`min-h-screen bg-off-white p-6 flex justify-center items-center`}
+			className={`min-h-screen bg-off-white p-3 lg:p-6 flex justify-center items-center`}
 		>
 			<div className="relative flex flex-col">
 				<GreetingForm onSubmit={handleFormSubmit} />

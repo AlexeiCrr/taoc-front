@@ -18,7 +18,7 @@ interface AdminState {
 	fetchResponses: () => Promise<void>
 	fetchResponseById: (id: number) => Promise<void>
 	updateUserData: (params: UpdateUserDataParams) => Promise<void>
-	resendEmail: (responseId: number) => Promise<void>
+	// resendEmail: (responseId: number) => Promise<void>
 	setFilter: <K extends keyof ResponseFilters>(
 		key: K,
 		value: ResponseFilters[K]
@@ -95,20 +95,20 @@ const useAdminStore = create<AdminState>((set, get) => ({
 		}
 	},
 
-	resendEmail: async (responseId: number) => {
-		set({ isLoading: true, error: null })
-		try {
-			await apiService.resendEmail(responseId)
-			set({ isLoading: false })
-		} catch (error) {
-			set({
-				error:
-					error instanceof Error ? error.message : 'Failed to resend email',
-				isLoading: false,
-			})
-			throw error
-		}
-	},
+	// resendEmail: async (responseId: number) => {
+	// 	set({ isLoading: true, error: null })
+	// 	try {
+	// 		await apiService.resendEmail(responseId)
+	// 		set({ isLoading: false })
+	// 	} catch (error) {
+	// 		set({
+	// 			error:
+	// 				error instanceof Error ? error.message : 'Failed to resend email',
+	// 			isLoading: false,
+	// 		})
+	// 		throw error
+	// 	}
+	// },
 
 	setFilter: <K extends keyof ResponseFilters>(
 		key: K,

@@ -164,7 +164,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 									licenseStatus === 'invalid' || errors.licenseCode
 										? 'quiz-input-error'
 										: ''
-								} ${licenseStatus === 'valid' ? 'border-green-500' : ''}`}
+								} ${licenseStatus === 'valid' ? 'border-green-700' : ''}`}
 								required
 							/>
 
@@ -175,7 +175,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 								)}
 								{licenseStatus === 'valid' && (
 									<svg
-										className="w-5 h-5 text-green-500"
+										className="w-5 h-5 text-green-700"
 										fill="none"
 										stroke="currentColor"
 										viewBox="0 0 24 24"

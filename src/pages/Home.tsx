@@ -5,7 +5,7 @@ import * as m from '../paraglide/messages'
 
 const Home = () => {
 	return (
-		<QuizLayout showFooter={true}>
+		<QuizLayout>
 			{/* Language Selector in top-right corner */}
 			{/* <div className="absolute top-4 right-4 z-10">
 				<LanguageSelector />

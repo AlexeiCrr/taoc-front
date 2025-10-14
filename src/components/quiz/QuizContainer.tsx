@@ -18,8 +18,6 @@ export default function QuizContainer() {
 		goToPreviousQuestion,
 		goToNextQuestion,
 		submitQuiz,
-		progress,
-		isComplete,
 		canGoBack,
 		canGoForward,
 		currentQuestionIndex,
@@ -31,12 +29,21 @@ export default function QuizContainer() {
 	const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
 
 	const handleNext = () => {
-		setDirection('forward')
-		setIsTransitioning(true)
-		setTimeout(() => {
-			goToNextQuestion()
-			setIsTransitioning(false)
-		}, 200)
+		// Check if this is the last question
+		const isLastQuestion = currentQuestionIndex === questions.length - 1
+
+		if (isLastQuestion) {
+			// Submit the quiz
+			submitQuiz()
+		} else {
+			// Go to next question with animation
+			setDirection('forward')
+			setIsTransitioning(true)
+			setTimeout(() => {
+				goToNextQuestion()
+				setIsTransitioning(false)
+			}, 200)
+		}
 	}
 
 	const handlePrevious = () => {
@@ -78,13 +85,8 @@ export default function QuizContainer() {
 		)
 	}
 
-	// Show results if quiz is complete
-	if (quizResponse) {
-		// return <ResultsView response={quizResponse} />;
-	}
-
 	// Show loading state while fetching questions
-	if (isLoading || questions.length === 0) {
+	if (isLoading && questions.length === 0) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
 				<LoadingSpinner message="Loading questions..." />
@@ -92,12 +94,24 @@ export default function QuizContainer() {
 		)
 	}
 
-	// Check if quiz is complete and needs submission
-	if (isComplete()) {
-		submitQuiz()
+	// Show loading state while submitting quiz
+	if (isLoading && userData) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
 				<LoadingSpinner message="Calculating your results..." size="lg" />
+			</div>
+		)
+	}
+
+	// Show results if quiz is complete
+	if (quizResponse) {
+		return (
+			<div className="flex items-center justify-center min-h-[400px]">
+				<div className="text-center">
+					<h2 className="text-2xl font-bold mb-4">Quiz Complete!</h2>
+					<p>Your results have been submitted successfully.</p>
+					{/* TODO: Add ResultsView component here */}
+				</div>
 			</div>
 		)
 	}

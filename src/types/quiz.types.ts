@@ -34,7 +34,8 @@ export interface FrequencyMap {
 
 export interface QuizResponse {
 	id: string
-	userData: UserData
+	firstName: string
+	lastName: string
 	createdOn: string
 	frequencies: Frequency[]
 }

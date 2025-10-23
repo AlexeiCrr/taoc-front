@@ -4,11 +4,11 @@ interface LoadingSpinnerProps {
 }
 
 export default function LoadingSpinner({
-	message = 'Loading...',
+	message,
 	size = 'md',
 }: LoadingSpinnerProps) {
 	const sizeClasses = {
-		sm: 'w-6 h-6',
+		sm: 'w-5 h-5',
 		md: 'w-10 h-10',
 		lg: 'w-16 h-16',
 	}

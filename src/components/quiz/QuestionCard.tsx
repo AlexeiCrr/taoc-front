@@ -67,9 +67,8 @@ const QuestionCard = ({
 			{/* Rating Scale */}
 			<div className="rating-container">
 				<span className="rating-label rating-label-desktop">
-					STRONGLY AGREE
+					STRONGLY DISAGREE
 				</span>
-
 				<div className="rating-buttons-wrapper">
 					<div className="rating-buttons">
 						{[1, 2, 3, 4, 5].map((value) => (
@@ -88,17 +87,17 @@ const QuestionCard = ({
 					<div className="rating-labels-mobile">
 						<span className="rating-label-mobile">
 							STRONGLY <br />
-							AGREE
+							DISAGREE
 						</span>
 						<span className="rating-label-mobile">
 							STRONGLY <br />
-							DISAGREE
+							AGREE
 						</span>
 					</div>
 				</div>
 
 				<span className="rating-label rating-label-desktop">
-					STRONGLY DISAGREE
+					STRONGLY AGREE
 				</span>
 			</div>
 

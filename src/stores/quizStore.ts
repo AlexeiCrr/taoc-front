@@ -110,7 +110,6 @@ const useQuizStore = create<QuizState>()(
 					}
 
 					set({ isLoading: true, error: null })
-					console.log('submitting')
 
 					try {
 						const response = await apiService.submitQuizResponse({
@@ -118,8 +117,8 @@ const useQuizStore = create<QuizState>()(
 							answers,
 						})
 						set({ quizResponse: response, isLoading: false })
-						// Clear persisted data after successful submission
-						localStorage.removeItem('quiz-storage')
+						// Don't clear localStorage - keep quizResponse persisted
+						// so user can refresh and still see results
 					} catch (error) {
 						set({
 							error:
@@ -140,7 +139,7 @@ const useQuizStore = create<QuizState>()(
 						error: null,
 					})
 					// Clear persisted data when resetting
-					localStorage.removeItem('quiz-storage')
+					sessionStorage.removeItem('quiz-storage')
 				},
 
 				// Computed values
@@ -173,13 +172,16 @@ const useQuizStore = create<QuizState>()(
 			}),
 			{
 				name: 'quiz-storage',
-				partialize: (state) => ({
-					userData: state.userData,
-					questions: state.questions,
-					currentQuestionIndex: state.currentQuestionIndex,
-					answers: state.answers,
-					quizResponse: state.quizResponse,
-				}),
+				storage: {
+					getItem: (name) => {
+						const str = sessionStorage.getItem(name)
+						return str ? JSON.parse(str) : null
+					},
+					setItem: (name, value) => {
+						sessionStorage.setItem(name, JSON.stringify(value))
+					},
+					removeItem: (name) => sessionStorage.removeItem(name),
+				},
 			}
 		),
 		{

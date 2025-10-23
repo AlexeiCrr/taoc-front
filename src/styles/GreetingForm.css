@@ -119,7 +119,7 @@
 .quiz-form-container {
 	background-color: var(--color-off-white);
 
-	@apply w-full mx-auto flex justify-center flex-col items-center;
+	@apply w-full mx-auto flex justify-center flex-col items-center max-lg:px-3;
 }
 
 /* Form title styles */

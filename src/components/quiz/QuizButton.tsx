@@ -26,7 +26,7 @@ const QuizButton = ({
 	...props
 }: QuizButtonProps) => {
 	const baseClasses =
-		'inline-block transition-all duration-300 uppercase leading-none'
+		'inline-block transition-all duration-300 uppercase leading-none cursor-pointer'
 
 	const variantClasses = {
 		// Primary green variants (using tailwind config colors)

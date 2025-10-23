@@ -1,4 +1,4 @@
-import ky from 'ky'
+import { publicApi } from './api'
 
 export interface LicenseValidationResponse {
 	isValid: boolean
@@ -10,15 +10,12 @@ export interface LicenseValidationResponse {
 	}
 }
 
-const API_URL =
-	import.meta.env.VITE_LICENSE_API_URL || 'http://localhost:4000/tac-get-code'
-
 export const validateLicenseCode = async (
 	code: string
 ): Promise<LicenseValidationResponse> => {
 	try {
-		const response = await ky
-			.get(API_URL, {
+		const response = await publicApi
+			.get('tac-get-code', {
 				searchParams: { licenseCode: code },
 				timeout: 10000,
 			})

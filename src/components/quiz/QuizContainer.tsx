@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import useQuizStore from '../../stores/quizStore'
 import ErrorMessage from '../common/ErrorMessage'
 import LoadingSpinner from '../common/LoadingSpinner'
@@ -7,6 +8,7 @@ import QuestionCard from './QuestionCard'
 import QuizProgressBar from './QuizProgressBar'
 
 export default function QuizContainer() {
+	const navigate = useNavigate()
 	const {
 		userData,
 		currentQuestion,
@@ -105,15 +107,9 @@ export default function QuizContainer() {
 
 	// Show results if quiz is complete
 	if (quizResponse) {
-		return (
-			<div className="flex items-center justify-center min-h-[400px]">
-				<div className="text-center">
-					<h2 className="text-2xl font-bold mb-4">Quiz Complete!</h2>
-					<p>Your results have been submitted successfully.</p>
-					{/* TODO: Add ResultsView component here */}
-				</div>
-			</div>
-		)
+		// Navigate to results page
+		navigate('/results')
+		return null
 	}
 
 	// Show current question

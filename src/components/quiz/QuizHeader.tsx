@@ -3,7 +3,7 @@ import QuizButton from './QuizButton'
 
 const QuizHeader = () => {
 	return (
-		<header className="absolute top-0 left-0 right-0 z-10 p-6 flex justify-between items-center">
+		<header className="absolute top-0 left-0 right-0 z-10  max-lg:pe-0 p-4 lg:p-6 flex justify-between items-center">
 			{/* Logo */}
 			<Link
 				to="/"

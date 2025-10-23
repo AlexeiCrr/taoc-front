@@ -11,13 +11,18 @@ const Home = () => {
 				<LanguageSelector />
 			</div> */}
 
-			<div className="flex-1 flex items-center justify-center px-8">
+			<div className="flex-1 flex items-center justify-center px-4 lg:px-8">
 				<HeroSection
 					title="FIND YOUR FREQUENCY"
 					subtitle="THE SEVEN FREQUENCIES OF COMMUNICATION"
 				>
 					{/* Start Assessment Button */}
-					<QuizButton variant="light-outline" size="large" to="/quiz-start">
+					<QuizButton
+						variant="light-outline"
+						size="large"
+						to="/quiz-start"
+						className="max-lg:w-full"
+					>
 						{m['quiz.start']()}
 					</QuizButton>
 				</HeroSection>

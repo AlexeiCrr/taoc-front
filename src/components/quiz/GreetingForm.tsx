@@ -18,6 +18,7 @@ interface FormData {
 	lastName: string
 	email: string
 	agreeToEmail: boolean
+	licenseTier?: number
 }
 
 const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
@@ -34,6 +35,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 		'idle' | 'loading' | 'valid' | 'invalid'
 	>('idle')
 	const [licenseMessage, setLicenseMessage] = useState<string>('')
+	const [isLicenseError, setIsLicenseError] = useState<boolean>(false)
 	const validationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
 	const isFormValid = () => {
@@ -55,6 +57,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 		if (formData.licenseCode.length < 6) {
 			setLicenseStatus('idle')
 			setLicenseMessage('')
+			setIsLicenseError(false)
 			return
 		}
 
@@ -63,26 +66,31 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 			setLicenseStatus('loading')
 
 			validationTimeoutRef.current = setTimeout(async () => {
-				try {
-					const result = await validateLicenseCode(formData.licenseCode)
+				const result = await validateLicenseCode(formData.licenseCode)
 
-					if (result.isValid) {
-						setLicenseStatus('valid')
-						setErrors((prev) => ({ ...prev, licenseCode: undefined }))
-					} else {
-						setLicenseStatus('invalid')
-						setLicenseMessage(m['quiz.greeting.validation.licenseInvalid']())
-						setErrors((prev) => ({
-							...prev,
-							licenseCode: m['quiz.greeting.validation.licenseInvalid'](),
-						}))
-					}
-				} catch (error) {
+				console.log(result, 'result')
+
+				if (result && result.isValid) {
+					setLicenseStatus('valid')
+					setIsLicenseError(false)
+					setErrors((prev) => ({ ...prev, licenseCode: undefined }))
+					setFormData((prev) => ({
+						...prev,
+						licenseTier: result.licenseTier,
+					}))
+				} else {
 					setLicenseStatus('invalid')
-					setLicenseMessage(m['quiz.greeting.validation.licenseError']())
+					setIsLicenseError(result.isError)
+
+					// Use different messages based on whether it's an error or invalid license
+					const errorMessage = result.isError
+						? m['quiz.greeting.validation.licenseError']()
+						: m['quiz.greeting.validation.licenseInvalid']()
+
+					setLicenseMessage(errorMessage)
 					setErrors((prev) => ({
 						...prev,
-						licenseCode: m['quiz.greeting.validation.licenseError'](),
+						licenseCode: errorMessage,
 					}))
 				}
 			}, 500)
@@ -113,7 +121,18 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 
 		if (!formData.licenseCode.trim()) {
 			newErrors.licenseCode = m['quiz.greeting.validation.licenseRequired']()
+		} else if (licenseStatus === 'invalid') {
+			// Use the appropriate error message based on whether it's a validation error or system error
+			if (isLicenseError) {
+				newErrors.licenseCode = m['quiz.greeting.validation.licenseError']()
+			} else {
+				newErrors.licenseCode = m['quiz.greeting.validation.licenseInvalid']()
+			}
+		} else if (licenseStatus !== 'valid') {
+			// License hasn't been validated yet
+			newErrors.licenseCode = m['quiz.greeting.validation.licenseRequired']()
 		}
+
 		if (!formData.firstName.trim()) {
 			newErrors.firstName = m['quiz.greeting.validation.firstNameRequired']()
 		}
@@ -211,8 +230,8 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 							<p className="text-green-600 text-sm mt-1">{licenseMessage}</p>
 						)}
 
-						{/* Error message */}
-						{licenseStatus === 'invalid' && errors.licenseCode && (
+						{/* Error message - only show if there's an error */}
+						{errors.licenseCode && (
 							<p className="quiz-error-message">{errors.licenseCode}</p>
 						)}
 					</div>

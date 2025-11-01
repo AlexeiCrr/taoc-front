@@ -113,7 +113,6 @@ export const handleApiError = (error: unknown): string => {
 }
 
 export const apiService = {
-	// Quiz endpoints (using publicApi with API key)
 	getQuestions: async (): Promise<Question[]> => {
 		return await publicApi.get('questions').json()
 	},
@@ -124,7 +123,6 @@ export const apiService = {
 		return await publicApi.post('responses', { json: data }).json()
 	},
 
-	// License code endpoints (using publicApi with API key)
 	validateLicenseCode: async (code: string): Promise<boolean> => {
 		try {
 			const response = await publicApi

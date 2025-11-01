@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		flexWrap: 'wrap',
 		justifyContent: 'flex-start',
-		marginBottom: 20,
+		marginBottom: 60,
 	},
 	frequencyItem: {
 		width: '33.33%',
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		textTransform: 'uppercase',
 		marginBottom: 20,
+		lineHeight: 1,
 		textAlign: 'center',
 		textDecoration: 'none',
 	},
@@ -131,6 +132,12 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 		marginBottom: 40,
 	},
+	frequencyData: {
+		textAlign: 'center',
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 })
 
 interface ResultsPDFProps {
@@ -139,6 +146,34 @@ interface ResultsPDFProps {
 
 export const ResultsPDF = ({ quizResponse }: ResultsPDFProps) => {
 	const { firstName, lastName, frequencies } = quizResponse
+
+	// Helper function to generate the appropriate text based on number of frequencies
+	const getFrequenciesIntro = () => {
+		const count = frequencies.length
+		if (count === 1) {
+			return {
+				prefix: 'This is the',
+				number: 'top',
+			}
+		} else if (count === 2) {
+			return {
+				prefix: 'These are the',
+				number: 'top two',
+			}
+		} else if (count === 3) {
+			return {
+				prefix: 'These are the',
+				number: 'top three',
+			}
+		} else {
+			return {
+				prefix: 'These are the',
+				number: `top ${count}`,
+			}
+		}
+	}
+
+	const frequenciesIntro = getFrequenciesIntro()
 
 	return (
 		<Document>
@@ -164,7 +199,7 @@ export const ResultsPDF = ({ quizResponse }: ResultsPDFProps) => {
 									style={styles.frequencyImage}
 									src={`https://taoc-quiz-media.s3.us-west-1.amazonaws.com/images/${frequency.name.toLowerCase()}.png`}
 								/>
-								<View>
+								<View style={styles.frequencyData}>
 									<Text style={styles.frequencyName}>{frequency.name}</Text>
 									<Text style={styles.frequencyNumber}>
 										{(index + 1).toString().padStart(2, '0')}
@@ -191,9 +226,10 @@ export const ResultsPDF = ({ quizResponse }: ResultsPDFProps) => {
 					{/* Main Content */}
 					<View style={styles.mainContent}>
 						<Text style={styles.paragraph}>
-							These are the{' '}
+							{frequenciesIntro.prefix}{' '}
 							<Text style={styles.bold}>
-								top three communication frequencies
+								{frequenciesIntro.number} communication{' '}
+								{frequencies.length === 1 ? 'frequency' : 'frequencies'}
 							</Text>{' '}
 							you utilize and access most naturally, but each of the Seven
 							Frequencies can become a part of your communication toolkit over

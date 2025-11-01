@@ -16,12 +16,10 @@ export const Results = () => {
 		console.log(quizResponse)
 		setIsGenerating(true)
 		try {
-			// Generate the PDF
 			const blob = await pdf(
 				<ResultsPDF quizResponse={quizResponse} />
 			).toBlob()
 
-			// Create download link
 			const url = URL.createObjectURL(blob)
 			const link = document.createElement('a')
 			link.href = url

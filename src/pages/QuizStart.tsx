@@ -9,6 +9,7 @@ interface FormData {
 	lastName: string
 	email: string
 	agreeToEmail: boolean
+	licenseTier?: number
 }
 
 const QuizStart = () => {
@@ -28,6 +29,7 @@ const QuizStart = () => {
 			lastName: data.lastName,
 			email: data.email,
 			licenseCode: data.licenseCode,
+			licenseTier: data.licenseTier,
 			hasSubscribed: data.agreeToEmail,
 			quizStartedAt: new Date().toISOString(),
 		})

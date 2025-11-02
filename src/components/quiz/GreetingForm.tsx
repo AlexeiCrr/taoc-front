@@ -68,8 +68,6 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 			validationTimeoutRef.current = setTimeout(async () => {
 				const result = await validateLicenseCode(formData.licenseCode)
 
-				console.log(result, 'result')
-
 				if (result && result.isValid) {
 					setLicenseStatus('valid')
 					setIsLicenseError(false)

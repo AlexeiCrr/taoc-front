@@ -13,8 +13,8 @@ export const Results = () => {
 
 	const generatePDF = async () => {
 		if (!quizResponse) return
-		console.log(quizResponse)
 		setIsGenerating(true)
+
 		try {
 			const blob = await pdf(
 				<ResultsPDF quizResponse={quizResponse} />

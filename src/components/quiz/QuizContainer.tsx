@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { identifyUser, trackEvent } from '../../services/posthog'
 import useQuizStore from '../../stores/quizStore'
+import type { UserData } from '../../types/quiz.types'
 import ErrorMessage from '../common/ErrorMessage'
 import LoadingSpinner from '../common/LoadingSpinner'
 import GreetingForm from './GreetingForm'
@@ -30,9 +32,61 @@ export default function QuizContainer() {
 	const [isTransitioning, setIsTransitioning] = useState(false)
 	const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
 
+	// Navigate to results when quiz is complete
+	useEffect(() => {
+		if (quizResponse) {
+			navigate('/results')
+		}
+	}, [quizResponse, navigate])
+
+	// Identify user in PostHog when userData is set
+	useEffect(() => {
+		if (userData) {
+			// Use email as the unique identifier
+			identifyUser(userData.email, {
+				email: userData.email,
+				firstName: userData.firstName,
+				lastName: userData.lastName,
+				name: `${userData.firstName} ${userData.lastName}`,
+				licenseCode: userData.licenseCode,
+				licenseTier: userData.licenseTier,
+			})
+
+			// Track quiz start event
+			trackEvent('quiz_started', {
+				email: userData.email,
+				firstName: userData.firstName,
+				lastName: userData.lastName,
+				licenseCode: userData.licenseCode,
+				licenseTier: userData.licenseTier,
+			})
+		}
+	}, [userData])
+
+	const handleUserDataSubmit = (data: UserData) => {
+		setUserData(data)
+	}
+
 	const handleNext = () => {
 		// Check if this is the last question
 		const isLastQuestion = currentQuestionIndex === questions.length - 1
+
+		// Track question answered - find answer by questionId
+		const currentQuestionData = currentQuestion()
+		const currentAnswer = currentQuestionData
+			? answers.find((a) => a?.questionId === currentQuestionData.id)
+			: undefined
+
+		if (currentAnswer) {
+			trackEvent('question_answered', {
+				questionNumber: currentQuestionIndex + 1,
+				totalQuestions: questions.length,
+				questionId: currentAnswer.questionId,
+				frequencyId: currentAnswer.frequencyId,
+				value: currentAnswer.value,
+				isLastQuestion,
+			})
+		}
 
 		if (isLastQuestion) {
 			// Submit the quiz
@@ -82,7 +136,7 @@ export default function QuizContainer() {
 	if (!userData) {
 		return (
 			<div className="max-w-2xl mx-auto">
-				<GreetingForm onSubmit={setUserData} />
+				<GreetingForm onSubmit={handleUserDataSubmit} />
 			</div>
 		)
 	}
@@ -105,15 +159,20 @@ export default function QuizContainer() {
 		)
 	}
 
-	// Show results if quiz is complete
+	// Show loading while navigating to results
 	if (quizResponse) {
-		// Navigate to results page
-		navigate('/results')
-		return null
+		return (
+			<div className="flex items-center justify-center min-h-[400px]">
+				<LoadingSpinner message="Loading results..." />
+			</div>
+		)
 	}
 
-	// Show current question
-	const currentAnswer = answers[currentQuestionIndex]
+	// Show current question - find answer by questionId
+	const currentQuestionData = currentQuestion()
+	const currentAnswerValue = currentQuestionData
+		? answers.find((a) => a?.questionId === currentQuestionData.id)?.value
+		: undefined
 
 	return (
 		<>
@@ -130,7 +189,7 @@ export default function QuizContainer() {
 					{currentQuestion() && (
 						<QuestionCard
 							question={currentQuestion()!}
-							currentValue={currentAnswer?.value}
+							currentValue={currentAnswerValue}
 							onAnswer={answerQuestion}
 							onNext={handleNext}
 							onPrevious={handlePrevious}

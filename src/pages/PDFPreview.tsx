@@ -12,7 +12,7 @@ const mockQuizResponse: QuizResponse = {
 		{
 			id: 1,
 			name: 'Commander',
-			value: 42,
+			value: 44,
 			description:
 				'Commanders are natural leaders who inspire action and drive results. They communicate with clarity, confidence, and decisiveness.',
 		},

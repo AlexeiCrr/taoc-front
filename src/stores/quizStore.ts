@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import { apiService } from '../services/api'
+import { trackEvent } from '../services/posthog'
 import type {
 	Answer,
 	Question,
@@ -53,7 +54,8 @@ const useQuizStore = create<QuizState>()(
 					set({ isLoading: true, error: null })
 					try {
 						const questions = await apiService.getQuestions()
-						set({ questions, isLoading: false })
+						// Reset answers when fetching new questions to prevent stale data
+						set({ questions, answers: [], currentQuestionIndex: 0, isLoading: false })
 					} catch (error) {
 						set({
 							error:
@@ -81,8 +83,20 @@ const useQuizStore = create<QuizState>()(
 						value,
 					}
 
-					const newAnswers = [...state.answers]
-					newAnswers[state.currentQuestionIndex] = answer
+					// Find if answer already exists for this question
+					const existingIndex = state.answers.findIndex(
+						(a) => a?.questionId === currentQuestion.id
+					)
+
+					let newAnswers: Answer[]
+					if (existingIndex >= 0) {
+						// Update existing answer
+						newAnswers = [...state.answers]
+						newAnswers[existingIndex] = answer
+					} else {
+						// Add new answer
+						newAnswers = [...state.answers, answer]
+					}
 
 					set({ answers: newAnswers })
 				},
@@ -102,11 +116,23 @@ const useQuizStore = create<QuizState>()(
 				},
 
 				submitQuiz: async () => {
-					const { userData, answers } = get()
+					const { userData, answers, questions } = get()
 
 					if (!userData) {
 						set({ error: 'User data is missing' })
 						return
+					}
+
+					// Filter out any undefined/null values and log if found
+					const validAnswers = answers.filter((answer) => answer != null)
+					
+					if (validAnswers.length !== answers.length) {
+						console.error('Found undefined/null answers:', {
+							totalAnswers: answers.length,
+							validAnswers: validAnswers.length,
+							totalQuestions: questions.length,
+							answers: answers.map((a, i) => ({ index: i, answer: a }))
+						})
 					}
 
 					set({ isLoading: true, error: null })
@@ -114,9 +140,23 @@ const useQuizStore = create<QuizState>()(
 					try {
 						const response = await apiService.submitQuizResponse({
 							userData,
-							answers,
+							answers: validAnswers,
 						})
 						set({ quizResponse: response, isLoading: false })
+
+						// Track quiz completion in PostHog
+						trackEvent('quiz_completed', {
+							email: userData.email,
+							firstName: userData.firstName,
+							lastName: userData.lastName,
+							licenseCode: userData.licenseCode,
+							licenseTier: userData.licenseTier,
+							totalQuestions: answers.length,
+							responseId: response.id,
+							topFrequency: response.frequencies[0]?.name,
+							topFrequencyValue: response.frequencies[0]?.value,
+						})
+
 						// Don't clear localStorage - keep quizResponse persisted
 						// so user can refresh and still see results
 					} catch (error) {
@@ -166,8 +206,11 @@ const useQuizStore = create<QuizState>()(
 				},
 
 				canGoForward: () => {
-					const { currentQuestionIndex, answers } = get()
-					return answers[currentQuestionIndex] !== undefined
+					const { currentQuestionIndex, answers, questions } = get()
+					const currentQuestion = questions[currentQuestionIndex]
+					if (!currentQuestion) return false
+					// Check if an answer exists for the current question by questionId
+					return answers.some((a) => a?.questionId === currentQuestion.id)
 				},
 			}),
 			{
@@ -175,7 +218,20 @@ const useQuizStore = create<QuizState>()(
 				storage: {
 					getItem: (name) => {
 						const str = sessionStorage.getItem(name)
-						return str ? JSON.parse(str) : null
+						if (!str) return null
+						
+						try {
+							const parsed = JSON.parse(str)
+							// Validate and clean the answers array if it exists
+							if (parsed.state?.answers && Array.isArray(parsed.state.answers)) {
+								// Filter out any null/undefined values from the persisted answers
+								parsed.state.answers = parsed.state.answers.filter((a: any) => a != null)
+							}
+							return parsed
+						} catch (e) {
+							console.error('Failed to parse quiz storage:', e)
+							return null
+						}
 					},
 					setItem: (name, value) => {
 						sessionStorage.setItem(name, JSON.stringify(value))

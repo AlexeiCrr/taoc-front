@@ -1,221 +1,152 @@
-// import {
-// 	AuthenticationDetails,
-// 	CognitoUser,
-// 	CognitoUserPool,
-// 	CognitoUserSession,
-// } from 'amazon-cognito-identity-js'
-// import type { User } from '../types/auth.types'
+import type { User } from '../types/auth.types'
 
-// // Cognito configuration
-// const poolData = {
-// 	UserPoolId: import.meta.env.VITE_USER_POOL_ID || 'us-west-1_2sHchLZDR',
-// 	ClientId: import.meta.env.VITE_CLIENT_ID || '1to5504c05956ijk9g16jpkoio',
-// }
+const COGNITO_DOMAIN = import.meta.env.VITE_COGNITO_APP_WEB_DOMAIN as string
+const CLIENT_ID = import.meta.env.VITE_COGNITO_CLIENT_ID as string
+const REDIRECT_SIGN_IN = import.meta.env
+	.VITE_COGNITO_REDIRECT_SIGNIN as string
+const REDIRECT_SIGN_OUT = import.meta.env
+	.VITE_COGNITO_REDIRECT_SIGNOUT as string
+const SCOPES = (import.meta.env.VITE_COGNITO_TOKEN_SCOPES as string) ||
+	'openid email profile'
 
-// const userPool = new CognitoUserPool(poolData)
+// PKCE helpers
+const base64UrlEncode = (arrayBuffer: ArrayBuffer | Uint8Array) => {
+	const bytes = arrayBuffer instanceof Uint8Array
+		? arrayBuffer
+		: new Uint8Array(arrayBuffer)
+	let str = ''
+	for (let i = 0; i < bytes.byteLength; i++) {
+		str += String.fromCharCode(bytes[i])
+	}
+	return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
 
-// // OAuth configuration for hosted UI
-// const COGNITO_DOMAIN =
-// 	import.meta.env.VITE_COGNITO_DOMAIN || 'taoc.auth.us-west-1.amazoncognito.com'
-// const REDIRECT_SIGN_IN =
-// 	import.meta.env.VITE_REDIRECT_SIGN_IN || 'http://localhost:3000/admin'
-// const REDIRECT_SIGN_OUT =
-// 	import.meta.env.VITE_REDIRECT_SIGN_OUT || 'http://localhost:3000/admin'
+const sha256 = async (plain: string) => {
+	const encoder = new TextEncoder()
+	const data = encoder.encode(plain)
+	const hash = await crypto.subtle.digest('SHA-256', data)
+	return base64UrlEncode(hash)
+}
 
-// export const authService = {
-// 	// Sign in with hosted UI (OAuth)
-// 	signIn: async (): Promise<User> => {
-// 		const authUrl =
-// 			`https://${COGNITO_DOMAIN}/login?` +
-// 			`client_id=${poolData.ClientId}&` +
-// 			`response_type=code&` +
-// 			`scope=openid+email+profile&` +
-// 			`redirect_uri=${encodeURIComponent(REDIRECT_SIGN_IN)}`
+const generateCodeVerifier = () => {
+	const array = new Uint8Array(32)
+	crypto.getRandomValues(array)
+	return base64UrlEncode(array)
+}
 
-// 		window.location.href = authUrl
+const getStored = (key: string) => localStorage.getItem(key)
+const setStored = (key: string, value: string) => localStorage.setItem(key, value)
+const delStored = (key: string) => localStorage.removeItem(key)
 
-// 		// This will redirect, so we return a placeholder
-// 		return Promise.resolve({} as User)
-// 	},
+export const authService = {
+	// Start login using Cognito Hosted UI with PKCE
+	signIn: async (): Promise<User> => {
+		const codeVerifier = generateCodeVerifier()
+		const codeChallenge = await sha256(codeVerifier)
+		setStored('pkce_code_verifier', codeVerifier)
 
-// 	// Sign in with username/password (alternative)
-// 	signInWithCredentials: async (
-// 		username: string,
-// 		password: string
-// 	): Promise<User> => {
-// 		return new Promise((resolve, reject) => {
-// 			const authenticationDetails = new AuthenticationDetails({
-// 				Username: username,
-// 				Password: password,
-// 			})
+		const params = new URLSearchParams({
+			client_id: CLIENT_ID,
+			response_type: 'code',
+			scope: SCOPES.split(/\s+/).join(' '),
+			redirect_uri: REDIRECT_SIGN_IN,
+			code_challenge_method: 'S256',
+			code_challenge: codeChallenge,
+		})
+		window.location.href = `https://${COGNITO_DOMAIN}/oauth2/authorize?${params.toString()}`
+		return Promise.resolve({} as User)
+	},
 
-// 			const cognitoUser = new CognitoUser({
-// 				Username: username,
-// 				Pool: userPool,
-// 			})
+	// Handle callback from Cognito after auth
+	handleCallback: async (): Promise<User | null> => {
+		const urlParams = new URLSearchParams(window.location.search)
+		const code = urlParams.get('code')
+		if (!code) return null
 
-// 			cognitoUser.authenticateUser(authenticationDetails, {
-// 				onSuccess: (session: CognitoUserSession) => {
-// 					const idToken = session.getIdToken()
-// 					const user: User = {
-// 						username: idToken.payload['cognito:username'],
-// 						email: idToken.payload.email,
-// 						attributes: idToken.payload,
-// 					}
+		const codeVerifier = getStored('pkce_code_verifier') || ''
+		try {
+			const body = new URLSearchParams({
+				grant_type: 'authorization_code',
+				client_id: CLIENT_ID,
+				code,
+				redirect_uri: REDIRECT_SIGN_IN,
+				code_verifier: codeVerifier,
+			})
+			const resp = await fetch(`https://${COGNITO_DOMAIN}/oauth2/token`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body,
+			})
+			if (!resp.ok) throw new Error('Token exchange failed')
+			const tokens = await resp.json()
 
-// 					// Store the token
-// 					localStorage.setItem('auth-token', session.getIdToken().getJwtToken())
+			setStored('auth-token', tokens.id_token)
+			setStored('access-token', tokens.access_token)
+			if (tokens.refresh_token) setStored('refresh-token', tokens.refresh_token)
+			delStored('pkce_code_verifier')
 
-// 					resolve(user)
-// 				},
-// 				onFailure: (err) => {
-// 					reject(err)
-// 				},
-// 			})
-// 		})
-// 	},
+			const payload = JSON.parse(atob(tokens.id_token.split('.')[1]))
+			const user: User = {
+				username: payload['cognito:username'] || payload.sub,
+				email: payload.email,
+				attributes: payload,
+			}
+			window.history.replaceState({}, document.title, window.location.pathname)
+			return user
+		} catch (e) {
+			console.error(e)
+			return null
+		}
+	},
 
-// 	// Sign out
-// 	signOut: async (): Promise<void> => {
-// 		const cognitoUser = userPool.getCurrentUser()
+	getCurrentUser: async (): Promise<User | null> => {
+		const idToken = getStored('auth-token')
+		if (!idToken) return null
+		try {
+			const payload = JSON.parse(atob(idToken.split('.')[1]))
+			return {
+				username: payload['cognito:username'] || payload.sub,
+				email: payload.email,
+				attributes: payload,
+			}
+		} catch {
+			return null
+		}
+	},
 
-// 		if (cognitoUser) {
-// 			cognitoUser.signOut()
-// 			localStorage.removeItem('auth-token')
-// 		}
+	refreshSession: async (): Promise<boolean> => {
+		const refreshToken = getStored('refresh-token')
+		if (!refreshToken) return false
+		try {
+			const resp = await fetch(`https://${COGNITO_DOMAIN}/oauth2/token`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					grant_type: 'refresh_token',
+					client_id: CLIENT_ID,
+					refresh_token: refreshToken,
+				}),
+			})
+			if (!resp.ok) return false
+			const tokens = await resp.json()
+			if (tokens.id_token) setStored('auth-token', tokens.id_token)
+			if (tokens.access_token) setStored('access-token', tokens.access_token)
+			return true
+		} catch {
+			return false
+		}
+	},
 
-// 		// Redirect to Cognito hosted UI logout
-// 		const logoutUrl =
-// 			`https://${COGNITO_DOMAIN}/logout?` +
-// 			`client_id=${poolData.ClientId}&` +
-// 			`logout_uri=${encodeURIComponent(REDIRECT_SIGN_OUT)}`
+	signOut: async (): Promise<void> => {
+		delStored('auth-token')
+		delStored('access-token')
+		delStored('refresh-token')
+		const params = new URLSearchParams({
+			client_id: CLIENT_ID,
+			logout_uri: REDIRECT_SIGN_OUT,
+		})
+		window.location.href = `https://${COGNITO_DOMAIN}/logout?${params.toString()}`
+	},
+}
 
-// 		window.location.href = logoutUrl
-// 	},
-
-// 	// Get current user
-// 	getCurrentUser: async (): Promise<User | null> => {
-// 		return new Promise((resolve) => {
-// 			const cognitoUser = userPool.getCurrentUser()
-
-// 			if (!cognitoUser) {
-// 				resolve(null)
-// 				return
-// 			}
-
-// 			cognitoUser.getSession(
-// 				(err: Error | null, session: CognitoUserSession | null) => {
-// 					if (err || !session || !session.isValid()) {
-// 						resolve(null)
-// 						return
-// 					}
-
-// 					const idToken = session.getIdToken()
-// 					const user: User = {
-// 						username: idToken.payload['cognito:username'],
-// 						email: idToken.payload.email,
-// 						attributes: idToken.payload,
-// 					}
-
-// 					// Update stored token
-// 					localStorage.setItem('auth-token', session.getIdToken().getJwtToken())
-
-// 					resolve(user)
-// 				}
-// 			)
-// 		})
-// 	},
-
-// 	// Handle OAuth callback
-// 	handleCallback: async (): Promise<User | null> => {
-// 		const urlParams = new URLSearchParams(window.location.search)
-// 		const code = urlParams.get('code')
-
-// 		if (!code) {
-// 			return null
-// 		}
-
-// 		// Exchange code for tokens
-// 		try {
-// 			const response = await fetch(`https://${COGNITO_DOMAIN}/oauth2/token`, {
-// 				method: 'POST',
-// 				headers: {
-// 					'Content-Type': 'application/x-www-form-urlencoded',
-// 				},
-// 				body: new URLSearchParams({
-// 					grant_type: 'authorization_code',
-// 					client_id: poolData.ClientId,
-// 					code: code,
-// 					redirect_uri: REDIRECT_SIGN_IN,
-// 				}),
-// 			})
-
-// 			if (!response.ok) {
-// 				throw new Error('Failed to exchange code for tokens')
-// 			}
-
-// 			const tokens = await response.json()
-
-// 			// Store tokens
-// 			localStorage.setItem('auth-token', tokens.id_token)
-// 			localStorage.setItem('access-token', tokens.access_token)
-// 			localStorage.setItem('refresh-token', tokens.refresh_token)
-
-// 			// Decode ID token to get user info
-// 			const payload = JSON.parse(atob(tokens.id_token.split('.')[1]))
-
-// 			const user: User = {
-// 				username: payload['cognito:username'] || payload.sub,
-// 				email: payload.email,
-// 				attributes: payload,
-// 			}
-
-// 			// Clear the code from URL
-// 			window.history.replaceState({}, document.title, window.location.pathname)
-
-// 			return user
-// 		} catch (error) {
-// 			console.error('Error handling OAuth callback:', error)
-// 			return null
-// 		}
-// 	},
-
-// 	// Refresh session
-// 	refreshSession: async (): Promise<boolean> => {
-// 		const refreshToken = localStorage.getItem('refresh-token')
-
-// 		if (!refreshToken) {
-// 			return false
-// 		}
-
-// 		try {
-// 			const response = await fetch(`https://${COGNITO_DOMAIN}/oauth2/token`, {
-// 				method: 'POST',
-// 				headers: {
-// 					'Content-Type': 'application/x-www-form-urlencoded',
-// 				},
-// 				body: new URLSearchParams({
-// 					grant_type: 'refresh_token',
-// 					client_id: poolData.ClientId,
-// 					refresh_token: refreshToken,
-// 				}),
-// 			})
-
-// 			if (!response.ok) {
-// 				return false
-// 			}
-
-// 			const tokens = await response.json()
-
-// 			// Update stored tokens
-// 			localStorage.setItem('auth-token', tokens.id_token)
-// 			localStorage.setItem('access-token', tokens.access_token)
-
-// 			return true
-// 		} catch {
-// 			return false
-// 		}
-// 	},
-// }
-
-// export default authService
+export default authService

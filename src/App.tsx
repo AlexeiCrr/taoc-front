@@ -16,6 +16,9 @@ import PostHogTest from './pages/PostHogTest'
 import Quiz from './pages/Quiz'
 import QuizStart from './pages/QuizStart'
 import { Results } from './pages/Results'
+import AdminCallback from './pages/Admin'
+import Dashboard from './pages/Dashboard'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function AnimatedRoutes() {
 	const location = useLocation()
@@ -29,6 +32,16 @@ function AnimatedRoutes() {
 				<Route path="/results" element={<Results />} />
 				<Route path="/pdf-preview" element={<PDFPreview />} />
 				<Route path="/posthog-test" element={<PostHogTest />} />
+				{/* Cognito redirect URI must be configured to this path */}
+				<Route path="/admin" element={<AdminCallback />} />
+				<Route
+					path="/dashboard"
+					element={
+						<ProtectedRoute>
+							<Dashboard />
+						</ProtectedRoute>
+					}
+				/>
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</PageTransition>

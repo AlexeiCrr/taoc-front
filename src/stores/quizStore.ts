@@ -142,20 +142,26 @@ const useQuizStore = create<QuizState>()(
 							userData,
 							answers: validAnswers,
 						})
-						set({ quizResponse: response, isLoading: false })
 
-						// Track quiz completion in PostHog
+						// Track quiz completion in PostHog BEFORE setting response
+						// This ensures the event is sent before navigation
 						trackEvent('quiz_completed', {
 							email: userData.email,
 							firstName: userData.firstName,
 							lastName: userData.lastName,
 							licenseCode: userData.licenseCode,
 							licenseTier: userData.licenseTier,
-							totalQuestions: answers.length,
+							totalQuestions: questions.length,
+							answersSubmitted: validAnswers.length,
 							responseId: response.id,
 							topFrequency: response.frequencies[0]?.name,
 							topFrequencyValue: response.frequencies[0]?.value,
 						})
+
+						// Small delay to ensure PostHog event is sent before navigation
+						await new Promise(resolve => setTimeout(resolve, 100))
+
+						set({ quizResponse: response, isLoading: false })
 
 						// Don't clear localStorage - keep quizResponse persisted
 						// so user can refresh and still see results

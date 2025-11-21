@@ -13,6 +13,8 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 				person_profiles: 'identified_only',
 				capture_pageview: false, // We'll manually capture pageviews
 				capture_pageleave: true,
+				// Disable autocapture of clicks and other interactions
+				autocapture: false,
 				// Exception capture
 				capture_exceptions: true,
 				// Additional useful options

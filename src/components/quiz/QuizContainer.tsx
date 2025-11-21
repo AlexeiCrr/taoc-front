@@ -71,23 +71,6 @@ export default function QuizContainer() {
 		// Check if this is the last question
 		const isLastQuestion = currentQuestionIndex === questions.length - 1
 
-		// Track question answered - find answer by questionId
-		const currentQuestionData = currentQuestion()
-		const currentAnswer = currentQuestionData
-			? answers.find((a) => a?.questionId === currentQuestionData.id)
-			: undefined
-
-		if (currentAnswer) {
-			trackEvent('question_answered', {
-				questionNumber: currentQuestionIndex + 1,
-				totalQuestions: questions.length,
-				questionId: currentAnswer.questionId,
-				frequencyId: currentAnswer.frequencyId,
-				value: currentAnswer.value,
-				isLastQuestion,
-			})
-		}
-
 		if (isLastQuestion) {
 			// Submit the quiz
 			submitQuiz()

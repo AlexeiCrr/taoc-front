@@ -4,6 +4,8 @@ import type {
 	AdminResponse,
 	ResponseFilters,
 	UpdateUserDataParams,
+	PaginatedResponse,
+	StatisticsResponse,
 } from '../types/admin.types'
 
 interface AdminState {
@@ -11,6 +13,13 @@ interface AdminState {
 	responses: AdminResponse[]
 	selectedResponse: AdminResponse | null
 	filters: ResponseFilters
+	pagination: {
+		page: number
+		pageSize: number
+		total: number
+		totalPages: number
+	}
+	statistics: StatisticsResponse | null
 	isLoading: boolean
 	error: string | null
 
@@ -18,15 +27,15 @@ interface AdminState {
 	fetchResponses: () => Promise<void>
 	fetchResponseById: (id: number) => Promise<void>
 	updateUserData: (params: UpdateUserDataParams) => Promise<void>
-	// resendEmail: (responseId: number) => Promise<void>
+	resendEmail: (responseId: number) => Promise<void>
+	exportCSV: () => Promise<void>
+	fetchStatistics: () => Promise<void>
 	setFilter: <K extends keyof ResponseFilters>(
 		key: K,
 		value: ResponseFilters[K]
 	) => void
+	setPage: (page: number) => void
 	clearFilters: () => void
-
-	// Computed
-	getFilteredResponses: () => AdminResponse[]
 }
 
 const useAdminStore = create<AdminState>((set, get) => ({
@@ -34,10 +43,21 @@ const useAdminStore = create<AdminState>((set, get) => ({
 	responses: [],
 	selectedResponse: null,
 	filters: {
-		search: '',
-		dateRange: null,
+		page: 1,
+		name: undefined,
+		email: undefined,
 		licenseCode: undefined,
+		date: undefined,
+		dateFrom: undefined,
+		dateTo: undefined,
 	},
+	pagination: {
+		page: 1,
+		pageSize: 100,
+		total: 0,
+		totalPages: 0,
+	},
+	statistics: null,
 	isLoading: false,
 	error: null,
 
@@ -45,8 +65,19 @@ const useAdminStore = create<AdminState>((set, get) => ({
 	fetchResponses: async () => {
 		set({ isLoading: true, error: null })
 		try {
-			const responses = await apiService.getResponses()
-			set({ responses, isLoading: false })
+			const result: PaginatedResponse = await apiService.getResponses(
+				get().filters
+			)
+			set({
+				responses: result.items,
+				pagination: {
+					page: result.page,
+					pageSize: result.pageSize,
+					total: result.total,
+					totalPages: result.totalPages,
+				},
+				isLoading: false,
+			})
 		} catch (error) {
 			set({
 				error:
@@ -80,7 +111,7 @@ const useAdminStore = create<AdminState>((set, get) => ({
 			// Update the response in the list
 			set((state) => ({
 				responses: state.responses.map((r) =>
-					r.id === params.responseId ? { ...r, ...params } : r
+					r.id === params.responseId ? { ...r, ...updatedResponse } : r
 				),
 				selectedResponse: updatedResponse,
 				isLoading: false,
@@ -95,20 +126,60 @@ const useAdminStore = create<AdminState>((set, get) => ({
 		}
 	},
 
-	// resendEmail: async (responseId: number) => {
-	// 	set({ isLoading: true, error: null })
-	// 	try {
-	// 		await apiService.resendEmail(responseId)
-	// 		set({ isLoading: false })
-	// 	} catch (error) {
-	// 		set({
-	// 			error:
-	// 				error instanceof Error ? error.message : 'Failed to resend email',
-	// 			isLoading: false,
-	// 		})
-	// 		throw error
-	// 	}
-	// },
+	resendEmail: async (responseId: number) => {
+		set({ isLoading: true, error: null })
+		try {
+			await apiService.resendEmail(responseId)
+			set({ isLoading: false })
+		} catch (error) {
+			set({
+				error:
+					error instanceof Error ? error.message : 'Failed to resend email',
+				isLoading: false,
+			})
+			throw error
+		}
+	},
+
+	exportCSV: async () => {
+		set({ isLoading: true, error: null })
+		try {
+			const blob = await apiService.exportCSV(get().filters)
+			const url = window.URL.createObjectURL(blob)
+			const a = document.createElement('a')
+			a.href = url
+			a.download = `responses-${new Date().toISOString().split('T')[0]}.csv`
+			document.body.appendChild(a)
+			a.click()
+			window.URL.revokeObjectURL(url)
+			document.body.removeChild(a)
+			set({ isLoading: false })
+		} catch (error) {
+			set({
+				error:
+					error instanceof Error ? error.message : 'Failed to export CSV',
+				isLoading: false,
+			})
+			throw error
+		}
+	},
+
+	fetchStatistics: async () => {
+		set({ isLoading: true, error: null })
+		try {
+			const statistics = await apiService.getStatistics(get().filters)
+			set({ statistics, isLoading: false })
+		} catch (error) {
+			set({
+				error:
+					error instanceof Error
+						? error.message
+						: 'Failed to fetch statistics',
+				isLoading: false,
+			})
+			throw error
+		}
+	},
 
 	setFilter: <K extends keyof ResponseFilters>(
 		key: K,
@@ -118,6 +189,17 @@ const useAdminStore = create<AdminState>((set, get) => ({
 			filters: {
 				...state.filters,
 				[key]: value,
+				// Reset to page 1 when filters change
+				page: key !== 'page' ? 1 : state.filters.page,
+			},
+		}))
+	},
+
+	setPage: (page: number) => {
+		set((state) => ({
+			filters: {
+				...state.filters,
+				page,
 			},
 		}))
 	},
@@ -125,52 +207,14 @@ const useAdminStore = create<AdminState>((set, get) => ({
 	clearFilters: () => {
 		set({
 			filters: {
-				search: '',
-				dateRange: null,
+				page: 1,
+				name: undefined,
+				email: undefined,
 				licenseCode: undefined,
+				date: undefined,
+				dateFrom: undefined,
+				dateTo: undefined,
 			},
-		})
-	},
-
-	// Computed filtered responses
-	getFilteredResponses: () => {
-		const { responses, filters } = get()
-
-		return responses.filter((response) => {
-			// Search filter
-			if (filters.search) {
-				const searchLower = filters.search.toLowerCase()
-				const matchesSearch =
-					response.firstName.toLowerCase().includes(searchLower) ||
-					response.lastName.toLowerCase().includes(searchLower) ||
-					response.email.toLowerCase().includes(searchLower) ||
-					response.licenseCode?.toLowerCase().includes(searchLower)
-
-				if (!matchesSearch) return false
-			}
-
-			// Date range filter
-			if (filters.dateRange) {
-				const responseDate = new Date(response.createdOn)
-				if (
-					responseDate < filters.dateRange.start ||
-					responseDate > filters.dateRange.end
-				) {
-					return false
-				}
-			}
-
-			// License code filter
-			if (filters.licenseCode !== undefined) {
-				if (filters.licenseCode === '' && response.licenseCode) return false
-				if (
-					filters.licenseCode !== '' &&
-					response.licenseCode !== filters.licenseCode
-				)
-					return false
-			}
-
-			return true
 		})
 	},
 }))

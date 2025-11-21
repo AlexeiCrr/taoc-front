@@ -137,12 +137,24 @@ export const apiService = {
 	},
 
 	// Admin endpoints (using adminApi with JWT)
-	getResponses: async (): Promise<AdminResponse[]> => {
-		return await adminApi.get('responses').json()
+	getResponses: async (
+		filters?: import('../types/admin.types').ResponseFilters
+	): Promise<import('../types/admin.types').PaginatedResponse> => {
+		const searchParams: Record<string, string> = {}
+
+		if (filters?.page) searchParams.page = String(filters.page)
+		if (filters?.name) searchParams.name = filters.name
+		if (filters?.email) searchParams.email = filters.email
+		if (filters?.licenseCode) searchParams.licenseCode = filters.licenseCode
+		if (filters?.date) searchParams.date = filters.date
+		if (filters?.dateFrom) searchParams.dateFrom = filters.dateFrom
+		if (filters?.dateTo) searchParams.dateTo = filters.dateTo
+
+		return await adminApi.get('responses', { searchParams }).json()
 	},
 
 	getResponseById: async (id: number): Promise<AdminResponse> => {
-		return await adminApi.get(`response/${id}`).json()
+		return await adminApi.get(`responses/${id}`).json()
 	},
 
 	updateResponse: async (
@@ -150,20 +162,45 @@ export const apiService = {
 	): Promise<AdminResponse> => {
 		const { responseId, ...userData } = params
 		return await adminApi
-			.put(`response/${responseId}`, { json: userData })
+			.put(`responses/${responseId}`, { json: userData })
 			.json()
 	},
 
-	// resendEmail: async (responseId: number): Promise<ResendEmailResult> => {
-	// 	const response = await adminApi
-	// 		.post('send-response', { json: { responseId } })
-	// 		.json<any>()
-	// 	// Parse the body if it's a string (Lambda response format)
-	// 	if (response.body && typeof response.body === 'string') {
-	// 		return JSON.parse(response.body)
-	// 	}
-	// 	return response
-	// },
+	resendEmail: async (responseId: number): Promise<import('../types/admin.types').ResendEmailResult> => {
+		return await adminApi
+			.post(`responses/${responseId}/resend`)
+			.json()
+	},
+
+	exportCSV: async (
+		filters?: import('../types/admin.types').ResponseFilters
+	): Promise<Blob> => {
+		const searchParams: Record<string, string> = {}
+
+		if (filters?.name) searchParams.name = filters.name
+		if (filters?.email) searchParams.email = filters.email
+		if (filters?.licenseCode) searchParams.licenseCode = filters.licenseCode
+		if (filters?.date) searchParams.date = filters.date
+		if (filters?.dateFrom) searchParams.dateFrom = filters.dateFrom
+		if (filters?.dateTo) searchParams.dateTo = filters.dateTo
+
+		return await adminApi.get('responses/export/csv', { searchParams }).blob()
+	},
+
+	getStatistics: async (
+		filters?: import('../types/admin.types').ResponseFilters
+	): Promise<import('../types/admin.types').StatisticsResponse> => {
+		const searchParams: Record<string, string> = {}
+
+		if (filters?.name) searchParams.name = filters.name
+		if (filters?.email) searchParams.email = filters.email
+		if (filters?.licenseCode) searchParams.licenseCode = filters.licenseCode
+		if (filters?.date) searchParams.date = filters.date
+		if (filters?.dateFrom) searchParams.dateFrom = filters.dateFrom
+		if (filters?.dateTo) searchParams.dateTo = filters.dateTo
+
+		return await adminApi.get('responses/statistics', { searchParams }).json()
+	},
 }
 
 // Export both API clients for direct use if needed

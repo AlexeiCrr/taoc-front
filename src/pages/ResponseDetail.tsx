@@ -3,6 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom'
 import useAuthStore from '../stores/authStore'
 import useAdminStore from '../stores/adminStore'
 import { toast } from 'sonner'
+import {
+	Button,
+	Input,
+	Label,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+	DialogTrigger,
+} from '../components/ui'
 
 export default function ResponseDetail() {
 	const { id } = useParams<{ id: string }>()
@@ -19,7 +30,7 @@ export default function ResponseDetail() {
 		resendEmail,
 	} = useAdminStore()
 
-	const [isEditing, setIsEditing] = useState(false)
+	const [dialogOpen, setDialogOpen] = useState(false)
 	const [firstName, setFirstName] = useState('')
 	const [lastName, setLastName] = useState('')
 	const [email, setEmail] = useState('')
@@ -52,7 +63,7 @@ export default function ResponseDetail() {
 				lastName,
 				email,
 			})
-			setIsEditing(false)
+			setDialogOpen(false)
 			toast.success('User data updated successfully')
 		} catch (err: any) {
 			toast.error(err.message || 'Failed to update user data')
@@ -65,7 +76,16 @@ export default function ResponseDetail() {
 			setLastName(selectedResponse.lastName)
 			setEmail(selectedResponse.email)
 		}
-		setIsEditing(false)
+		setDialogOpen(false)
+	}
+
+	const handleOpenDialog = () => {
+		if (selectedResponse) {
+			setFirstName(selectedResponse.firstName)
+			setLastName(selectedResponse.lastName)
+			setEmail(selectedResponse.email)
+		}
+		setDialogOpen(true)
 	}
 
 	const handleResendEmail = async () => {
@@ -110,12 +130,9 @@ export default function ResponseDetail() {
 				<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
 					{error || 'Response not found'}
 				</div>
-				<button
-					onClick={() => navigate('/dashboard')}
-					className="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
-				>
+				<Button onClick={() => navigate('/dashboard')} variant="outline">
 					Back to Dashboard
-				</button>
+				</Button>
 			</div>
 		)
 	}
@@ -151,12 +168,9 @@ export default function ResponseDetail() {
 					<div className="text-sm text-gray-600">
 						Authorized as: <span className="font-semibold">{user?.username || user?.email}</span>
 					</div>
-					<button
-						onClick={logout}
-						className="px-4 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50"
-					>
+					<Button onClick={logout} variant="outline" size="sm">
 						Logout
-					</button>
+					</Button>
 				</div>
 			</div>
 
@@ -165,97 +179,102 @@ export default function ResponseDetail() {
 					{/* User Data Section */}
 					<div className="bg-white border border-gray-300 rounded p-6">
 						<h2 className="text-xl font-semibold mb-4">User Data</h2>
-						{!isEditing ? (
-							<div className="space-y-3">
-								<div>
-									<span className="text-gray-600">First Name: </span>
-									<span className="font-semibold">{selectedResponse.firstName}</span>
-								</div>
-								<div>
-									<span className="text-gray-600">Last Name: </span>
-									<span className="font-semibold">{selectedResponse.lastName}</span>
-								</div>
-								<div>
-									<span className="text-gray-600">Email: </span>
-									<span className="font-semibold">{selectedResponse.email}</span>
-								</div>
+						<div className="space-y-3">
+							<div>
+								<span className="text-gray-600">First Name: </span>
+								<span className="font-semibold">{selectedResponse.firstName}</span>
 							</div>
-						) : (
-							<div className="space-y-4">
-								<div>
-									<label className="block text-sm text-gray-600 mb-1">
-										First Name*
-									</label>
-									<input
-										type="text"
-										value={firstName}
-										onChange={(e) => setFirstName(e.target.value)}
-										className="w-full px-3 py-2 border border-gray-300 rounded bg-[#f3f0e8]"
-									/>
-								</div>
-								<div>
-									<label className="block text-sm text-gray-600 mb-1">
-										Last Name*
-									</label>
-									<input
-										type="text"
-										value={lastName}
-										onChange={(e) => setLastName(e.target.value)}
-										className="w-full px-3 py-2 border border-gray-300 rounded bg-[#f3f0e8]"
-									/>
-								</div>
-								<div>
-									<label className="block text-sm text-gray-600 mb-1">Email*</label>
-									<input
-										type="email"
-										value={email}
-										onChange={(e) => setEmail(e.target.value)}
-										className="w-full px-3 py-2 border border-gray-300 rounded bg-[#f3f0e8]"
-									/>
-								</div>
+							<div>
+								<span className="text-gray-600">Last Name: </span>
+								<span className="font-semibold">{selectedResponse.lastName}</span>
 							</div>
-						)}
+							<div>
+								<span className="text-gray-600">Email: </span>
+								<span className="font-semibold">{selectedResponse.email}</span>
+							</div>
+						</div>
 
 						<div className="mt-6 space-y-3">
-							{!isEditing ? (
-								<>
-									<button
-										onClick={() => setIsEditing(true)}
-										className="w-full px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
+							<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+								<DialogTrigger asChild>
+									<Button
+										onClick={handleOpenDialog}
+										variant="outline"
+										className="w-full"
 									>
 										CHANGE USER DATA
-									</button>
-									<button
-										onClick={handleResendEmail}
-										disabled={isLoading}
-										className="w-full px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
-									>
-										RESEND RESULTS EMAIL
-									</button>
-									<button
-										onClick={handleDownloadPDF}
-										className="w-full px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
-									>
-										DOWNLOAD RESULTS PDF
-									</button>
-								</>
-							) : (
-								<div className="flex gap-3">
-									<button
-										onClick={handleCancelEdit}
-										className="flex-1 px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
-									>
-										Cancel
-									</button>
-									<button
-										onClick={handleSaveUserData}
-										disabled={isLoading}
-										className="flex-1 px-4 py-2 bg-[#4855c4] text-white rounded hover:bg-[#3a46a8] disabled:opacity-50"
-									>
-										Save
-									</button>
-								</div>
-							)}
+									</Button>
+								</DialogTrigger>
+								<DialogContent className="sm:max-w-md">
+									<DialogHeader>
+										<DialogTitle>Edit User Data</DialogTitle>
+									</DialogHeader>
+									<div className="space-y-4">
+										<div>
+											<Label htmlFor="edit-firstName" required>
+												First Name
+											</Label>
+											<Input
+												id="edit-firstName"
+												type="text"
+												value={firstName}
+												onChange={(e) => setFirstName(e.target.value)}
+											/>
+										</div>
+										<div>
+											<Label htmlFor="edit-lastName" required>
+												Last Name
+											</Label>
+											<Input
+												id="edit-lastName"
+												type="text"
+												value={lastName}
+												onChange={(e) => setLastName(e.target.value)}
+											/>
+										</div>
+										<div>
+											<Label htmlFor="edit-email" required>
+												Email
+											</Label>
+											<Input
+												id="edit-email"
+												type="email"
+												value={email}
+												onChange={(e) => setEmail(e.target.value)}
+											/>
+										</div>
+									</div>
+									<DialogFooter>
+										<Button onClick={handleCancelEdit} variant="outline">
+											Cancel
+										</Button>
+										<Button
+											onClick={handleSaveUserData}
+											disabled={isLoading}
+											variant="primary"
+										>
+											Save
+										</Button>
+									</DialogFooter>
+								</DialogContent>
+							</Dialog>
+
+							<Button
+								onClick={handleResendEmail}
+								disabled={isLoading}
+								variant="outline"
+								className="w-full"
+							>
+								RESEND RESULTS EMAIL
+							</Button>
+
+							<Button
+								onClick={handleDownloadPDF}
+								variant="outline"
+								className="w-full"
+							>
+								DOWNLOAD RESULTS PDF
+							</Button>
 						</div>
 					</div>
 

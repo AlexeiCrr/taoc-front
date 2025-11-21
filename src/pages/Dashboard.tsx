@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/authStore'
 import useAdminStore from '../stores/adminStore'
 import { toast } from 'sonner'
+import { Button, Input, Label } from '../components/ui'
 
 export default function Dashboard() {
 	const navigate = useNavigate()
@@ -111,77 +112,62 @@ export default function Dashboard() {
 					<div className="text-sm text-gray-600">
 						Authorized as: <span className="font-semibold">{user?.username || user?.email}</span>
 					</div>
-					<button
-						onClick={logout}
-						className="px-4 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50"
-					>
+					<Button onClick={logout} variant="outline" size="sm">
 						Logout
-					</button>
+					</Button>
 				</div>
 			</div>
 
 			{/* Filters */}
 			<div className="mb-6 flex flex-wrap items-end gap-4">
 				<div className="flex-1 min-w-[200px]">
-					<input
+					<Label htmlFor="name-email">Name/Email</Label>
+					<Input
+						id="name-email"
 						type="text"
-						placeholder="Name/Email"
+						placeholder="Search by name or email"
 						value={nameEmailInput}
 						onChange={(e) => setNameEmailInput(e.target.value)}
 						onKeyDown={(e) => e.key === 'Enter' && handleApplyFilters()}
-						className="w-full px-4 py-2 border border-gray-300 rounded bg-white"
 					/>
 				</div>
 				<div className="flex-1 min-w-[200px]">
-					<input
+					<Label htmlFor="license-code">License Code</Label>
+					<Input
+						id="license-code"
 						type="text"
-						placeholder="License Code"
+						placeholder="Enter license code"
 						value={licenseCodeInput}
 						onChange={(e) => setLicenseCodeInput(e.target.value)}
 						onKeyDown={(e) => e.key === 'Enter' && handleApplyFilters()}
-						className="w-full px-4 py-2 border border-gray-300 rounded bg-white"
 					/>
 				</div>
-				<div className="flex-1 min-w-[200px] relative">
-					<input
+				<div className="flex-1 min-w-[200px]">
+					<Label htmlFor="date">Date</Label>
+					<Input
+						id="date"
 						type="date"
 						value={dateInput}
 						onChange={(e) => setDateInput(e.target.value)}
 						onKeyDown={(e) => e.key === 'Enter' && handleApplyFilters()}
-						placeholder="Choose a Date"
-						className="w-full px-4 py-2 border border-gray-300 rounded bg-white"
 					/>
 				</div>
-				<button
-					onClick={handleApplyFilters}
-					className="px-4 py-2 bg-[#5e6153] text-white rounded hover:bg-[#4a4c40]"
-				>
+				<Button onClick={handleApplyFilters} variant="secondary">
 					Apply
-				</button>
-				<button
-					onClick={handleResetFilters}
-					className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-				>
+				</Button>
+				<Button onClick={handleResetFilters} variant="outline">
 					Reset Filters
-				</button>
+				</Button>
 			</div>
 
 			{/* Action Buttons */}
 			<div className="mb-6 flex gap-4">
-				<button
-					onClick={handleExportCSV}
-					disabled={isLoading}
-					className="px-6 py-2 bg-[#4855c4] text-white rounded hover:bg-[#3a46a8] disabled:opacity-50"
-				>
+				<Button onClick={handleExportCSV} disabled={isLoading} variant="primary">
 					Download All Results
-				</button>
-				<button
-					onClick={handleViewReport}
-					disabled={isLoading}
-					className="px-6 py-2 bg-[#4855c4] text-white rounded hover:bg-[#3a46a8] disabled:opacity-50"
-				>
+				</Button>
+				<Button onClick={handleViewReport} disabled={isLoading} variant="primary">
 					View Report
-				</button>
+				</Button>
 			</div>
 
 			{/* Loading/Error State */}
@@ -288,13 +274,13 @@ export default function Dashboard() {
 								{pagination.total} results
 							</div>
 							<div className="flex gap-2">
-								<button
+								<Button
 									onClick={() => setPage(pagination.page - 1)}
 									disabled={pagination.page === 1}
-									className="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+									variant="outline"
 								>
 									Previous
-								</button>
+								</Button>
 								<div className="flex items-center gap-1">
 									{Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
 										.filter(
@@ -312,27 +298,25 @@ export default function Dashboard() {
 													{showEllipsis && (
 														<span className="px-2 text-gray-500">...</span>
 													)}
-													<button
+													<Button
 														onClick={() => setPage(page)}
-														className={`px-3 py-2 rounded ${
-															page === pagination.page
-																? 'bg-[#4855c4] text-white'
-																: 'bg-white border border-gray-300 hover:bg-gray-50'
-														}`}
+														variant={page === pagination.page ? 'primary' : 'outline'}
+														size="sm"
+														className="min-w-[40px]"
 													>
 														{page}
-													</button>
+													</Button>
 												</div>
 											)
 										})}
 								</div>
-								<button
+								<Button
 									onClick={() => setPage(pagination.page + 1)}
 									disabled={pagination.page === pagination.totalPages}
-									className="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+									variant="outline"
 								>
 									Next
-								</button>
+								</Button>
 							</div>
 						</div>
 					)}

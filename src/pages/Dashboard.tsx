@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/authStore'
 import useAdminStore from '../stores/adminStore'
 import { toast } from 'sonner'
 
 export default function Dashboard() {
+	const navigate = useNavigate()
 	const user = useAuthStore((s) => s.user)
 	const logout = useAuthStore((s) => s.logout)
 
@@ -252,7 +254,11 @@ export default function Dashboard() {
 										</tr>
 									) : (
 										responses.map((response) => (
-											<tr key={response.id} className="border-b border-gray-200 hover:bg-gray-50">
+											<tr
+												key={response.id}
+												onClick={() => navigate(`/dashboard/response/${response.id}`)}
+												className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
+											>
 												<td className="px-4 py-3">{response.firstName}</td>
 												<td className="px-4 py-3">{response.lastName}</td>
 												<td className="px-4 py-3">{response.email}</td>

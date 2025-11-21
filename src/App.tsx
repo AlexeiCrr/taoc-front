@@ -18,6 +18,7 @@ import QuizStart from './pages/QuizStart'
 import { Results } from './pages/Results'
 import AdminCallback from './pages/Admin'
 import Dashboard from './pages/Dashboard'
+import ResponseDetail from './pages/ResponseDetail'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function AnimatedRoutes() {
@@ -39,6 +40,14 @@ function AnimatedRoutes() {
 					element={
 						<ProtectedRoute>
 							<Dashboard />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/dashboard/response/:id"
+					element={
+						<ProtectedRoute>
+							<ResponseDetail />
 						</ProtectedRoute>
 					}
 				/>

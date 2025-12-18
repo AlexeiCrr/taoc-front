@@ -1,9 +1,25 @@
+import { Link, useSearchParams } from 'react-router-dom'
 import HeroSection from '../components/quiz/HeroSection'
-import QuizButton from '../components/quiz/QuizButton'
 import QuizLayout from '../components/quiz/QuizLayout'
 import * as m from '../paraglide/messages'
 
 const Home = () => {
+	const LocationPreservingLink = () => {
+		const [searchParams] = useSearchParams()
+
+		return (
+			<Link
+				to={{
+					pathname: '/quiz-start',
+					search: searchParams.toString(),
+				}}
+				className="inline-block transition-all duration-300 uppercase leading-none cursor-pointer border border-off-white text-off-white hover:bg-off-white hover:text-primary px-8 py-4 text-base max-lg:w-full"
+			>
+				{m['quiz.start']()}
+			</Link>
+		)
+	}
+
 	return (
 		<QuizLayout>
 			{/* Language Selector in top-right corner */}
@@ -16,15 +32,7 @@ const Home = () => {
 					title="FIND YOUR FREQUENCY"
 					subtitle="THE SEVEN FREQUENCIES OF COMMUNICATION"
 				>
-					{/* Start Assessment Button */}
-					<QuizButton
-						variant="light-outline"
-						size="large"
-						to="/quiz-start"
-						className="max-lg:w-full"
-					>
-						{m['quiz.start']()}
-					</QuizButton>
+					<LocationPreservingLink />
 				</HeroSection>
 			</div>
 		</QuizLayout>

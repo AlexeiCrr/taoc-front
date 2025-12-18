@@ -5,6 +5,7 @@ import {
 	useRef,
 	useState,
 } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import * as m from '../../paraglide/messages'
 import { validateLicenseCode } from '../../services/licenseApi'
 
@@ -22,6 +23,8 @@ interface FormData {
 }
 
 const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
+	const navigate = useNavigate()
+	const [searchParams] = useSearchParams()
 	const [formData, setFormData] = useState<FormData>({
 		licenseCode: '',
 		firstName: '',
@@ -38,6 +41,64 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 	const [isLicenseError, setIsLicenseError] = useState<boolean>(false)
 	const validationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+	useEffect(() => {
+		const licenseFromUrl = searchParams.get('licenseKey')
+
+		if (
+			licenseFromUrl &&
+			(licenseFromUrl.length > 6 || licenseFromUrl.includes(','))
+		) {
+			// Remove the malformed licenseKey parameter from the URL without page reload
+			const newSearchParams = new URLSearchParams(searchParams.toString())
+			newSearchParams.delete('licenseKey')
+
+			// Navigate to the same route but without the licenseKey parameter
+			navigate({ search: newSearchParams.toString() }, { replace: true })
+			return // Exit early to prevent further processing
+		}
+
+		if (
+			licenseFromUrl &&
+			licenseFromUrl.length === 6 &&
+			licenseStatus === 'loading'
+		) {
+			const validateUrlLicense = async () => {
+				const result = await validateLicenseCode(licenseFromUrl)
+
+				if (result && result.isValid) {
+					setLicenseStatus('valid')
+					setIsLicenseError(false)
+					setErrors((prev) => ({ ...prev, licenseCode: undefined }))
+					setFormData((prev) => ({
+						...prev,
+						licenseCode: licenseFromUrl,
+						licenseTier: result.licenseTier,
+					}))
+					setLicenseMessage(result.message || '')
+				} else {
+					setLicenseStatus('invalid')
+					setIsLicenseError(result.isError)
+
+					const errorMessage = result.isError
+						? m['quiz.greeting.validation.licenseError']()
+						: m['quiz.greeting.validation.licenseInvalid']()
+
+					setLicenseMessage(errorMessage)
+					setFormData((prev) => ({
+						...prev,
+						licenseCode: licenseFromUrl,
+					}))
+					setErrors((prev) => ({
+						...prev,
+						licenseCode: errorMessage,
+					}))
+				}
+			}
+
+			validateUrlLicense()
+		}
+	}, [navigate, licenseStatus, searchParams])
+
 	const isFormValid = () => {
 		return (
 			licenseStatus === 'valid' &&
@@ -49,7 +110,90 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 		)
 	}
 
+	// Track the original URL license code to know if we're dealing with the initial URL value
+	const urlLicenseCode = searchParams.get('licenseKey')
+
+	// Effect to check for and remove malformed license key parameters
 	useEffect(() => {
+		if (
+			urlLicenseCode &&
+			(urlLicenseCode.length > 6 || urlLicenseCode.includes(','))
+		) {
+			// Remove the malformed licenseKey parameter from the URL without page reload
+			const newSearchParams = new URLSearchParams(searchParams.toString())
+			newSearchParams.delete('licenseKey')
+
+			// Navigate to the same route but without the licenseKey parameter
+			navigate({ search: newSearchParams.toString() }, { replace: true })
+		}
+	}, [urlLicenseCode, searchParams, navigate])
+
+	const [hasCheckedUrlLicense, setHasCheckedUrlLicense] = useState(false)
+
+	// Don't process the URL license if it's malformed
+	const isValidLicenseCode =
+		!urlLicenseCode ||
+		(urlLicenseCode.length === 6 && !urlLicenseCode.includes(','))
+
+	// Effect to handle auto-validation when licenseKey is in URL - only runs once
+	useEffect(() => {
+		if (
+			urlLicenseCode &&
+			urlLicenseCode.length === 6 &&
+			!hasCheckedUrlLicense &&
+			isValidLicenseCode
+		) {
+			setHasCheckedUrlLicense(true)
+
+			// Validate the license from URL immediately
+			const validateUrlLicense = async () => {
+				setLicenseStatus('loading') // Set loading state for URL validation
+				const result = await validateLicenseCode(urlLicenseCode)
+
+				if (result && result.isValid) {
+					setLicenseStatus('valid')
+					setIsLicenseError(false)
+					setErrors((prev) => ({ ...prev, licenseCode: undefined }))
+					setFormData((prev) => ({
+						...prev,
+						licenseCode: urlLicenseCode, // Make sure form data has the validated code
+						licenseTier: result.licenseTier,
+					}))
+					setLicenseMessage(result.message || '')
+				} else {
+					setLicenseStatus('invalid')
+					setIsLicenseError(result.isError)
+
+					// Use different messages based on whether it's an error or invalid license
+					const errorMessage = result.isError
+						? m['quiz.greeting.validation.licenseError']()
+						: m['quiz.greeting.validation.licenseInvalid']()
+
+					setLicenseMessage(errorMessage)
+					// Set the form data with the invalid license code so it shows in the input field
+					setFormData((prev) => ({
+						...prev,
+						licenseCode: urlLicenseCode, // Show the invalid license code in the input
+					}))
+					setErrors((prev) => ({
+						...prev,
+						licenseCode: errorMessage,
+					}))
+				}
+			}
+
+			validateUrlLicense()
+		}
+	}, [urlLicenseCode, hasCheckedUrlLicense, navigate, isValidLicenseCode]) // Add navigate to dependency array
+
+	// Effect for manual license validation - only runs when form data changes from user input
+	useEffect(() => {
+		// Don't run manual validation if we're still processing the initial URL validation
+		if (!hasCheckedUrlLicense) return
+
+		// Don't run if the current code is the same as the URL code (to prevent re-validation)
+		if (urlLicenseCode && formData.licenseCode === urlLicenseCode) return
+
 		if (validationTimeoutRef.current) {
 			clearTimeout(validationTimeoutRef.current)
 		}
@@ -72,6 +216,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 					setLicenseStatus('valid')
 					setIsLicenseError(false)
 					setErrors((prev) => ({ ...prev, licenseCode: undefined }))
+					setLicenseMessage('') // Clear any previous error messages on success
 					setFormData((prev) => ({
 						...prev,
 						licenseTier: result.licenseTier,
@@ -100,7 +245,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 				clearTimeout(validationTimeoutRef.current)
 			}
 		}
-	}, [formData.licenseCode])
+	}, [formData.licenseCode, hasCheckedUrlLicense, urlLicenseCode])
 
 	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { name, value, type, checked } = e.target
@@ -181,8 +326,14 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 									licenseStatus === 'invalid' || errors.licenseCode
 										? 'quiz-input-error'
 										: ''
-								} ${licenseStatus === 'valid' ? 'border-green-700' : ''}`}
+								} ${licenseStatus === 'valid' ? 'border-green-700' : ''} ${licenseStatus === 'valid' && searchParams.get('licenseKey') === formData.licenseCode ? 'bg-gray-100 cursor-not-allowed' : ''}`}
 								required
+								disabled={
+									licenseStatus === 'valid' &&
+									searchParams.get('licenseKey') === formData.licenseCode
+										? true
+										: false
+								}
 							/>
 
 							{/* Status indicator in input */}

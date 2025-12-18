@@ -42,7 +42,7 @@ const QuizStart = () => {
 		<div
 			className={`min-h-screen bg-off-white p-3 lg:p-6 flex justify-center items-center`}
 		>
-			<div className="absolute text-pompei top-10 lg:top-20 left-1/2 -translate-x-1/2 text-primary text-5xl">
+			<div className="absolute text-pompei top-10 lg:top-20 left-1/2 -translate-x-1/2 text-main text-5xl">
 				7
 			</div>
 			<div className="relative flex flex-col">

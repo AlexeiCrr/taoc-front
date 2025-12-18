@@ -56,8 +56,8 @@
 }
 
 .quiz-checkbox:checked {
-	background-color: var(--color-primary);
-	border-color: var(--color-primary);
+	background-color: var(--color-main);
+	border-color: var(--color-main);
 }
 
 .quiz-checkbox:checked::after {
@@ -69,7 +69,7 @@
 }
 
 .quiz-checkbox:focus {
-	outline: 2px solid var(--color-primary);
+	outline: 2px solid var(--color-main);
 	outline-offset: 2px;
 }
 
@@ -91,7 +91,7 @@
 }
 
 .quiz-submit-btn:enabled {
-	background-color: var(--color-primary);
+	background-color: var(--color-main);
 	color: var(--color-off-white);
 }
 

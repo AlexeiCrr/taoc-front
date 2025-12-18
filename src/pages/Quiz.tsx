@@ -24,7 +24,7 @@ export default function Quiz() {
 
 	return (
 		<Layout>
-			<div className="absolute text-pompei top-10 lg:top-20 left-1/2 -translate-x-1/2 text-primary text-5xl">
+			<div className="absolute text-pompei top-10 lg:top-20 left-1/2 -translate-x-1/2 text-main text-5xl">
 				7
 			</div>
 			<QuizContainer />

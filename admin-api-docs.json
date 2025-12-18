@@ -1,0 +1,857 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "TAOC Backend Admin API",
+    "version": "1.0.0",
+    "description": "Admin API endpoints for managing quiz responses, statistics, and exports. All endpoints require API key authentication via the x-api-key header."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API key for authentication. Required for all admin endpoints."
+      }
+    },
+    "schemas": {
+      "FrequencyMap": {
+        "type": "object",
+        "description": "Map of frequency names to their values",
+        "additionalProperties": {
+          "type": "string"
+        },
+        "example": {
+          "Motivator": "55",
+          "Connector": "48",
+          "Commander": "42"
+        }
+      },
+      "ResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 18091
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Alexei"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Crudu"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "crudu-alexei@mail.ru"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-10-01T19:24:34.967Z"
+          },
+          "licenseCode": {
+            "type": "string",
+            "nullable": true,
+            "example": "R0KLUD"
+          },
+          "quizStartedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2025-10-01T19:20:00.000Z"
+          },
+          "frequencies": {
+            "$ref": "#/components/schemas/FrequencyMap"
+          }
+        }
+      },
+      "PaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResponseDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "example": 100
+          },
+          "total": {
+            "type": "integer",
+            "example": 500
+          },
+          "totalPages": {
+            "type": "integer",
+            "example": 5
+          }
+        }
+      },
+      "AnswerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "description": {
+            "type": "string",
+            "example": "When you communicate with this frequency..."
+          },
+          "value": {
+            "type": "integer",
+            "example": 4
+          },
+          "frequencyName": {
+            "type": "string",
+            "example": "Motivator"
+          }
+        }
+      },
+      "ResponseDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 18091
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Alexei"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Crudu"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "crudu-alexei@mail.ru"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-10-01T19:24:34.967Z"
+          },
+          "quizStartedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2025-10-01T19:20:00.000Z"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "country": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnswerDto"
+            }
+          },
+          "frequencies": {
+            "$ref": "#/components/schemas/FrequencyMap"
+          }
+        }
+      },
+      "UpdateResponseDto": {
+        "type": "object",
+        "required": ["firstName", "lastName", "email"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Alexei"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Crudu"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "crudu-alexei@mail.ru"
+          }
+        }
+      },
+      "FrequencyAverageScore": {
+        "type": "object",
+        "properties": {
+          "frequency": {
+            "type": "string",
+            "example": "Motivator"
+          },
+          "averageScore": {
+            "type": "number",
+            "format": "float",
+            "example": 52.5
+          },
+          "totalResponses": {
+            "type": "integer",
+            "example": 150
+          }
+        }
+      },
+      "FrequencyUserCount": {
+        "type": "object",
+        "properties": {
+          "frequency": {
+            "type": "string",
+            "example": "Motivator"
+          },
+          "userCount": {
+            "type": "integer",
+            "example": 45
+          },
+          "percentage": {
+            "type": "number",
+            "format": "float",
+            "example": 30.0
+          }
+        }
+      },
+      "TimeSpentCategory": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "example": "0-5 minutes"
+          },
+          "userCount": {
+            "type": "integer",
+            "example": 30
+          },
+          "percentage": {
+            "type": "number",
+            "format": "float",
+            "example": 20.0
+          }
+        }
+      },
+      "TimeSpentStatistics": {
+        "type": "object",
+        "properties": {
+          "sampleSize": {
+            "type": "integer",
+            "example": 150
+          },
+          "averageTimeMinutes": {
+            "type": "number",
+            "format": "float",
+            "example": 8.5
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimeSpentCategory"
+            }
+          }
+        }
+      },
+      "StatisticsResponse": {
+        "type": "object",
+        "properties": {
+          "frequencyAverageScores": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FrequencyAverageScore"
+            }
+          },
+          "frequencyUserCounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FrequencyUserCount"
+            }
+          },
+          "timeSpentStatistics": {
+            "$ref": "#/components/schemas/TimeSpentStatistics"
+          }
+        }
+      },
+      "SuccessMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Update successful"
+          }
+        }
+      },
+      "ResendResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Email resent successfully"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "Response with ID 123 not found"
+          },
+          "error": {
+            "type": "string",
+            "example": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/responses": {
+      "get": {
+        "summary": "List all quiz responses",
+        "description": "Retrieves a paginated list of quiz responses with optional search filters. Returns 100 items per page.",
+        "tags": ["Responses"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number (starts at 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Search by first or last name (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Search by email address (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseCode",
+            "in": "query",
+            "description": "Search by license code (exact match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Search by specific date (YYYY-MM-DD format)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Search from date (YYYY-MM-DD format, inclusive)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Search to date (YYYY-MM-DD format, inclusive)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of responses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/responses/export/csv": {
+      "get": {
+        "summary": "Export responses to CSV",
+        "description": "Exports all quiz responses (or filtered subset) to a CSV file for download. Includes all response data and answers.",
+        "tags": ["Responses"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by first or last name (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Filter by email address (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseCode",
+            "in": "query",
+            "description": "Filter by license code (exact match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filter by specific date (YYYY-MM-DD format)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter from date (YYYY-MM-DD format, inclusive)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter to date (YYYY-MM-DD format, inclusive)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file download",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            },
+            "headers": {
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string",
+                  "example": "attachment; filename=\"responses.csv\""
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error generating CSV export",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Error generating CSV export"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/responses/statistics": {
+      "get": {
+        "summary": "Get response statistics",
+        "description": "Retrieves aggregated statistics for charts and analysis, including frequency average scores, user counts, and time spent data. Supports filtering.",
+        "tags": ["Responses"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by first or last name (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Filter by email address (partial match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseCode",
+            "in": "query",
+            "description": "Filter by license code (exact match)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filter by specific date (YYYY-MM-DD format)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Filter from date (YYYY-MM-DD format, inclusive)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Filter to date (YYYY-MM-DD format, inclusive)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Statistics data for charts and analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/responses/{id}": {
+      "get": {
+        "summary": "Get response by ID",
+        "description": "Retrieves a single quiz response with full details including all answers and frequency scores.",
+        "tags": ["Responses"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Response ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDetailDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Response with ID 123 not found",
+                  "error": "Not Found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update response",
+        "description": "Updates user information (name and email) for a quiz response. Does not modify answers or frequency scores.",
+        "tags": ["Responses"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Response ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateResponseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": ["email must be an email"],
+                  "error": "Bad Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/responses/{id}/resend": {
+      "post": {
+        "summary": "Resend email for response",
+        "description": "Resends the quiz results email to the user associated with the specified response. Useful for cases where the original email was not received.",
+        "tags": ["Responses"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Response ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email resent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResendResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to send email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Responses",
+      "description": "Admin endpoints for managing quiz responses"
+    }
+  ]
+}

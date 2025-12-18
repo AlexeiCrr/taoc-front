@@ -90,11 +90,11 @@
 }
 
 .rating-button:hover:not(:disabled):not(.selected) {
-	border-color: var(--color-primary);
+	border-color: var(--color-main);
 }
 
 .rating-button.selected {
-	border-color: var(--color-primary);
+	border-color: var(--color-main);
 	background-color: transparent;
 	color: #212121;
 }
@@ -109,7 +109,7 @@
 
 .nav-button {
 	font-family: var(--font-family-pompei);
-	border-color: var(--color-primary);
+	border-color: var(--color-main);
 
 	@apply py-4 px-12 text-base uppercase border-2;
 	@apply cursor-pointer transition-all duration-300 min-w-[120px];
@@ -120,17 +120,17 @@
 }
 
 .back-button:hover:not(:disabled) {
-	background-color: var(--color-primary);
+	background-color: var(--color-main);
 	@apply opacity-20;
 }
 
 .back-button:disabled {
 	@apply opacity-30 cursor-not-allowed;
-	border-color: var(--color-primary);
+	border-color: var(--color-main);
 }
 
 .next-button {
-	background-color: var(--color-primary);
+	background-color: var(--color-main);
 	color: var(--color-off-white);
 }
 
@@ -140,7 +140,7 @@
 
 .next-button:disabled {
 	@apply opacity-30 cursor-not-allowed;
-	background-color: var(--color-primary);
+	background-color: var(--color-main);
 }
 
 /* Responsive Design */

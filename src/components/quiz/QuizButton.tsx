@@ -32,7 +32,7 @@ const QuizButton = ({
 		// Primary green variants (using tailwind config colors)
 		primary: 'bg-main text-off-white hover:bg-opacity-90',
 		'primary-outline':
-			'border-2 border-primary text-primary hover:bg-main hover:text-off-white',
+			'border-2 border-main text-main hover:bg-main hover:text-off-white',
 
 		// Dark/Black variants
 		dark: 'bg-black text-off-white hover:bg-opacity-90',
@@ -40,9 +40,9 @@ const QuizButton = ({
 		'dark-outline':
 			'border-2 border-black text-black hover:bg-black hover:text-off-white',
 
-		light: 'bg-off-white text-primary hover:bg-main',
+		light: 'bg-off-white text-main hover:bg-main',
 		'light-outline':
-			'border border-off-white text-off-white hover:bg-off-white hover:text-primary',
+			'border border-off-white text-off-white hover:bg-off-white hover:text-main',
 	}
 
 	const sizeClasses = {

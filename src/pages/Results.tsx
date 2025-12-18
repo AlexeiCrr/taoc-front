@@ -42,10 +42,10 @@ export const Results = () => {
 		return (
 			<div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
 				<div className="text-center max-w-md">
-					<h2 className="text-2xl font-bold text-primary mb-4">
+					<h2 className="text-2xl font-bold text-main mb-4">
 						No Results Found
 					</h2>
-					<p className="text-lg text-primary mb-6">
+					<p className="text-lg text-main mb-6">
 						Please complete the quiz first to see your results.
 					</p>
 					<button
@@ -67,7 +67,7 @@ export const Results = () => {
 				<div className="flex items-center gap-4">
 					<button
 						onClick={() => navigate('/')}
-						className="text-primary hover:opacity-70 transition-opacity cursor-pointer"
+						className="text-main hover:opacity-70 transition-opacity cursor-pointer"
 						aria-label="Go back"
 					>
 						<svg
@@ -90,7 +90,7 @@ export const Results = () => {
 					href="https://www.thesevenfrequencies.com/"
 					target="_blank"
 					rel="noopener noreferrer"
-					className="text-primary font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity"
+					className="text-main font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity"
 				>
 					More Info
 				</a>
@@ -99,10 +99,11 @@ export const Results = () => {
 			{/* Main Content */}
 			<main className="flex-1 flex items-center justify-center p-6 lg:p-8">
 				<div className="max-w-2xl w-full text-center">
-					<h1 className=" font-bold text-primary mb-4 uppercase">
+					<h1 className=" font-bold text-main mb-4 uppercase">
 						Congratulations!
 					</h1>
-					<p className="text-base font-family-helvetica text-primary mb-8 uppercase">
+
+					<p className="text-base font-family-helvetica text-main mb-8 uppercase">
 						Your communication frequency results will be emailed to you!
 					</p>
 

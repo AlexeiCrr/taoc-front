@@ -1,3 +1,4 @@
+import QuizButton from '@/components/quiz/QuizButton'
 import {
 	type ChangeEvent,
 	type FormEvent,
@@ -40,64 +41,6 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 	const [licenseMessage, setLicenseMessage] = useState<string>('')
 	const [isLicenseError, setIsLicenseError] = useState<boolean>(false)
 	const validationTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-	useEffect(() => {
-		const licenseFromUrl = searchParams.get('licenseKey')
-
-		if (
-			licenseFromUrl &&
-			(licenseFromUrl.length > 6 || licenseFromUrl.includes(','))
-		) {
-			// Remove the malformed licenseKey parameter from the URL without page reload
-			const newSearchParams = new URLSearchParams(searchParams.toString())
-			newSearchParams.delete('licenseKey')
-
-			// Navigate to the same route but without the licenseKey parameter
-			navigate({ search: newSearchParams.toString() }, { replace: true })
-			return // Exit early to prevent further processing
-		}
-
-		if (
-			licenseFromUrl &&
-			licenseFromUrl.length === 6 &&
-			licenseStatus === 'loading'
-		) {
-			const validateUrlLicense = async () => {
-				const result = await validateLicenseCode(licenseFromUrl)
-
-				if (result && result.isValid) {
-					setLicenseStatus('valid')
-					setIsLicenseError(false)
-					setErrors((prev) => ({ ...prev, licenseCode: undefined }))
-					setFormData((prev) => ({
-						...prev,
-						licenseCode: licenseFromUrl,
-						licenseTier: result.licenseTier,
-					}))
-					setLicenseMessage(result.message || '')
-				} else {
-					setLicenseStatus('invalid')
-					setIsLicenseError(result.isError)
-
-					const errorMessage = result.isError
-						? m['quiz.greeting.validation.licenseError']()
-						: m['quiz.greeting.validation.licenseInvalid']()
-
-					setLicenseMessage(errorMessage)
-					setFormData((prev) => ({
-						...prev,
-						licenseCode: licenseFromUrl,
-					}))
-					setErrors((prev) => ({
-						...prev,
-						licenseCode: errorMessage,
-					}))
-				}
-			}
-
-			validateUrlLicense()
-		}
-	}, [navigate, licenseStatus, searchParams])
 
 	const isFormValid = () => {
 		return (
@@ -183,15 +126,16 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 			}
 
 			validateUrlLicense()
+		} else if (!urlLicenseCode && !hasCheckedUrlLicense) {
+			// If there's no URL license code, mark as checked so manual validation can work
+			setHasCheckedUrlLicense(true)
 		}
 	}, [urlLicenseCode, hasCheckedUrlLicense, navigate, isValidLicenseCode]) // Add navigate to dependency array
 
 	// Effect for manual license validation - only runs when form data changes from user input
 	useEffect(() => {
-		// Don't run manual validation if we're still processing the initial URL validation
 		if (!hasCheckedUrlLicense) return
 
-		// Don't run if the current code is the same as the URL code (to prevent re-validation)
 		if (urlLicenseCode && formData.licenseCode === urlLicenseCode) return
 
 		if (validationTimeoutRef.current) {
@@ -205,7 +149,6 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 			return
 		}
 
-		// If code is exactly 6 characters, validate after a short delay
 		if (formData.licenseCode.length === 6) {
 			setLicenseStatus('loading')
 
@@ -216,7 +159,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 					setLicenseStatus('valid')
 					setIsLicenseError(false)
 					setErrors((prev) => ({ ...prev, licenseCode: undefined }))
-					setLicenseMessage('') // Clear any previous error messages on success
+					setLicenseMessage('')
 					setFormData((prev) => ({
 						...prev,
 						licenseTier: result.licenseTier,
@@ -225,7 +168,6 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 					setLicenseStatus('invalid')
 					setIsLicenseError(result.isError)
 
-					// Use different messages based on whether it's an error or invalid license
 					const errorMessage = result.isError
 						? m['quiz.greeting.validation.licenseError']()
 						: m['quiz.greeting.validation.licenseInvalid']()
@@ -239,7 +181,6 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 			}, 500)
 		}
 
-		// Cleanup function
 		return () => {
 			if (validationTimeoutRef.current) {
 				clearTimeout(validationTimeoutRef.current)
@@ -253,9 +194,17 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 			...prev,
 			[name]: type === 'checkbox' ? checked : value,
 		}))
-		// Clear error for this field when user starts typing
+
 		if (errors[name as keyof FormData]) {
 			setErrors((prev) => ({ ...prev, [name]: undefined }))
+		}
+
+		// If user is manually changing the license code and it's different from URL,
+		// remove the URL parameter to prevent conflicts
+		if (name === 'licenseCode' && urlLicenseCode && value !== urlLicenseCode) {
+			const newSearchParams = new URLSearchParams(searchParams.toString())
+			newSearchParams.delete('licenseKey')
+			navigate({ search: newSearchParams.toString() }, { replace: true })
 		}
 	}
 
@@ -265,14 +214,12 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 		if (!formData.licenseCode.trim()) {
 			newErrors.licenseCode = m['quiz.greeting.validation.licenseRequired']()
 		} else if (licenseStatus === 'invalid') {
-			// Use the appropriate error message based on whether it's a validation error or system error
 			if (isLicenseError) {
 				newErrors.licenseCode = m['quiz.greeting.validation.licenseError']()
 			} else {
 				newErrors.licenseCode = m['quiz.greeting.validation.licenseInvalid']()
 			}
 		} else if (licenseStatus !== 'valid') {
-			// License hasn't been validated yet
 			newErrors.licenseCode = m['quiz.greeting.validation.licenseRequired']()
 		}
 
@@ -450,13 +397,14 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 
 					{/* Submit Button */}
 					<div className="pt-4">
-						<button
+						<QuizButton
 							type="submit"
+							variant="primary"
 							disabled={!isFormValid()}
 							className="quiz-submit-btn"
 						>
 							{m['quiz.greeting.startQuiz']()}
-						</button>
+						</QuizButton>
 					</div>
 				</form>
 			</div>

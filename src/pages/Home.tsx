@@ -13,7 +13,7 @@ const Home = () => {
 					pathname: '/quiz-start',
 					search: searchParams.toString(),
 				}}
-				className="inline-block transition-all duration-300 uppercase leading-none cursor-pointer border border-off-white text-off-white hover:bg-off-white hover:text-primary px-8 py-4 text-base max-lg:w-full"
+				className="inline-block transition-all duration-300 uppercase leading-none cursor-pointer border border-off-white text-off-white hover:bg-off-white hover:text-main px-8 py-4 text-base max-lg:w-full"
 			>
 				{m['quiz.start']()}
 			</Link>

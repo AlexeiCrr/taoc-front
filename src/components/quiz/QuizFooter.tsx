@@ -9,7 +9,7 @@ const QuizFooter: FC<QuizFooterProps> = ({ inverted = false }) => {
 	const arenaLogoSrc = inverted
 		? '/images/arena-logo-green.png'
 		: '/images/arena-logo-white.png'
-	const textColor = inverted ? 'text-primary' : 'text-off-white'
+	const textColor = inverted ? 'text-main' : 'text-off-white'
 
 	return (
 		<footer className="quiz-footer w-full p-4 lg:p-6 flex max-lg:flex-col max-lg:gap-3 items-center justify-between backdrop-blur-sm">

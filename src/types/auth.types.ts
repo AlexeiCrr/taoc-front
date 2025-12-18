@@ -12,6 +12,14 @@ export interface UserAttributes {
 	[key: string]: unknown
 }
 
+export interface CognitoIdTokenPayload {
+	sub: string
+	email: string
+	email_verified?: boolean
+	'cognito:username'?: string
+	[key: string]: unknown
+}
+
 export interface AuthState {
 	user: User | null
 	isAuthenticated: boolean

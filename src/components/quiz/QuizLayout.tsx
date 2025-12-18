@@ -10,7 +10,7 @@ interface QuizLayoutProps {
 const QuizLayout = ({ children, className = '' }: QuizLayoutProps) => {
 	return (
 		<div className={`min-h-screen bg-off-white p-3 lg:p-6 ${className}`}>
-			<div className="bg-primary relative flex flex-col h-[calc(100vh-24px)] lg:h-[calc(100vh-48px)]">
+			<div className="bg-main relative flex flex-col h-[calc(100vh-24px)] lg:h-[calc(100vh-48px)]">
 				<QuizHeader />
 				{children}
 				<QuizFooter />

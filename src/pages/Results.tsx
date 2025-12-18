@@ -50,7 +50,7 @@ export const Results = () => {
 					</p>
 					<button
 						onClick={() => navigate('/')}
-						className="bg-primary text-off-white px-8 py-3 rounded-md text-lg font-semibold uppercase hover:opacity-80 transition-opacity"
+						className="bg-main text-off-white px-8 py-3 rounded-md text-lg font-semibold uppercase hover:opacity-80 transition-opacity"
 					>
 						Take the Quiz
 					</button>

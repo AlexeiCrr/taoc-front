@@ -400,6 +400,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 						<QuizButton
 							type="submit"
 							variant="primary"
+							size="large"
 							disabled={!isFormValid()}
 							className="quiz-submit-btn"
 						>

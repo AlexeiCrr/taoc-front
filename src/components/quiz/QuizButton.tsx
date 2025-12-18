@@ -23,10 +23,11 @@ const QuizButton = ({
 	children,
 	newTab = false,
 	className = '',
+	disabled = false,
 	...props
 }: QuizButtonProps) => {
 	const baseClasses =
-		'inline-block transition-all duration-300 uppercase leading-none cursor-pointer'
+		'inline-block transition-all duration-300 uppercase leading-none'
 
 	const variantClasses = {
 		// Primary green variants (using tailwind config colors)
@@ -51,7 +52,11 @@ const QuizButton = ({
 		large: 'px-8 py-4 text-base',
 	}
 
-	const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`
+	const disabledClasses = disabled
+		? 'opacity-60 hover:cursor-not-allowed pointer-events-none'
+		: 'cursor-pointer'
+
+	const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className}`
 
 	if (to) {
 		return (

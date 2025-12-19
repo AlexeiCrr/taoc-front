@@ -67,10 +67,13 @@ export const adminApi: KyInstance = ky.create({
 	hooks: {
 		beforeRequest: [
 			(request) => {
-				// Add JWT token if available
 				const token = localStorage.getItem('auth-token')
 				if (token) {
 					request.headers.set('Authorization', `Bearer ${token}`)
+				}
+
+				if (API_KEY) {
+					request.headers.set('x-api-key', API_KEY)
 				}
 			},
 		],

@@ -1,73 +1,80 @@
 import { create } from 'zustand'
-import { apiService } from '../services/api'
+import { adminApi } from '../services/api'
 import type {
 	AdminResponse,
+	PaginatedAdminResponses,
 	ResponseFilters,
 	UpdateUserDataParams,
 } from '../types/admin.types'
 
 interface AdminState {
-	// State
 	responses: AdminResponse[]
-	selectedResponse: AdminResponse | null
 	filters: ResponseFilters
+	pagination: {
+		page: number
+		pageSize: number
+		total: number
+		totalPages: number
+	}
 	isLoading: boolean
 	error: string | null
 
-	// Actions
-	fetchResponses: () => Promise<void>
-	fetchResponseById: (id: number) => Promise<void>
+	fetchResponses: (page?: number) => Promise<void>
 	updateUserData: (params: UpdateUserDataParams) => Promise<void>
-	// resendEmail: (responseId: number) => Promise<void>
-	setFilter: <K extends keyof ResponseFilters>(
-		key: K,
-		value: ResponseFilters[K]
-	) => void
+	setFilter: (filters: Partial<ResponseFilters>) => void
 	clearFilters: () => void
-
-	// Computed
-	getFilteredResponses: () => AdminResponse[]
 }
 
 const useAdminStore = create<AdminState>((set, get) => ({
-	// Initial state
 	responses: [],
-	selectedResponse: null,
-	filters: {
-		search: '',
-		dateRange: null,
-		licenseCode: undefined,
-	},
+	filters: {},
+	pagination: { page: 1, pageSize: 100, total: 0, totalPages: 0 },
 	isLoading: false,
 	error: null,
 
-	// Actions
-	fetchResponses: async () => {
+	// Decision Log: Server-side pagination over client-side (matches API design, keeps initial load fast)
+	fetchResponses: async (page = 1) => {
 		set({ isLoading: true, error: null })
 		try {
-			const responses = await apiService.getResponses()
-			set({ responses, isLoading: false })
-		} catch (error) {
-			set({
-				error:
-					error instanceof Error ? error.message : 'Failed to fetch responses',
-				isLoading: false,
-			})
-			throw error
-		}
-	},
+			// Invariant: empty filter values omitted from API request
+			const params = new URLSearchParams({ page: page.toString() })
+			const { search, email, licenseCode, date } = get().filters
 
-	fetchResponseById: async (id: number) => {
-		set({ isLoading: true, error: null })
-		try {
-			const response = await apiService.getResponseById(id)
-			set({ selectedResponse: response, isLoading: false })
-		} catch (error) {
+			if (search) params.append('name', search)
+			if (email) params.append('email', email)
+			if (licenseCode) params.append('licenseCode', licenseCode)
+			if (date) params.append('date', date)
+
+			const response = await adminApi
+				.get(`responses?${params.toString()}`)
+				.json<PaginatedAdminResponses>()
+
+			// Validate response structure to prevent UI breakage from malformed API responses
+			if (
+				!response ||
+				typeof response.page !== 'number' ||
+				typeof response.pageSize !== 'number' ||
+				typeof response.total !== 'number' ||
+				typeof response.totalPages !== 'number' ||
+				!Array.isArray(response.items)
+			) {
+				throw new Error('Invalid API response structure')
+			}
+
 			set({
-				error:
-					error instanceof Error ? error.message : 'Failed to fetch response',
+				responses: response.items,
+				pagination: {
+					page: response.page,
+					pageSize: response.pageSize,
+					total: response.total,
+					totalPages: response.totalPages,
+				},
 				isLoading: false,
 			})
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : 'Failed to fetch responses'
+			set({ error: errorMessage, isLoading: false })
 			throw error
 		}
 	},
@@ -75,14 +82,15 @@ const useAdminStore = create<AdminState>((set, get) => ({
 	updateUserData: async (params: UpdateUserDataParams) => {
 		set({ isLoading: true, error: null })
 		try {
-			const updatedResponse = await apiService.updateResponse(params)
+			const { responseId, ...userData } = params
+			await adminApi
+				.put(`responses/${responseId}`, { json: userData })
+				.json<AdminResponse>()
 
-			// Update the response in the list
 			set((state) => ({
 				responses: state.responses.map((r) =>
-					r.id === params.responseId ? { ...r, ...params } : r
+					r.id === params.responseId ? { ...r, ...userData } : r
 				),
-				selectedResponse: updatedResponse,
 				isLoading: false,
 			}))
 		} catch (error) {
@@ -95,83 +103,16 @@ const useAdminStore = create<AdminState>((set, get) => ({
 		}
 	},
 
-	// resendEmail: async (responseId: number) => {
-	// 	set({ isLoading: true, error: null })
-	// 	try {
-	// 		await apiService.resendEmail(responseId)
-	// 		set({ isLoading: false })
-	// 	} catch (error) {
-	// 		set({
-	// 			error:
-	// 				error instanceof Error ? error.message : 'Failed to resend email',
-	// 			isLoading: false,
-	// 		})
-	// 		throw error
-	// 	}
-	// },
-
-	setFilter: <K extends keyof ResponseFilters>(
-		key: K,
-		value: ResponseFilters[K]
-	) => {
+	// Invariant: pagination resets to page 1 when filters change
+	setFilter: (newFilters: Partial<ResponseFilters>) => {
 		set((state) => ({
-			filters: {
-				...state.filters,
-				[key]: value,
-			},
+			filters: { ...state.filters, ...newFilters },
+			pagination: { ...state.pagination, page: 1 },
 		}))
 	},
 
 	clearFilters: () => {
-		set({
-			filters: {
-				search: '',
-				dateRange: null,
-				licenseCode: undefined,
-			},
-		})
-	},
-
-	// Computed filtered responses
-	getFilteredResponses: () => {
-		const { responses, filters } = get()
-
-		return responses.filter((response) => {
-			// Search filter
-			if (filters.search) {
-				const searchLower = filters.search.toLowerCase()
-				const matchesSearch =
-					response.firstName.toLowerCase().includes(searchLower) ||
-					response.lastName.toLowerCase().includes(searchLower) ||
-					response.email.toLowerCase().includes(searchLower) ||
-					response.licenseCode?.toLowerCase().includes(searchLower)
-
-				if (!matchesSearch) return false
-			}
-
-			// Date range filter
-			if (filters.dateRange) {
-				const responseDate = new Date(response.createdOn)
-				if (
-					responseDate < filters.dateRange.start ||
-					responseDate > filters.dateRange.end
-				) {
-					return false
-				}
-			}
-
-			// License code filter
-			if (filters.licenseCode !== undefined) {
-				if (filters.licenseCode === '' && response.licenseCode) return false
-				if (
-					filters.licenseCode !== '' &&
-					response.licenseCode !== filters.licenseCode
-				)
-					return false
-			}
-
-			return true
-		})
+		set({ filters: {}, pagination: { ...get().pagination, page: 1 } })
 	},
 }))
 

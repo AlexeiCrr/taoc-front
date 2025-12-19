@@ -72,6 +72,8 @@
 	--font-family-mono: 'Courier New', monospace;
 	--font-family-pompei: 'PompeiPro', system-ui, sans-serif;
 	--font-family-helvetica: 'Helvetica', Arial, sans-serif;
+	--font-family-roboto:
+		'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
 	/* Letter spacing */
 	--letter-spacing-form: 0.05em;
@@ -212,6 +214,10 @@ a {
 		font-family: var(--font-family-helvetica);
 	}
 
+	.font-roboto {
+		font-family: var(--font-family-roboto);
+	}
+
 	/* Container width override */
 	@media (min-width: 768px) and (max-width: 1023.99px) {
 		.container {
@@ -336,5 +342,10 @@ a {
 	}
 	body {
 		@apply bg-background text-foreground;
+	}
+
+	/* Make Radix popover wrapper match anchor width */
+	[data-radix-popper-content-wrapper] {
+		width: var(--radix-popper-anchor-width) !important;
 	}
 }

@@ -22,14 +22,23 @@ export interface Answer {
 }
 
 export interface ResponseFilters {
-  search: string;
-  dateRange: DateRange | null;
-  licenseCode?: string;
+  search?: string
+  email?: string
+  licenseCode?: string
+  date?: string
 }
 
 export interface DateRange {
   start: Date;
   end: Date;
+}
+
+export interface PaginatedAdminResponses {
+  items: AdminResponse[]
+  page: number
+  pageSize: number
+  total: number
+  totalPages: number
 }
 
 export interface ResendEmailResult {

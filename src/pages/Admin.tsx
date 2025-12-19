@@ -4,7 +4,7 @@ import useAuthStore from '../stores/authStore'
 
 export default function Admin() {
 	const navigate = useNavigate()
-	const { isAuthenticated, checkAuth, handleCallback, isLoading } =
+	const { isAuthenticated, checkAuth, handleCallback, login, isLoading } =
 		useAuthStore()
 
 	useEffect(() => {
@@ -13,23 +13,31 @@ export default function Admin() {
 			const hasCode = urlParams.has('code')
 
 			if (hasCode) {
-				await handleCallback()
-				navigate('/dashboard', { replace: true })
+				// Handle OAuth callback - user is returning from Cognito
+				try {
+					await handleCallback()
+					// After successful callback, redirect to dashboard
+					navigate('/dashboard', { replace: true })
+				} catch (error) {
+					console.error('OAuth callback failed:', error)
+					// If callback fails, trigger login again
+					login()
+				}
 			} else if (isAuthenticated) {
+				// Already authenticated, go to dashboard
 				navigate('/dashboard', { replace: true })
 			} else {
-				await checkAuth()
-				if (isAuthenticated) {
-					navigate('/dashboard', { replace: true })
-				}
+				// Not authenticated and no callback code, trigger login flow
+				// This will redirect to Cognito hosted UI
+				login()
 			}
 		}
 
 		processAuth()
-	}, [handleCallback, checkAuth, isAuthenticated, navigate])
+	}, [handleCallback, checkAuth, isAuthenticated, login, navigate])
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-off-white">
+		<div className="min-h-screen flex items-center justify-center bg-off-white font-roboto">
 			<div className="text-center">
 				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-main mx-auto mb-4"></div>
 				<p className="text-main">

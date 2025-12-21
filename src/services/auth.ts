@@ -38,11 +38,9 @@ export const authService = {
 
 		window.location.href = authUrl
 
-		// This will redirect, so we return a placeholder
 		return Promise.resolve({} as User)
 	},
 
-	// Sign in with username/password (alternative)
 	signInWithCredentials: async (
 		username: string,
 		password: string
@@ -71,7 +69,6 @@ export const authService = {
 						},
 					}
 
-					// Store the token
 					localStorage.setItem('auth-token', session.getIdToken().getJwtToken())
 
 					resolve(user)
@@ -93,7 +90,6 @@ export const authService = {
 			localStorage.removeItem('refresh-token')
 		}
 
-		// Redirect to Cognito hosted UI logout
 		const logoutUrl =
 			`https://${COGNITO_DOMAIN}/logout?` +
 			`client_id=${poolData.ClientId}&` +

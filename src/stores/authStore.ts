@@ -9,7 +9,6 @@ interface AuthState {
 	isLoading: boolean
 	error: string | null
 
-	// Actions
 	login: () => Promise<void>
 	logout: () => Promise<void>
 	checkAuth: () => Promise<void>
@@ -44,14 +43,13 @@ const useAuthStore = create<AuthState>()(
 			},
 
 			logout: async () => {
-				set({ isLoading: true })
+				set({
+					user: null,
+					isAuthenticated: false,
+					isLoading: true,
+				})
 				try {
 					await authService.signOut()
-					set({
-						user: null,
-						isAuthenticated: false,
-						isLoading: false,
-					})
 				} catch (error) {
 					set({
 						error: error instanceof Error ? error.message : 'Logout failed',
@@ -110,8 +108,18 @@ const useAuthStore = create<AuthState>()(
 			name: 'auth-storage',
 			partialize: (state) => ({
 				user: state.user,
-				isAuthenticated: state.isAuthenticated,
 			}),
+			onRehydrateStorage: () => (state) => {
+				if (state) {
+					const token = localStorage.getItem('auth-token')
+					if (!token) {
+						state.user = null
+						state.isAuthenticated = false
+					} else {
+						state.checkAuth()
+					}
+				}
+			},
 		}
 	)
 )

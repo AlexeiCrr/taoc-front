@@ -8,13 +8,19 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-	const { isAuthenticated, isLoading, login } = useAuthStore()
+	const { isAuthenticated, isLoading, login, checkAuth } = useAuthStore()
 
 	useEffect(() => {
-		if (!isAuthenticated && !isLoading) {
+		const token = localStorage.getItem('auth-token')
+
+		if (!token) {
 			login()
+		} else if (!isAuthenticated && !isLoading) {
+			checkAuth()
 		}
-	}, [isAuthenticated, isLoading, login])
+	}, [isAuthenticated, isLoading, login, checkAuth])
+
+	const token = localStorage.getItem('auth-token')
 
 	if (isLoading) {
 		return (
@@ -24,7 +30,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 		)
 	}
 
-	if (!isAuthenticated) {
+	if (!isAuthenticated || !token) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<LoadingSpinner />

@@ -85,7 +85,11 @@ const TableCell = React.forwardRef<
 	HTMLTableCellElement,
 	React.TdHTMLAttributes<HTMLTableCellElement>
 >(({ className, ...props }, ref) => (
-	<td ref={ref} className={cn('p-2 align-middle', className)} {...props} />
+	<td
+		ref={ref}
+		className={cn('p-2 align-middle hover:cursor-pointer', className)}
+		{...props}
+	/>
 ))
 TableCell.displayName = 'TableCell'
 

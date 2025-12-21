@@ -9,12 +9,6 @@ import {
 } from '@react-pdf/renderer'
 import type { QuizResponse } from '../../types/quiz.types'
 
-// Register fonts if needed
-// Font.register({
-// 	family: 'Helvetica',
-// 	src: '/fonts/helvetica_regular.otf',
-// })
-
 // Create styles
 const styles = StyleSheet.create({
 	page: {
@@ -113,6 +107,7 @@ const styles = StyleSheet.create({
 		lineHeight: 1,
 		textAlign: 'center',
 		textDecoration: 'none',
+		cursor: 'pointer',
 	},
 	link: {
 		color: '#5e6153',

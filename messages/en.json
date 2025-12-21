@@ -43,5 +43,14 @@
 		"loading": "Loading...",
 		"error": "An error occurred",
 		"tryAgain": "Try Again"
+	},
+	"frequencies": {
+		"Maven": "When you communicate with this frequency, you transmit a new reality and create paradigm shifts in others. Mavens are outliers and iconoclasts whose revolutionary worldviews can be seen by some as heretical or violating.",
+		"Challenger": "When you communicate with this frequency, you transmit courage and awaken calling in others. Challengers are persuasive, dynamic, and unafraid of confrontation to achieve results.",
+		"Commander": "When you communicate with this frequency, you transmit trust and provide direction to others. Commanders are authoritative, clear, and direct others with confidence to execute goals.",
+		"Motivator": "When you communicate with this frequency, you transmit energy and infuse self-belief in others. Motivators are positive, encouraging, and enthusiastic supporters of the dreams and goals of others.",
+		"Seer": "When you communicate with this frequency, you transmit vision and generate innovation in others. Seers are originative, pioneering, and direct the focus of others away from past achievements to future possibilities.",
+		"Professor": "When you communicate with this frequency, you transmit knowledge and assure competency in others. Professors are instructive, mentoring, and use data as the backbone for their worldview and ideas.",
+		"Healer": "When you communicate with this frequency, you transmit acceptance and extend wholeness to others. Healers are therapeutic, intentional, and capable of speaking into the wounding and brokenness in those around them."
 	}
 }

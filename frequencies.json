@@ -1,0 +1,45 @@
+{
+"frequencies": [
+	{
+		"f_id" : 1,
+		"f_name" : "Maven",
+		"f_desc" : "When you communicate with this frequency, you transmit a new reality and create paradigm shifts in others. Mavens are outliers and iconoclasts whose revolutionary worldviews can be seen by some as heretical or violating.",
+		"deletedon" : null
+	},
+	{
+		"f_id" : 2,
+		"f_name" : "Challenger",
+		"f_desc" : "When you communicate with this frequency, you transmit courage and awaken calling in others. Challengers are persuasive, dynamic, and unafraid of confrontation to achieve results.",
+		"deletedon" : null
+	},
+	{
+		"f_id" : 3,
+		"f_name" : "Commander",
+		"f_desc" : "When you communicate with this frequency, you transmit trust and provide direction to others. Commanders are authoritative, clear, and direct others with confidence to execute goals.",
+		"deletedon" : null
+	},
+	{
+		"f_id" : 4,
+		"f_name" : "Motivator",
+		"f_desc" : "When you communicate with this frequency, you transmit energy and infuse self-belief in others. Motivators are positive, encouraging, and enthusiastic supporters of the dreams and goals of others.",
+		"deletedon" : null
+	},
+	{
+		"f_id" : 5,
+		"f_name" : "Seer",
+		"f_desc" : "When you communicate with this frequency, you transmit vision and generate innovation in others. Seers are originative, pioneering, and direct the focus of others away from past achievements to future possibilities.",
+		"deletedon" : null
+	},
+	{
+		"f_id" : 6,
+		"f_name" : "Professor",
+		"f_desc" : "When you communicate with this frequency, you transmit knowledge and assure competency in others. Professors are instructive, mentoring, and use data as the backbone for their worldview and ideas.",
+		"deletedon" : null
+	},
+	{
+		"f_id" : 7,
+		"f_name" : "Healer",
+		"f_desc" : "When you communicate with this frequency, you transmit acceptance and extend wholeness to others. Healers are therapeutic, intentional, and capable of speaking into the wounding and brokenness in those around them.",
+		"deletedon" : null
+	}
+]}

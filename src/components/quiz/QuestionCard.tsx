@@ -55,16 +55,13 @@ const QuestionCard = ({
 
 	return (
 		<div className="question-card">
-			{/* Question Counter */}
 			<div className="question-counter">
 				{String(currentQuestionNumber).padStart(2, '0')} /{' '}
 				{String(totalQuestions).padStart(2, '0')}
 			</div>
 
-			{/* Question Text */}
 			<h2 className="question-text">{question.description}</h2>
 
-			{/* Rating Scale */}
 			<div className="rating-container">
 				<span className="rating-label rating-label-desktop">
 					STRONGLY DISAGREE
@@ -83,7 +80,6 @@ const QuestionCard = ({
 						))}
 					</div>
 
-					{/* Mobile Labels */}
 					<div className="rating-labels-mobile">
 						<span className="rating-label-mobile">
 							STRONGLY <br />
@@ -101,7 +97,6 @@ const QuestionCard = ({
 				</span>
 			</div>
 
-			{/* Navigation Buttons */}
 			<div className="navigation-buttons">
 				<button
 					onClick={handlePrevious}

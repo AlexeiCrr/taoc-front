@@ -30,7 +30,7 @@ const QuizButton = ({
 		'inline-block transition-all duration-300 uppercase leading-none'
 
 	const variantClasses = {
-		// Primary green variants (using tailwind config colors)
+		// Primary green variants
 		primary: 'bg-main text-off-white hover:bg-opacity-90',
 		'primary-outline':
 			'border-2 border-main text-main hover:bg-main hover:text-off-white',

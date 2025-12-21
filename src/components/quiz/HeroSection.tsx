@@ -21,7 +21,6 @@ const HeroSection = ({
 					{subtitle}
 				</h4>
 			)}
-			{/* Additional Content */}
 			{children}
 		</div>
 	)

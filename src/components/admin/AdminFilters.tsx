@@ -9,7 +9,7 @@ import {
 import { cn } from '@/lib/utils'
 import useAdminStore from '@/stores/adminStore'
 import { format } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon, X } from 'lucide-react'
 import { useState } from 'react'
 
 export default function AdminFilters() {
@@ -21,15 +21,12 @@ export default function AdminFilters() {
 	const { setFilter, clearFilters, fetchResponses } = useAdminStore()
 
 	const handleApplyFilters = () => {
-		// Convert empty strings to undefined (Invariant: empty filter values omitted from API request)
-		// Format date to YYYY-MM-DD for API query params
 		setFilter({
 			search: nameFilter.trim() || undefined,
 			email: emailFilter.trim() || undefined,
 			licenseCode: licenseCodeFilter.trim() || undefined,
 			date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
 		})
-		// Invariant: pagination resets to page 1 when filters change
 		fetchResponses(1)
 	}
 
@@ -42,7 +39,6 @@ export default function AdminFilters() {
 		fetchResponses(1)
 	}
 
-	// Apply filters on Enter key press
 	const handleKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter') {
 			handleApplyFilters()
@@ -104,32 +100,48 @@ export default function AdminFilters() {
 
 			<div className="flex-1 min-w-[200px]">
 				<label className="text-sm font-medium mb-1.5 block">Date</label>
-				<Popover>
-					<PopoverTrigger asChild>
-						<Button
-							variant="outline"
-							className={cn(
-								'w-full justify-start text-left font-normal font-roboto',
-								!selectedDate && 'text-muted-foreground'
-							)}
+				<div className="relative">
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button
+								variant="outline"
+								className={cn(
+									'w-full justify-start text-left font-normal font-roboto bg-card',
+									!selectedDate && 'text-muted-foreground'
+								)}
+							>
+								<CalendarIcon className="mr-2 h-4 w-4" />
+								{selectedDate ? (
+									format(selectedDate, 'MMM d, yyyy')
+								) : (
+									<span>Pick a date</span>
+								)}
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent
+							className="dark w-auto p-0 font-roboto bg-popover"
+							align="start"
 						>
-							<CalendarIcon className="mr-2 h-4 w-4" />
-							{selectedDate ? (
-								format(selectedDate, 'MMM d, yyyy')
-							) : (
-								<span>Pick a date</span>
-							)}
+							<Calendar
+								mode="single"
+								selected={selectedDate}
+								onSelect={setSelectedDate}
+								disabled={(date) => date > new Date()}
+								defaultMonth={selectedDate}
+							/>
+						</PopoverContent>
+					</Popover>
+					{selectedDate && (
+						<Button
+							variant="ghost"
+							size="icon"
+							className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+							onClick={() => setSelectedDate(undefined)}
+						>
+							<X className="h-4 w-4" />
 						</Button>
-					</PopoverTrigger>
-					<PopoverContent className="w-auto p-0 font-roboto" align="start">
-						<Calendar
-							mode="single"
-							selected={selectedDate}
-							onSelect={setSelectedDate}
-							initialFocus
-						/>
-					</PopoverContent>
-				</Popover>
+					)}
+				</div>
 			</div>
 
 			<Button onClick={handleApplyFilters}>Apply</Button>

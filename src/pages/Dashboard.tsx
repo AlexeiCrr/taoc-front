@@ -30,16 +30,15 @@ export default function Dashboard() {
 	}
 
 	return (
-		<div className="min-h-screen bg-off-white font-roboto">
-			{/* Header */}
-			<header className="bg-white shadow-sm border-b border-gray-200">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+		<div className="min-h-screen bg-background font-roboto">
+			<header className="bg-card shadow-sm border-b border-border">
+				<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
 					<div className="flex justify-between items-center">
 						<div>
-							<h3 className="text-3xl font-bold text-main !mt-4 !mb-4">
+							<h3 className="text-3xl font-bold text-foreground !mt-4 !mb-4">
 								Admin Dashboard
 							</h3>
-							<p className="text-sm text-gray-600 mt-1">
+							<p className="text-sm text-muted-foreground mt-1">
 								Welcome back, {user?.username || user?.email}
 							</p>
 						</div>

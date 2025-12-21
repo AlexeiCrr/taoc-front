@@ -168,6 +168,18 @@
             "nullable": true,
             "example": null
           },
+          "licenseCode": {
+            "type": "string",
+            "nullable": true,
+            "example": "R0KLUD",
+            "description": "The license code used for this quiz response"
+          },
+          "licenseTier": {
+            "type": "integer",
+            "nullable": true,
+            "example": 3,
+            "description": "The tier level of the license (1, 3, or 7)"
+          },
           "answers": {
             "type": "array",
             "items": {
@@ -647,7 +659,7 @@
     "/responses/{id}": {
       "get": {
         "summary": "Get response by ID",
-        "description": "Retrieves a single quiz response with full details including all answers and frequency scores.",
+        "description": "Retrieves a single quiz response with full details including all answers, frequency scores, and license information (license code and tier).",
         "tags": ["Responses"],
         "security": [
           {

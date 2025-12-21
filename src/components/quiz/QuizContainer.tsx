@@ -94,7 +94,6 @@ export default function QuizContainer() {
 		}, 200)
 	}
 
-	// Show loading state
 	if (isLoading && !userData) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
@@ -103,7 +102,6 @@ export default function QuizContainer() {
 		)
 	}
 
-	// Show error state
 	if (error && !userData) {
 		return (
 			<div className="max-w-2xl mx-auto">
@@ -115,7 +113,6 @@ export default function QuizContainer() {
 		)
 	}
 
-	// Show greeting form if no user data
 	if (!userData) {
 		return (
 			<div className="max-w-2xl mx-auto">
@@ -124,7 +121,6 @@ export default function QuizContainer() {
 		)
 	}
 
-	// Show loading state while fetching questions
 	if (isLoading && questions.length === 0) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
@@ -133,7 +129,6 @@ export default function QuizContainer() {
 		)
 	}
 
-	// Show loading state while submitting quiz
 	if (isLoading && userData) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
@@ -142,7 +137,6 @@ export default function QuizContainer() {
 		)
 	}
 
-	// Show loading while navigating to results
 	if (quizResponse) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
@@ -151,7 +145,6 @@ export default function QuizContainer() {
 		)
 	}
 
-	// Show current question - find answer by questionId
 	const currentQuestionData = currentQuestion()
 	const currentAnswerValue = currentQuestionData
 		? answers.find((a) => a?.questionId === currentQuestionData.id)?.value

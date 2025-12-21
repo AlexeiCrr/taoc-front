@@ -8,6 +8,7 @@ import type {
 	QuizResponse,
 	UserData,
 } from '../types/quiz.types'
+import * as m from '../paraglide/messages'
 
 interface QuizState {
 	// State
@@ -142,6 +143,12 @@ const useQuizStore = create<QuizState>()(
 							userData,
 							answers: validAnswers,
 						})
+
+						// Ensure frequency descriptions come from translations
+						response.frequencies = response.frequencies.map(freq => ({
+							...freq,
+							description: (m as any)[`frequencies.${freq.name}`]?.() || freq.description || '',
+						}))
 
 						// Track quiz completion in PostHog BEFORE setting response
 						// This ensures the event is sent before navigation

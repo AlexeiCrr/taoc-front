@@ -5,7 +5,8 @@ export interface AdminResponse {
   lastName: string;
   email: string;
   createdOn: string;
-  licenseCode?: string; 
+  licenseCode?: string;
+  licenseTier?: number;
   quizStartedAt?: Date;
   frequencies: FrequencyMap;
   answers?: Answer[];

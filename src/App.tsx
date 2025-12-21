@@ -19,6 +19,8 @@ import QuizStart from './pages/QuizStart'
 import { Results } from './pages/Results'
 import Admin from './pages/Admin'
 import Dashboard from './pages/Dashboard'
+import ResponseDetail from './pages/ResponseDetail'
+import AdminLayout from './components/admin/AdminLayout'
 
 function AnimatedRoutes() {
 	const location = useLocation()
@@ -37,7 +39,19 @@ function AnimatedRoutes() {
 					path="/dashboard"
 					element={
 						<ProtectedRoute>
-							<Dashboard />
+							<AdminLayout>
+								<Dashboard />
+							</AdminLayout>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/response/:id"
+					element={
+						<ProtectedRoute>
+							<AdminLayout>
+								<ResponseDetail />
+							</AdminLayout>
 						</ProtectedRoute>
 					}
 				/>

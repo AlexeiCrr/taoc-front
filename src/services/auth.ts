@@ -14,18 +14,20 @@ const poolData = {
 
 const userPool = new CognitoUserPool(poolData)
 
-// OAuth configuration for hosted UI
 const COGNITO_DOMAIN =
 	import.meta.env.VITE_APP_WEB_DOMAIN || 'taoc.auth.us-west-1.amazoncognito.com'
-const REDIRECT_SIGN_IN =
-	import.meta.env.VITE_REDIRECT_SIGN_IN ||
-	'https://d17qvu98sfvqdy.cloudfront.net/admin'
+
+const getRedirectUri = () => {
+	return (
+		import.meta.env.VITE_REDIRECT_SIGN_IN || `${window.location.origin}/admin`
+	)
+}
+
+const REDIRECT_SIGN_IN = getRedirectUri()
 const REDIRECT_SIGN_OUT =
-	import.meta.env.VITE_REDIRECT_SIGN_OUT ||
-	'https://d17qvu98sfvqdy.cloudfront.net/admin'
+	import.meta.env.VITE_REDIRECT_SIGN_OUT || `${window.location.origin}/admin`
 
 export const authService = {
-	// Sign in with hosted UI (OAuth)
 	signIn: async (): Promise<User> => {
 		const authUrl =
 			`https://${COGNITO_DOMAIN}/login?` +

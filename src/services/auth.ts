@@ -18,14 +18,18 @@ const COGNITO_DOMAIN =
 	import.meta.env.VITE_APP_WEB_DOMAIN || 'taoc.auth.us-west-1.amazoncognito.com'
 
 const getRedirectUri = () => {
-	return (
-		import.meta.env.VITE_REDIRECT_SIGN_IN || `${window.location.origin}/admin`
-	)
+	if (import.meta.env.VITE_REDIRECT_SIGN_IN) {
+		return import.meta.env.VITE_REDIRECT_SIGN_IN
+	}
+
+	// Force HTTPS in production (CloudFront terminates SSL, so window.location may be HTTP)
+	const protocol = window.location.hostname === 'localhost' ? window.location.protocol : 'https:'
+	return `${protocol}//${window.location.host}/admin`
 }
 
 const REDIRECT_SIGN_IN = getRedirectUri()
 const REDIRECT_SIGN_OUT =
-	import.meta.env.VITE_REDIRECT_SIGN_OUT || `${window.location.origin}/admin`
+	import.meta.env.VITE_REDIRECT_SIGN_OUT || REDIRECT_SIGN_IN
 
 export const authService = {
 	signIn: async (): Promise<User> => {

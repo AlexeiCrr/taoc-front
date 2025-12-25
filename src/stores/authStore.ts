@@ -61,17 +61,30 @@ const useAuthStore = create<AuthState>()(
 			checkAuth: async () => {
 				set({ isLoading: true })
 				try {
-					const user = await authService.getCurrentUser()
+					const user = await Promise.race([
+						authService.getCurrentUser(),
+						new Promise<null>((_, reject) =>
+							setTimeout(
+								() => reject(new Error('Authentication timeout')),
+								5000
+							)
+						),
+					])
 					set({
 						user,
 						isAuthenticated: !!user,
 						isLoading: false,
+						error: null,
 					})
-				} catch {
+				} catch (error) {
 					set({
 						user: null,
 						isAuthenticated: false,
 						isLoading: false,
+						error:
+							error instanceof Error
+								? error.message
+								: 'Authentication check failed',
 					})
 				}
 			},
@@ -111,12 +124,16 @@ const useAuthStore = create<AuthState>()(
 			}),
 			onRehydrateStorage: () => (state) => {
 				if (state) {
-					const token = localStorage.getItem('auth-token')
+					const token = localStorage.getItem('access-token')
 					if (!token) {
 						state.user = null
 						state.isAuthenticated = false
+						state.isLoading = false
 					} else {
-						state.checkAuth()
+						// Token exists but don't assume it's valid
+						// Let ProtectedRoute or Admin call checkAuth to verify
+						state.isAuthenticated = false
+						state.isLoading = false
 					}
 				}
 			},

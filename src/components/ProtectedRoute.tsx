@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import useAuthStore from '../stores/authStore'
 import LoadingSpinner from './common/LoadingSpinner'
 
@@ -9,18 +9,21 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 	const { isAuthenticated, isLoading, login, checkAuth } = useAuthStore()
+	const authCheckInitiatedRef = useRef(false)
 
 	useEffect(() => {
-		const token = localStorage.getItem('auth-token')
+		if (authCheckInitiatedRef.current) return
 
-		if (!token) {
+		const accessToken = localStorage.getItem('access-token')
+
+		if (!accessToken) {
+			authCheckInitiatedRef.current = true
 			login()
 		} else if (!isAuthenticated && !isLoading) {
+			authCheckInitiatedRef.current = true
 			checkAuth()
 		}
 	}, [isAuthenticated, isLoading, login, checkAuth])
-
-	const token = localStorage.getItem('auth-token')
 
 	if (isLoading) {
 		return (
@@ -30,7 +33,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 		)
 	}
 
-	if (!isAuthenticated || !token) {
+	const accessToken = localStorage.getItem('access-token')
+
+	if (!isAuthenticated || !accessToken) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<LoadingSpinner />

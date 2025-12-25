@@ -56,7 +56,7 @@ export const publicApi: KyInstance = ky.create({
 		methods: ['get'],
 		statusCodes: [408, 413, 429, 500, 502, 503, 504],
 	},
-	timeout: 30000, // 30 seconds
+	timeout: 30000,
 })
 
 export const adminApi: KyInstance = ky.create({
@@ -67,7 +67,7 @@ export const adminApi: KyInstance = ky.create({
 	hooks: {
 		beforeRequest: [
 			(request) => {
-				const token = localStorage.getItem('auth-token')
+				const token = localStorage.getItem('access-token')
 				if (token) {
 					request.headers.set('Authorization', `Bearer ${token}`)
 				}
@@ -78,11 +78,21 @@ export const adminApi: KyInstance = ky.create({
 			},
 		],
 		afterResponse: [
-			async (_request, _options, response) => {
+			async (request, options, response) => {
 				// Handle authentication errors
 				if (response.status === 401) {
-					localStorage.removeItem('auth-token')
-					localStorage.removeItem('user')
+					const { authService, clearTokens } = await import('./auth')
+					const refreshed = await authService.refreshSession()
+					if (refreshed) {
+						// Retry the original request with new token
+						const newToken = localStorage.getItem('access-token')
+						if (newToken) {
+							request.headers.set('Authorization', `Bearer ${newToken}`)
+							return ky(request, options)
+						}
+					}
+					// Only clear and redirect if refresh failed
+					clearTokens()
 					window.location.href = '/admin'
 					throw new Error('Unauthorized - Please login again')
 				}

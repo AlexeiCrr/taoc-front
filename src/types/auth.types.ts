@@ -17,6 +17,8 @@ export interface CognitoIdTokenPayload {
 	email: string
 	email_verified?: boolean
 	'cognito:username'?: string
+	exp?: number
+	iat?: number
 	[key: string]: unknown
 }
 

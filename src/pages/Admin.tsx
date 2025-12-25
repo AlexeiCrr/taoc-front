@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useAuthStore from '../stores/authStore'
 
@@ -6,35 +6,44 @@ export default function Admin() {
 	const navigate = useNavigate()
 	const { isAuthenticated, checkAuth, handleCallback, login, isLoading } =
 		useAuthStore()
+	const hasProcessedAuthRef = useRef(false)
 
 	useEffect(() => {
+		if (isAuthenticated) {
+			navigate('/dashboard', { replace: true })
+			return
+		}
+
+		if (hasProcessedAuthRef.current) return
+
 		const processAuth = async () => {
 			const urlParams = new URLSearchParams(window.location.search)
 			const hasCode = urlParams.has('code')
 
 			if (hasCode) {
-				// Handle OAuth callback - user is returning from Cognito
+				hasProcessedAuthRef.current = true
 				try {
 					await handleCallback()
-					// After successful callback, redirect to dashboard
-					navigate('/dashboard', { replace: true })
 				} catch (error) {
 					console.error('OAuth callback failed:', error)
-					// If callback fails, trigger login again
+					hasProcessedAuthRef.current = false
 					login()
 				}
-			} else if (isAuthenticated) {
-				// Already authenticated, go to dashboard
-				navigate('/dashboard', { replace: true })
 			} else {
-				// Not authenticated and no callback code, trigger login flow
-				// This will redirect to Cognito hosted UI
-				login()
+				const accessToken = localStorage.getItem('access-token')
+
+				if (accessToken && !isLoading) {
+					hasProcessedAuthRef.current = true
+					await checkAuth()
+				} else if (!accessToken && !isLoading) {
+					hasProcessedAuthRef.current = true
+					login()
+				}
 			}
 		}
 
 		processAuth()
-	}, [handleCallback, checkAuth, isAuthenticated, login, navigate])
+	}, [isAuthenticated, isLoading, handleCallback, checkAuth, login, navigate])
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-off-white font-roboto">

@@ -53,3 +53,41 @@ export interface UpdateUserDataParams {
   lastName: string;
   email: string;
 }
+
+// Statistics API types (from /responses/statistics endpoint)
+
+export interface FrequencyAverageScore {
+  frequency: string
+  averageScore: number
+  totalResponses: number
+}
+
+export interface FrequencyUserCount {
+  frequency: string
+  userCount: number
+  percentage: number
+}
+
+export interface TimeSpentCategory {
+  category: string
+  userCount: number
+  percentage: number
+}
+
+export interface TimeSpentStatistics {
+  sampleSize: number
+  averageTimeMinutes: number
+  categories: TimeSpentCategory[]
+}
+
+export interface StatisticsResponse {
+  frequencyAverageScores: FrequencyAverageScore[]
+  frequencyUserCounts: FrequencyUserCount[]
+  timeSpentStatistics: TimeSpentStatistics
+}
+
+// Monthly trend data (TODO: backend API not implemented)
+export interface MonthlyTrendData {
+  month: string // "Jan", "Feb", etc.
+  userCount: number
+}

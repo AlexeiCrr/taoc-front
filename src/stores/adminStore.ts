@@ -5,6 +5,7 @@ import type {
 	PaginatedAdminResponses,
 	ResponseFilters,
 	UpdateUserDataParams,
+	StatisticsResponse,
 } from '../types/admin.types'
 
 interface AdminState {
@@ -19,7 +20,12 @@ interface AdminState {
 	isLoading: boolean
 	error: string | null
 
+	statistics: StatisticsResponse | null
+	isLoadingStatistics: boolean
+	statisticsError: string | null
+
 	fetchResponses: (page?: number) => Promise<void>
+	fetchStatistics: () => Promise<void>
 	updateUserData: (params: UpdateUserDataParams) => Promise<void>
 	setFilter: (filters: Partial<ResponseFilters>) => void
 	clearFilters: () => void
@@ -31,6 +37,9 @@ const useAdminStore = create<AdminState>((set, get) => ({
 	pagination: { page: 1, pageSize: 100, total: 0, totalPages: 0 },
 	isLoading: false,
 	error: null,
+	statistics: null,
+	isLoadingStatistics: false,
+	statisticsError: null,
 
 	// Decision Log: Server-side pagination over client-side (matches API design, keeps initial load fast)
 	fetchResponses: async (page = 1) => {
@@ -99,6 +108,35 @@ const useAdminStore = create<AdminState>((set, get) => ({
 					error instanceof Error ? error.message : 'Failed to update user data',
 				isLoading: false,
 			})
+			throw error
+		}
+	},
+
+	fetchStatistics: async () => {
+		set({ isLoadingStatistics: true, statisticsError: null })
+		try {
+			const response = await adminApi
+				.get('responses/statistics')
+				.json<StatisticsResponse>()
+
+			if (
+				!response ||
+				!Array.isArray(response.frequencyAverageScores) ||
+				!Array.isArray(response.frequencyUserCounts) ||
+				!response.timeSpentStatistics ||
+				!Array.isArray(response.timeSpentStatistics.categories)
+			) {
+				throw new Error('Invalid statistics response structure')
+			}
+
+			set({
+				statistics: response,
+				isLoadingStatistics: false,
+			})
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : 'Failed to fetch statistics'
+			set({ statisticsError: errorMessage, isLoadingStatistics: false })
 			throw error
 		}
 	},

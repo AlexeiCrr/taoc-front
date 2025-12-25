@@ -20,6 +20,7 @@ import { Results } from './pages/Results'
 import Admin from './pages/Admin'
 import Dashboard from './pages/Dashboard'
 import ResponseDetail from './pages/ResponseDetail'
+import Statistics from './pages/Statistics'
 import AdminLayout from './components/admin/AdminLayout'
 
 function AnimatedRoutes() {
@@ -41,6 +42,16 @@ function AnimatedRoutes() {
 						<ProtectedRoute>
 							<AdminLayout>
 								<Dashboard />
+							</AdminLayout>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/dashboard/statistics"
+					element={
+						<ProtectedRoute>
+							<AdminLayout>
+								<Statistics />
 							</AdminLayout>
 						</ProtectedRoute>
 					}

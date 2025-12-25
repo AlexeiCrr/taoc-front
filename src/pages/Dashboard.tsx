@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import useAdminStore from '@/stores/adminStore'
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import useAuthStore from '../stores/authStore'
 
 export default function Dashboard() {
@@ -35,9 +36,16 @@ export default function Dashboard() {
 				<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
 					<div className="flex justify-between items-center">
 						<div>
-							<h3 className="text-3xl font-bold text-foreground !mt-4 !mb-4">
-								Admin Dashboard
-							</h3>
+							<div className="flex items-center gap-4">
+								<h3 className="text-3xl font-bold text-foreground !mt-4 !mb-4">
+									Admin Dashboard
+								</h3>
+								<Link to="/dashboard/statistics">
+									<Button variant="outline" size="sm">
+										View Statistics
+									</Button>
+								</Link>
+							</div>
 							<p className="text-sm text-muted-foreground mt-1">
 								Welcome back, {user?.username || user?.email}
 							</p>

@@ -50,7 +50,7 @@ export function MonthlyTrendsChart() {
 						}}
 						labelStyle={{ color: '#ffffff' }}
 						itemStyle={{ color: '#ffffff' }}
-						formatter={(value: number) => [`${value} users`, 'User Count']}
+						formatter={(value?: number) => [`${value ?? 0} users`, 'User Count']}
 						isAnimationActive={false}
 					/>
 					<Legend />

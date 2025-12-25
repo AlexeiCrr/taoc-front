@@ -4,7 +4,6 @@ import {
 	foregroundColor,
 	getFrequencyColor,
 } from '@/utils/chartUtils'
-import { RechartsDevtools } from '@recharts/devtools'
 import {
 	Bar,
 	BarChart,
@@ -76,10 +75,17 @@ export function FrequencyAverageScoresChart({ data }: Props) {
 					}}
 					labelStyle={{ color: foregroundColor }}
 					itemStyle={{ color: foregroundColor }}
-					formatter={(value?: number, name?: string, props?: { payload: FrequencyAverageScore }) => [
-						`Score: ${value?.toFixed(1)}`,
-						`Responses: ${props?.payload.totalResponses}`,
-					]}
+					formatter={(
+						value?: number,
+						_name?: string,
+						item?: { payload?: FrequencyAverageScore }
+					) => {
+						const payload = item?.payload
+						return [
+							`Score: ${value?.toFixed(1)}`,
+							`Responses: ${payload?.totalResponses ?? 'N/A'}`,
+						]
+					}}
 					isAnimationActive={false}
 					cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
 				/>
@@ -90,7 +96,6 @@ export function FrequencyAverageScoresChart({ data }: Props) {
 				/>
 				<Legend content={<CustomLegend />} />
 			</BarChart>
-			<RechartsDevtools />
 		</ResponsiveContainer>
 	)
 }

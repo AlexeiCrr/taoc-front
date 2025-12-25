@@ -1,4 +1,5 @@
 import type { TimeSpentStatistics } from '@/types/admin.types'
+import { foregroundColor } from '@/utils/chartUtils'
 import {
 	Bar,
 	BarChart,
@@ -8,7 +9,6 @@ import {
 	XAxis,
 	YAxis,
 } from 'recharts'
-import { foregroundColor } from '@/utils/chartUtils'
 
 interface Props {
 	data: TimeSpentStatistics
@@ -45,10 +45,17 @@ export function TimeSpentChart({ data }: Props) {
 						}}
 						labelStyle={{ color: foregroundColor }}
 						itemStyle={{ color: foregroundColor }}
-						formatter={(value?: number, name?: string, props?: { payload: { percentage: number } }) => [
-							`Count: ${value}`,
-							`Percentage: ${props?.payload.percentage.toFixed(1)}%`,
-						]}
+						formatter={(
+							value?: number,
+							_name?: string,
+							item?: { payload?: { percentage: number } }
+						) => {
+							const percentage = item?.payload?.percentage
+							return [
+								`Count: ${value}`,
+								`Percentage: ${percentage?.toFixed(1) ?? 'N/A'}%`,
+							]
+						}}
 						isAnimationActive={false}
 						cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
 					/>

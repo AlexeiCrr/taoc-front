@@ -16,6 +16,12 @@ interface Props {
 export function FrequencyUserCountChart({ data }: Props) {
 	const sortedData = [...data].sort((a, b) => b.userCount - a.userCount)
 
+	// Transform data to match Recharts' expected format with index signature
+	const chartData = sortedData.map((item) => ({
+		...item,
+		name: item.frequency,
+	}))
+
 	const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: FrequencyUserCount }> }) => {
 		if (active && payload && payload.length) {
 			const item = payload[0].payload
@@ -64,17 +70,18 @@ export function FrequencyUserCountChart({ data }: Props) {
 		<ResponsiveContainer width="100%" height={350}>
 			<PieChart>
 				<Pie
-					data={sortedData}
+					data={chartData}
 					dataKey="userCount"
 					nameKey="frequency"
 					cx="50%"
 					cy="50%"
 					outerRadius={100}
-					label={({ frequency, percentage }) =>
-						`${frequency} (${percentage.toFixed(1)}%)`
-					}
+					label={(props) => {
+						const entry = props as unknown as FrequencyUserCount & { frequency: string; percentage: number }
+						return `${entry.frequency} (${entry.percentage.toFixed(1)}%)`
+					}}
 				>
-					{sortedData.map((entry, index) => (
+					{chartData.map((entry, index) => (
 						<Cell
 							key={`cell-${index}`}
 							fill={getFrequencyColor(entry.frequency)}

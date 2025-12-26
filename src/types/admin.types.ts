@@ -84,10 +84,10 @@ export interface StatisticsResponse {
   frequencyAverageScores: FrequencyAverageScore[]
   frequencyUserCounts: FrequencyUserCount[]
   timeSpentStatistics: TimeSpentStatistics
+  monthlyUserStatistics: MonthlyTrendData[]
 }
 
-// Monthly trend data (TODO: backend API not implemented)
 export interface MonthlyTrendData {
-  month: string // "Jan", "Feb", etc.
+  month: string // "YYYY-MM" format
   userCount: number
 }

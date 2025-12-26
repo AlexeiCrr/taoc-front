@@ -78,21 +78,12 @@ export const adminApi: KyInstance = ky.create({
 			},
 		],
 		afterResponse: [
-			async (request, options, response) => {
+			async (_request, _options, response) => {
 				// Handle authentication errors
 				if (response.status === 401) {
-					const { authService, clearTokens } = await import('./auth')
-					const refreshed = await authService.refreshSession()
-					if (refreshed) {
-						// Retry the original request with new token
-						const newToken = localStorage.getItem('access-token')
-						if (newToken) {
-							request.headers.set('Authorization', `Bearer ${newToken}`)
-							return ky(request, options)
-						}
-					}
-					// Only clear and redirect if refresh failed
-					clearTokens()
+					// TODO: Implement auth refresh logic
+					localStorage.removeItem('access-token')
+					localStorage.removeItem('auth-token')
 					window.location.href = '/admin'
 					throw new Error('Unauthorized - Please login again')
 				}

@@ -5,10 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import useAdminStore from '@/stores/adminStore'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import useAuthStore from '../stores/authStore'
 
 export default function Dashboard() {
-	const { user, logout } = useAuthStore()
 	const { fetchResponses } = useAdminStore()
 
 	useEffect(() => {
@@ -22,12 +20,11 @@ export default function Dashboard() {
 		loadData()
 	}, [fetchResponses])
 
-	const handleLogout = async () => {
-		try {
-			await logout()
-		} catch (error) {
-			console.error('Logout failed:', error)
-		}
+	const handleLogout = () => {
+		// TODO: Implement logout logic
+		localStorage.removeItem('access-token')
+		localStorage.removeItem('auth-token')
+		window.location.href = '/admin'
 	}
 
 	return (
@@ -47,7 +44,7 @@ export default function Dashboard() {
 								</Link>
 							</div>
 							<p className="text-sm text-muted-foreground mt-1">
-								Welcome back, {user?.username || user?.email}
+								Welcome back, Admin
 							</p>
 						</div>
 						<Button onClick={handleLogout} variant="outline">

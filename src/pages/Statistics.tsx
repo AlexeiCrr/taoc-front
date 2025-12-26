@@ -122,7 +122,7 @@ export default function Statistics() {
               <CardTitle>Monthly User Activity Trends</CardTitle>
             </CardHeader>
             <CardContent>
-              <MonthlyTrendsChart />
+              <MonthlyTrendsChart data={statistics.monthlyUserStatistics} />
             </CardContent>
           </Card>
 

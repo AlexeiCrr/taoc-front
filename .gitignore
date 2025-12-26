@@ -29,6 +29,7 @@ src/paraglide/
 *.sln
 *.sw?
 *.md
+.claude/
 
 # Windows special device files accidentally created as regular files
 nul

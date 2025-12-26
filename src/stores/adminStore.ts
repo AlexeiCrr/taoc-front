@@ -124,9 +124,20 @@ const useAdminStore = create<AdminState>((set, get) => ({
 				!Array.isArray(response.frequencyAverageScores) ||
 				!Array.isArray(response.frequencyUserCounts) ||
 				!response.timeSpentStatistics ||
-				!Array.isArray(response.timeSpentStatistics.categories)
+				!Array.isArray(response.timeSpentStatistics.categories) ||
+				!Array.isArray(response.monthlyUserStatistics)
 			) {
 				throw new Error('Invalid statistics response structure')
+			}
+
+			const invalidMonths = response.monthlyUserStatistics.filter(
+				(item) => !item.month || !/^\d{4}-\d{2}$/.test(item.month)
+			)
+			if (invalidMonths.length > 0) {
+				console.warn('Invalid month formats detected:', invalidMonths)
+				response.monthlyUserStatistics = response.monthlyUserStatistics.filter(
+					(item) => /^\d{4}-\d{2}$/.test(item.month)
+				)
 			}
 
 			set({

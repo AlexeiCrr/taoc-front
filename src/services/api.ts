@@ -5,6 +5,7 @@ import type {
 	QuizResponse,
 	QuizResponseCreate,
 } from '../types/quiz.types'
+import useAuthStore from '../stores/authStore'
 
 interface LicenseValidationResponse {
 	isValid: boolean
@@ -66,11 +67,13 @@ export const adminApi: KyInstance = ky.create({
 	},
 	hooks: {
 		beforeRequest: [
-			(request) => {
-				const token = localStorage.getItem('access-token')
-				if (token) {
-					request.headers.set('Authorization', `Bearer ${token}`)
+			async (request) => {
+				// Get fresh token from auth store
+				const token = await useAuthStore.getState().getAccessToken()
+				if (!token) {
+					throw new Error('Authentication required')
 				}
+				request.headers.set('Authorization', `Bearer ${token}`)
 
 				if (API_KEY) {
 					request.headers.set('x-api-key', API_KEY)
@@ -81,10 +84,9 @@ export const adminApi: KyInstance = ky.create({
 			async (_request, _options, response) => {
 				// Handle authentication errors
 				if (response.status === 401) {
-					// TODO: Implement auth refresh logic
-					localStorage.removeItem('access-token')
-					localStorage.removeItem('auth-token')
-					window.location.href = '/admin'
+					// Sign out and redirect
+					await useAuthStore.getState().signOut()
+					window.location.href = '/'
 					throw new Error('Unauthorized - Please login again')
 				}
 

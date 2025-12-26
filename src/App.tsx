@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import {
 	BrowserRouter,
 	Navigate,
@@ -7,21 +8,22 @@ import {
 } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import './App.css'
+import AdminLayout from './components/admin/AdminLayout'
+import { PageTransition } from './components/common/PageTransition'
 import { LanguageProvider } from './components/LanguageProvider'
 import { PostHogProvider } from './components/PostHogProvider'
-import { PageTransition } from './components/common/PageTransition'
 import ProtectedRoute from './components/ProtectedRoute'
+import Admin from './pages/Admin'
+import Dashboard from './pages/Dashboard'
 import Home from './pages/Home'
 import PDFPreview from './pages/PDFPreview'
 import PostHogTest from './pages/PostHogTest'
 import Quiz from './pages/Quiz'
 import QuizStart from './pages/QuizStart'
-import { Results } from './pages/Results'
-import Admin from './pages/Admin'
-import Dashboard from './pages/Dashboard'
 import ResponseDetail from './pages/ResponseDetail'
+import { Results } from './pages/Results'
 import Statistics from './pages/Statistics'
-import AdminLayout from './components/admin/AdminLayout'
+import useAuthStore from './stores/authStore'
 
 function AnimatedRoutes() {
 	const location = useLocation()
@@ -73,6 +75,14 @@ function AnimatedRoutes() {
 }
 
 function App() {
+	const initializeAuth = useAuthStore((state) => state.initializeAuth)
+
+	useEffect(() => {
+		console.log('initializingauth')
+
+		initializeAuth()
+	}, [initializeAuth])
+
 	return (
 		<LanguageProvider>
 			<BrowserRouter>

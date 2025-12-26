@@ -3,11 +3,13 @@ import AdminFilters from '@/components/admin/AdminFilters'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import useAdminStore from '@/stores/adminStore'
+import useAuthStore from '@/stores/authStore'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 export default function Dashboard() {
 	const { fetchResponses } = useAdminStore()
+	const { signOut } = useAuthStore()
 
 	useEffect(() => {
 		const loadData = async () => {
@@ -20,11 +22,8 @@ export default function Dashboard() {
 		loadData()
 	}, [fetchResponses])
 
-	const handleLogout = () => {
-		// TODO: Implement logout logic
-		localStorage.removeItem('access-token')
-		localStorage.removeItem('auth-token')
-		window.location.href = '/admin'
+	const handleLogout = async () => {
+		await signOut()
 	}
 
 	return (

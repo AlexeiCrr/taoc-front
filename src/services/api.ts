@@ -1,3 +1,19 @@
+/**
+ * HTTP API clients and service methods for quiz and admin operations.
+ *
+ * Provides two pre-configured Ky clients:
+ *   - publicApi: Unauthenticated endpoints (quiz questions, license validation)
+ *   - adminApi: JWT-authenticated endpoints (admin dashboard, license generation)
+ *
+ * Key features:
+ *   - Automatic JWT injection via adminApi beforeRequest hook
+ *   - Auto-logout on 401 (session expired)
+ *   - Content-type validation for binary responses (CSV downloads)
+ *   - Retry logic for transient failures (2 attempts, GET only)
+ *
+ * The adminApi client fetches fresh tokens from authStore on every request,
+ * ensuring expired tokens are automatically refreshed before API calls.
+ */
 import ky, { type KyInstance } from 'ky'
 import type { AdminResponse, UpdateUserDataParams } from '../types/admin.types'
 import type {
@@ -6,6 +22,7 @@ import type {
 	QuizResponseCreate,
 } from '../types/quiz.types'
 import useAuthStore from '../stores/authStore'
+import type { LicenseTier } from './licenseApi'
 
 interface LicenseValidationResponse {
 	isValid: boolean
@@ -158,6 +175,36 @@ export const apiService = {
 		return await adminApi
 			.put(`response/${responseId}`, { json: userData })
 			.json()
+	},
+
+	/**
+	 * Generate license codes and return as CSV blob.
+	 *
+	 * Requires admin authentication (JWT via adminApi). Content-type validation
+	 * prevents silent failures when API returns error JSON instead of CSV.
+	 *
+	 * @param amount Number of license codes to generate (1-10,000)
+	 * @param licenseTier Tier level (1, 3, or 7)
+	 * @returns CSV blob with headers "code,license_tier"
+	 * @throws Error if content-type is not CSV (indicates API error)
+	 *
+	 * Example:
+	 *   const blob = await apiService.generateLicenses(100, LicenseTier.TIER_3)
+	 *   downloadBlob(blob, 'license_codes_2025-01-15.csv')
+	 */
+	generateLicenses: async (amount: number, licenseTier: LicenseTier): Promise<Blob> => {
+		const response = await adminApi.post('tac-generate-codes', {
+			json: { amount, licenseTier }
+		})
+
+		// Validate content-type to detect API errors returned as JSON instead of CSV
+		const contentType = response.headers.get('content-type')
+		if (!contentType?.includes('text/csv') && !contentType?.includes('application/octet-stream')) {
+			const text = await response.text()
+			throw new Error(`Expected CSV file but received: ${text.substring(0, 100)}`)
+		}
+
+		return response.blob()
 	},
 
 	// resendEmail: async (responseId: number): Promise<ResendEmailResult> => {

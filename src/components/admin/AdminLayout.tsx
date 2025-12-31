@@ -1,7 +1,13 @@
+import { ThemeProvider } from '../ThemeProvider'
+
 interface AdminLayoutProps {
-  children: React.ReactNode
+	children: React.ReactNode
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  return <div className="dark">{children}</div>
+	return (
+		<ThemeProvider defaultTheme="dark" storageKey="admin-theme">
+			{children}
+		</ThemeProvider>
+	)
 }

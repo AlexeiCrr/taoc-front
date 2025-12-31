@@ -1,5 +1,6 @@
 import AdminDataGrid from '@/components/admin/AdminDataGrid'
 import AdminFilters from '@/components/admin/AdminFilters'
+import ManageLicensesDialog from '@/components/admin/ManageLicensesDialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import useAdminStore from '@/stores/adminStore'
@@ -41,6 +42,11 @@ export default function Dashboard() {
 										View Statistics
 									</Button>
 								</Link>
+								<ManageLicensesDialog>
+									<Button variant="outline" size="sm">
+										Manage Licenses
+									</Button>
+								</ManageLicensesDialog>
 							</div>
 							<p className="text-sm text-muted-foreground mt-1">
 								Welcome back, Admin

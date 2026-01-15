@@ -93,6 +93,10 @@
 		-moz-osx-font-smoothing: grayscale;
 	}
 
+	html {
+		overflow-x: hidden;
+	}
+
 	body {
 		margin: 0;
 		min-width: 320px;

@@ -7,7 +7,7 @@ import {
 	Text,
 	View,
 } from '@react-pdf/renderer'
-import type { QuizResponse } from '../../types/quiz.types'
+import type { Frequency, QuizResponse } from '../../types/quiz.types'
 
 // Create styles
 const styles = StyleSheet.create({
@@ -133,13 +133,113 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
+	// Frequency Map Page styles
+	mapPage: {
+		padding: 40,
+		fontFamily: 'Helvetica',
+		color: '#5e6153',
+		backgroundColor: '#f8f7f4',
+	},
+	mapPageContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	frequencyMapTitle: {
+		fontSize: 24,
+		fontWeight: 'bold',
+		textAlign: 'center',
+		marginBottom: 40,
+		textTransform: 'uppercase',
+		letterSpacing: 2,
+	},
+	mapContainer: {
+		alignItems: 'center',
+		width: '100%',
+	},
+	mapRow: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginBottom: 20,
+	},
+	mapItemCenter: {
+		alignItems: 'center',
+		width: 200,
+	},
+	mapItemLeft: {
+		alignItems: 'center',
+		width: 200,
+		marginRight: 60,
+	},
+	mapItemRight: {
+		alignItems: 'center',
+		width: 200,
+		marginLeft: 60,
+	},
+	mapFrequencyImage: {
+		width: 80,
+		height: 80,
+		marginBottom: 10,
+	},
+	mapFrequencyLabel: {
+		fontSize: 14,
+		textTransform: 'uppercase',
+		fontWeight: 'bold',
+		textAlign: 'center',
+	},
+	mapTriangle: {
+		width: 0,
+		height: 0,
+		backgroundColor: 'transparent',
+		borderStyle: 'solid',
+		marginVertical: 15,
+	},
+	mapTriangleUp: {
+		borderLeftWidth: 30,
+		borderRightWidth: 30,
+		borderBottomWidth: 50,
+		borderLeftColor: 'transparent',
+		borderRightColor: 'transparent',
+		borderBottomColor: '#5e6153',
+	},
+	mapTriangleDown: {
+		borderLeftWidth: 30,
+		borderRightWidth: 30,
+		borderTopWidth: 50,
+		borderLeftColor: 'transparent',
+		borderRightColor: 'transparent',
+		borderTopColor: '#5e6153',
+	},
+	mapFooterNote: {
+		fontSize: 10,
+		textAlign: 'center',
+		marginTop: 30,
+		fontStyle: 'italic',
+	},
 })
+
+const S3_BASE_URL = 'https://taoc-quiz-media.s3.us-west-1.amazonaws.com'
+
+const getFrequencyImageUrl = (frequencyName: string): string =>
+	`${S3_BASE_URL}/images/${frequencyName.toLowerCase()}.png`
+
+const getWorkbookUrl = (frequencyName: string): string =>
+	`${S3_BASE_URL}/workbook/${frequencyName.toLowerCase()}.pdf`
 
 interface ResultsPDFProps {
 	quizResponse: QuizResponse
+	/** @deprecated Use frequencyMapImage instead for pixel-perfect rendering */
+	allFrequencies?: Frequency[]
+	/** Base64 data URL of the frequency map image captured via html2canvas */
+	frequencyMapImage?: string
 }
 
-export const ResultsPDF = ({ quizResponse }: ResultsPDFProps) => {
+export const ResultsPDF = ({
+	quizResponse,
+	allFrequencies,
+	frequencyMapImage,
+}: ResultsPDFProps) => {
 	const { firstName, lastName, frequencies } = quizResponse
 
 	// Helper function to generate the appropriate text based on number of frequencies
@@ -192,7 +292,7 @@ export const ResultsPDF = ({ quizResponse }: ResultsPDFProps) => {
 							<View key={frequency.id || index} style={styles.frequencyItem}>
 								<Image
 									style={styles.frequencyImage}
-									src={`https://taoc-quiz-media.s3.us-west-1.amazonaws.com/images/${frequency.name.toLowerCase()}.png`}
+									src={getFrequencyImageUrl(frequency.name)}
 								/>
 								<View style={styles.frequencyData}>
 									<Text style={styles.frequencyName}>{frequency.name}</Text>
@@ -243,7 +343,7 @@ export const ResultsPDF = ({ quizResponse }: ResultsPDFProps) => {
 
 						<Link
 							style={styles.button}
-							src={`https://taoc-quiz-media.s3.us-west-1.amazonaws.com/workbook/${frequencies[0].name.toLowerCase()}.pdf`}
+							src={getWorkbookUrl(frequencies[0].name)}
 						>
 							Download Workbook
 						</Link>
@@ -308,6 +408,118 @@ export const ResultsPDF = ({ quizResponse }: ResultsPDFProps) => {
 					</View>
 				</View>
 			</Page>
+
+			{/* Frequency Map Page - Rendered from captured image (preferred) or fallback to allFrequencies */}
+			{frequencyMapImage && (
+				<Page size="A4" style={{ padding: 0 }}>
+					<Image
+						src={frequencyMapImage}
+						style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+					/>
+				</Page>
+			)}
+
+			{/* Fallback: Render map using react-pdf if no image provided but allFrequencies exists */}
+			{!frequencyMapImage && allFrequencies && allFrequencies.length === 7 && (
+				<Page size="A4" style={styles.mapPage}>
+					<View style={styles.mapPageContainer}>
+						<Text style={styles.frequencyMapTitle}>YOUR FREQUENCIES MAP</Text>
+						<View style={styles.mapContainer}>
+							{/* Top Center - Position 0 (Highest) */}
+							<View style={styles.mapRow}>
+								<View style={styles.mapItemCenter}>
+									<Image
+										style={styles.mapFrequencyImage}
+										src={getFrequencyImageUrl(allFrequencies[0].name)}
+									/>
+									<Text style={styles.mapFrequencyLabel}>
+										{allFrequencies[0].name} | {allFrequencies[0].value}
+									</Text>
+								</View>
+							</View>
+
+							{/* Top Row - Positions 1 & 2 */}
+							<View style={styles.mapRow}>
+								<View style={styles.mapItemLeft}>
+									<Image
+										style={styles.mapFrequencyImage}
+										src={getFrequencyImageUrl(allFrequencies[1].name)}
+									/>
+									<Text style={styles.mapFrequencyLabel}>
+										{allFrequencies[1].value} | {allFrequencies[1].name}
+									</Text>
+								</View>
+								<View style={styles.mapItemRight}>
+									<Image
+										style={styles.mapFrequencyImage}
+										src={getFrequencyImageUrl(allFrequencies[2].name)}
+									/>
+									<Text style={styles.mapFrequencyLabel}>
+										{allFrequencies[2].name} | {allFrequencies[2].value}
+									</Text>
+								</View>
+							</View>
+
+							{/* Upward Triangle */}
+							<View style={[styles.mapTriangle, styles.mapTriangleUp]} />
+
+							{/* Middle Center - Position 3 */}
+							<View style={styles.mapRow}>
+								<View style={styles.mapItemCenter}>
+									<Image
+										style={styles.mapFrequencyImage}
+										src={getFrequencyImageUrl(allFrequencies[3].name)}
+									/>
+									<Text style={styles.mapFrequencyLabel}>
+										{allFrequencies[3].name} | {allFrequencies[3].value}
+									</Text>
+								</View>
+							</View>
+
+							{/* Downward Triangle */}
+							<View style={[styles.mapTriangle, styles.mapTriangleDown]} />
+
+							{/* Bottom Row - Positions 4 & 5 */}
+							<View style={styles.mapRow}>
+								<View style={styles.mapItemLeft}>
+									<Image
+										style={styles.mapFrequencyImage}
+										src={getFrequencyImageUrl(allFrequencies[4].name)}
+									/>
+									<Text style={styles.mapFrequencyLabel}>
+										{allFrequencies[4].value} | {allFrequencies[4].name}
+									</Text>
+								</View>
+								<View style={styles.mapItemRight}>
+									<Image
+										style={styles.mapFrequencyImage}
+										src={getFrequencyImageUrl(allFrequencies[5].name)}
+									/>
+									<Text style={styles.mapFrequencyLabel}>
+										{allFrequencies[5].name} | {allFrequencies[5].value}
+									</Text>
+								</View>
+							</View>
+
+							{/* Bottom Center - Position 6 (Lowest) */}
+							<View style={styles.mapRow}>
+								<View style={styles.mapItemCenter}>
+									<Image
+										style={styles.mapFrequencyImage}
+										src={getFrequencyImageUrl(allFrequencies[6].name)}
+									/>
+									<Text style={styles.mapFrequencyLabel}>
+										{allFrequencies[6].name} | {allFrequencies[6].value}
+									</Text>
+								</View>
+							</View>
+						</View>
+						<Text style={styles.mapFooterNote}>
+							*All scores are out of a maximum of 60
+						</Text>
+					</View>
+				</Page>
+			)}
 		</Document>
 	)
 }

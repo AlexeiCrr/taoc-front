@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
+import * as m from '../paraglide/messages'
 import { apiService } from '../services/api'
 import { trackEvent } from '../services/posthog'
 import type {
@@ -8,7 +9,6 @@ import type {
 	QuizResponse,
 	UserData,
 } from '../types/quiz.types'
-import * as m from '../paraglide/messages'
 
 interface QuizState {
 	// State
@@ -56,7 +56,12 @@ const useQuizStore = create<QuizState>()(
 					try {
 						const questions = await apiService.getQuestions()
 						// Reset answers when fetching new questions to prevent stale data
-						set({ questions, answers: [], currentQuestionIndex: 0, isLoading: false })
+						set({
+							questions,
+							answers: [],
+							currentQuestionIndex: 0,
+							isLoading: false,
+						})
 					} catch (error) {
 						set({
 							error:
@@ -126,13 +131,13 @@ const useQuizStore = create<QuizState>()(
 
 					// Filter out any undefined/null values and log if found
 					const validAnswers = answers.filter((answer) => answer != null)
-					
+
 					if (validAnswers.length !== answers.length) {
 						console.error('Found undefined/null answers:', {
 							totalAnswers: answers.length,
 							validAnswers: validAnswers.length,
 							totalQuestions: questions.length,
-							answers: answers.map((a, i) => ({ index: i, answer: a }))
+							answers: answers.map((a, i) => ({ index: i, answer: a })),
 						})
 					}
 
@@ -145,9 +150,14 @@ const useQuizStore = create<QuizState>()(
 						})
 
 						// Ensure frequency descriptions come from translations
-						response.frequencies = response.frequencies.map(freq => ({
+						response.frequencies = response.frequencies.map((freq) => ({
 							...freq,
-							description: (m as any)[`frequencies.${freq.name}`]?.() || freq.description || '',
+							description:
+								(m as unknown as Record<string, (() => string) | undefined>)[
+									`frequencies.${freq.name}`
+								]?.() ||
+								freq.description ||
+								'',
 						}))
 
 						// Track quiz completion in PostHog BEFORE setting response
@@ -166,7 +176,7 @@ const useQuizStore = create<QuizState>()(
 						})
 
 						// Small delay to ensure PostHog event is sent before navigation
-						await new Promise(resolve => setTimeout(resolve, 100))
+						await new Promise((resolve) => setTimeout(resolve, 100))
 
 						set({ quizResponse: response, isLoading: false })
 
@@ -232,13 +242,18 @@ const useQuizStore = create<QuizState>()(
 					getItem: (name) => {
 						const str = sessionStorage.getItem(name)
 						if (!str) return null
-						
+
 						try {
 							const parsed = JSON.parse(str)
 							// Validate and clean the answers array if it exists
-							if (parsed.state?.answers && Array.isArray(parsed.state.answers)) {
+							if (
+								parsed.state?.answers &&
+								Array.isArray(parsed.state.answers)
+							) {
 								// Filter out any null/undefined values from the persisted answers
-								parsed.state.answers = parsed.state.answers.filter((a: any) => a != null)
+								parsed.state.answers = parsed.state.answers.filter(
+									(a: unknown) => a != null
+								)
 							}
 							return parsed
 						} catch (e) {

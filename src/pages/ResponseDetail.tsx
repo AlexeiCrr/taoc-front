@@ -129,7 +129,8 @@ export default function ResponseDetail() {
 		setIsGeneratingMap(true)
 
 		try {
-			const frequencyMapImage = await captureFrequencyMap(frequencies)
+			const userName = `${response.firstName} ${response.lastName}`
+			const frequencyMapImage = await captureFrequencyMap(frequencies, userName)
 
 			// Convert base64 to blob and download
 			const base64Data = frequencyMapImage.split(',')[1]
@@ -364,7 +365,10 @@ export default function ResponseDetail() {
 							</Button>
 						</CardHeader>
 						<CardContent className="flex justify-center">
-							<FrequencyMap frequencies={getAllFrequenciesSorted(response)} />
+							<FrequencyMap
+								frequencies={getAllFrequenciesSorted(response)}
+								userName={`${response.firstName} ${response.lastName}`}
+							/>
 						</CardContent>
 					</Card>
 				)}

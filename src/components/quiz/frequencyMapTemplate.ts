@@ -10,7 +10,10 @@ export const getFrequencyImageUrl = (frequencyName: string): string =>
  * Generates the HTML template for the frequency map.
  * Used by both the React component (via dangerouslySetInnerHTML) and the capture utility.
  */
-export function generateFrequencyMapHTML(frequencies: Frequency[]): string {
+export function generateFrequencyMapHTML(
+	frequencies: Frequency[],
+	userName?: string
+): string {
 	if (frequencies.length !== 7) {
 		return ''
 	}
@@ -44,8 +47,8 @@ export function generateFrequencyMapHTML(frequencies: Frequency[]): string {
 				flex-direction: column;
 			}
 			.freq-map-title {
-				margin-top: 40px;
-				line-height: 1;
+				margin-top: 20px;
+				line-height: 1.1;
 				font-size: 28px;
 				font-weight: 600;
 				text-align: center;
@@ -77,11 +80,17 @@ export function generateFrequencyMapHTML(frequencies: Frequency[]): string {
 				height: 60px;
 				object-fit: contain;
 			}
-			.freq-item--bottom {
+			.freq-item--bottom-side {
 				top:-45px;
 			}
-			.freq-item--top {
+			.freq-item--top-side {
 				bottom: -40px;
+			}
+			.freq-item--top {
+				margin-bottom: 10px;
+			}
+			.freq-item--bottom {
+				margin-top: 10px;
 			}
 			.freq-label {
 				position: absolute;
@@ -108,7 +117,7 @@ export function generateFrequencyMapHTML(frequencies: Frequency[]): string {
 				justify-content: center;
 				position: relative;
 				width: 100%;
-				gap: 20px;
+				gap: 10px;
 			}
 			.triangle-up {
 				width: 0;
@@ -126,7 +135,7 @@ export function generateFrequencyMapHTML(frequencies: Frequency[]): string {
 			}
 			.vertical-line {
 				width: 2px;
-				height: 120px;
+				height: 80px;
 				background-color: ${styles.textColor};
 			}
 			.freq-footer {
@@ -139,25 +148,25 @@ export function generateFrequencyMapHTML(frequencies: Frequency[]): string {
 		</style>
 
 		<div class="freq-map-container">
-			<h1 class="freq-map-title">Your Frequencies Map</h1>
+			<h1 class="freq-map-title">${userName ? `${userName}'s<br/>Frequencies Map` : 'Your<br/>Frequency Map'}</h1>
 
 			<div class="freq-map-content">
 				<!-- Top Center - Position 0 (Highest) -->
-				<div class="freq-item">
+				<div class="freq-item freq-item--top">
 					<img src="${getFrequencyImageUrl(top1.name)}" alt="${top1.name}" crossorigin="anonymous" />
 					<span class="freq-label freq-label--right" style="color: ${getFrequencyColor(top1.name)}">${top1.name} | ${top1.value}</span>
 				</div>
 
 				<!-- Top Row with Triangle - Positions 1 & 2 -->
 				<div class="freq-row">
-					<div class="freq-item freq-item--top">
+					<div class="freq-item freq-item--top-side">
 						<img src="${getFrequencyImageUrl(top2.name)}" alt="${top2.name}" crossorigin="anonymous" />
 						<span class="freq-label freq-label--left" style="color: ${getFrequencyColor(top2.name)}">${top2.value} | ${top2.name}</span>
 					</div>
 
 					<div class="triangle-up"></div>
 
-					<div class="freq-item freq-item--top">
+					<div class="freq-item freq-item--top-side">
 						<img src="${getFrequencyImageUrl(top3.name)}" alt="${top3.name}" crossorigin="anonymous" />
 						<span class="freq-label freq-label--right" style="color: ${getFrequencyColor(top3.name)}">${top3.name} | ${top3.value}</span>
 					</div>
@@ -165,7 +174,7 @@ export function generateFrequencyMapHTML(frequencies: Frequency[]): string {
 
 				<!-- Vertical Line -->
 				<div class="vertical-line"></div>
-
+ 
 				<!-- Middle Center - Position 3 -->
 				<div class="freq-item">
 					<img src="${getFrequencyImageUrl(middle.name)}" alt="${middle.name}" crossorigin="anonymous" />
@@ -177,21 +186,21 @@ export function generateFrequencyMapHTML(frequencies: Frequency[]): string {
 
 				<!-- Bottom Row with Triangle - Positions 4 & 5 -->
 				<div class="freq-row">
-					<div class="freq-item freq-item--bottom">
+					<div class="freq-item freq-item--bottom-side">
 						<img src="${getFrequencyImageUrl(bottom1.name)}" alt="${bottom1.name}" crossorigin="anonymous" />
 						<span class="freq-label freq-label--left" style="color: ${getFrequencyColor(bottom1.name)}">${bottom1.value} | ${bottom1.name}</span>
 					</div>
 
 					<div class="triangle-down"></div>
 
-					<div class="freq-item freq-item--bottom">
+					<div class="freq-item freq-item--bottom-side">
 						<img src="${getFrequencyImageUrl(bottom2.name)}" alt="${bottom2.name}" crossorigin="anonymous" />
 						<span class="freq-label freq-label--right" style="color: ${getFrequencyColor(bottom2.name)}">${bottom2.name} | ${bottom2.value}</span>
 					</div>
 				</div>
 
 				<!-- Bottom Center - Position 6 (Lowest) -->
-				<div class="freq-item">
+				<div class="freq-item freq-item--bottom">
 					<img src="${getFrequencyImageUrl(bottom3.name)}" alt="${bottom3.name}" crossorigin="anonymous" />
 					<span class="freq-label freq-label--right" style="color: ${getFrequencyColor(bottom3.name)}">${bottom3.name} | ${bottom3.value}</span>
 				</div>

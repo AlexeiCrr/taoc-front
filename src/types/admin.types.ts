@@ -27,6 +27,8 @@ export interface ResponseFilters {
   email?: string
   licenseCode?: string
   date?: string
+  dateFrom?: string
+  dateTo?: string
 }
 
 export interface DateRange {
@@ -74,10 +76,25 @@ export interface TimeSpentCategory {
   percentage: number
 }
 
+export interface TimeByFrequency {
+  frequency: string
+  averageTimeMinutes: number
+  userCount: number
+}
+
 export interface TimeSpentStatistics {
   sampleSize: number
   averageTimeMinutes: number
   categories: TimeSpentCategory[]
+  fastestCompletion?: {
+    timeMinutes: number
+    primaryFrequency: string
+  }
+  slowestCompletion?: {
+    timeMinutes: number
+    primaryFrequency: string
+  }
+  timeByFrequency: TimeByFrequency[]
 }
 
 export interface StatisticsResponse {

@@ -5,10 +5,11 @@ import { generateFrequencyMapHTML } from './frequencyMapTemplate'
 interface FrequencyMapProps {
 	frequencies: Frequency[] // Must be sorted by score descending, exactly 7 items
 	className?: string
+	userName?: string
 }
 
 export const FrequencyMap = forwardRef<HTMLDivElement, FrequencyMapProps>(
-	({ frequencies, className }, ref) => {
+	({ frequencies, className, userName }, ref) => {
 		if (frequencies.length !== 7) {
 			return null
 		}
@@ -18,7 +19,7 @@ export const FrequencyMap = forwardRef<HTMLDivElement, FrequencyMapProps>(
 				ref={ref}
 				className={className}
 				dangerouslySetInnerHTML={{
-					__html: generateFrequencyMapHTML(frequencies),
+					__html: generateFrequencyMapHTML(frequencies, userName),
 				}}
 			/>
 		)

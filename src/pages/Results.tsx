@@ -116,6 +116,15 @@ export const Results = () => {
 					>
 						{isGenerating ? <LoadingSpinner size="sm" /> : 'Download Results'}
 					</QuizButton>
+
+					{/* Upgrade Upsell - show if user has room to upgrade */}
+					{/* {userData?.licenseTier && userData.licenseTier < 7 && (
+						<UpgradeCard
+							currentTier={userData.licenseTier as LicenseTier}
+							email={userData.email}
+							responseId={quizResponse.id}
+						/>
+					)} */}
 				</div>
 			</main>
 			<QuizFooter inverted />

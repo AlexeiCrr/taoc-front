@@ -10,10 +10,12 @@ import { generateFrequencyMapHTML } from '../components/quiz/frequencyMapTemplat
  * consistency between the preview component and the capture utility.
  *
  * @param frequencies - Array of 7 frequencies sorted by score descending
+ * @param userName - Optional user name to display in the title
  * @returns Promise<string> - Base64 data URL of the captured image
  */
 export async function captureFrequencyMap(
-	frequencies: Frequency[]
+	frequencies: Frequency[],
+	userName?: string
 ): Promise<string> {
 	if (frequencies.length !== 7) {
 		throw new Error('FrequencyMap requires exactly 7 frequencies')
@@ -36,7 +38,7 @@ export async function captureFrequencyMap(
 		}
 
 		// Use the shared template
-		const frequencyMapHTML = generateFrequencyMapHTML(frequencies)
+		const frequencyMapHTML = generateFrequencyMapHTML(frequencies, userName)
 
 		iframeDoc.open()
 		iframeDoc.write(`

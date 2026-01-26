@@ -81,10 +81,7 @@ const PDFPreview = () => {
 				</p>
 			</div>
 			<PDFViewer style={{ width: '100%', height: 'calc(100% - 80px)' }}>
-				<ResultsPDF
-					quizResponse={mockQuizResponse}
-					allFrequencies={allFrequenciesMock}
-				/>
+				<ResultsPDF quizResponse={mockQuizResponse} />
 			</PDFViewer>
 		</div>
 	)

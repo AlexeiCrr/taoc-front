@@ -22,7 +22,7 @@ interface Props {
 export function FrequencyAverageScoresChart({ data }: Props) {
 	const sortedData = [...data].sort((a, b) => b.averageScore - a.averageScore)
 
-	const chartData = data.map((item) => ({
+	const chartData = sortedData.map((item) => ({
 		...item,
 		fill: getFrequencyColor(item.frequency),
 	}))

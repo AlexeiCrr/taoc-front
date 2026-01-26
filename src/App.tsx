@@ -15,17 +15,25 @@ import useAuthStore from './stores/authStore'
 
 // Lazy load admin components (only loaded when admin routes are accessed)
 const AdminLayout = lazy(() => import('./components/admin/AdminLayout'))
-const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'))
+const AdminGuard = lazy(() =>
+	import('./components/AdminGuard').then((module) => ({
+		default: module.AdminGuard,
+	}))
+)
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Statistics = lazy(() => import('./pages/Statistics'))
 const ResponseDetail = lazy(() => import('./pages/ResponseDetail'))
 const Admin = lazy(() => import('./pages/Admin'))
+const Login = lazy(() => import('./pages/Login'))
 
 // Lazy load quiz components (only loaded when quiz routes are accessed)
 const Home = lazy(() => import('./pages/Home'))
 const QuizStart = lazy(() => import('./pages/QuizStart'))
 const Quiz = lazy(() => import('./pages/Quiz'))
-const Results = lazy(() => import('./pages/Results').then(module => ({ default: module.Results })))
+const Results = lazy(() =>
+	import('./pages/Results').then((module) => ({ default: module.Results }))
+)
+const UpgradeSuccess = lazy(() => import('./pages/UpgradeSuccess'))
 const PDFPreview = lazy(() => import('./pages/PDFPreview'))
 const PostHogTest = lazy(() => import('./pages/PostHogTest'))
 
@@ -49,37 +57,39 @@ function AnimatedRoutes() {
 					<Route path="/quiz-start" element={<QuizStart />} />
 					<Route path="/quiz" element={<Quiz />} />
 					<Route path="/results" element={<Results />} />
+					<Route path="/upgrade/success" element={<UpgradeSuccess />} />
 					<Route path="/pdf-preview" element={<PDFPreview />} />
 					<Route path="/posthog-test" element={<PostHogTest />} />
+					<Route path="/login" element={<Login />} />
 					<Route path="/admin" element={<Admin />} />
 					<Route
 						path="/dashboard"
 						element={
-							<ProtectedRoute>
+							<AdminGuard>
 								<AdminLayout>
 									<Dashboard />
 								</AdminLayout>
-							</ProtectedRoute>
+							</AdminGuard>
 						}
 					/>
 					<Route
 						path="/dashboard/statistics"
 						element={
-							<ProtectedRoute>
+							<AdminGuard>
 								<AdminLayout>
 									<Statistics />
 								</AdminLayout>
-							</ProtectedRoute>
+							</AdminGuard>
 						}
 					/>
 					<Route
 						path="/response/:id"
 						element={
-							<ProtectedRoute>
+							<AdminGuard>
 								<AdminLayout>
 									<ResponseDetail />
 								</AdminLayout>
-							</ProtectedRoute>
+							</AdminGuard>
 						}
 					/>
 					<Route path="*" element={<Navigate to="/" replace />} />
@@ -90,11 +100,11 @@ function AnimatedRoutes() {
 }
 
 function App() {
-	const initializeAuth = useAuthStore((state) => state.initializeAuth)
+	const checkAuth = useAuthStore((state) => state.checkAuth)
 
 	useEffect(() => {
-		initializeAuth()
-	}, [initializeAuth])
+		checkAuth()
+	}, [checkAuth])
 
 	return (
 		<LanguageProvider>

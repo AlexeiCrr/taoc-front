@@ -7,7 +7,7 @@ import {
 	Text,
 	View,
 } from '@react-pdf/renderer'
-import type { Frequency, QuizResponse } from '../../types/quiz.types'
+import type { QuizResponse } from '../../types/quiz.types'
 
 // Create styles
 const styles = StyleSheet.create({
@@ -229,15 +229,12 @@ const getWorkbookUrl = (frequencyName: string): string =>
 
 interface ResultsPDFProps {
 	quizResponse: QuizResponse
-	/** @deprecated Use frequencyMapImage instead for pixel-perfect rendering */
-	allFrequencies?: Frequency[]
 	/** Base64 data URL of the frequency map image captured via html2canvas */
 	frequencyMapImage?: string
 }
 
 export const ResultsPDF = ({
 	quizResponse,
-	allFrequencies,
 	frequencyMapImage,
 }: ResultsPDFProps) => {
 	const { firstName, lastName, frequencies } = quizResponse
@@ -329,6 +326,7 @@ export const ResultsPDF = ({
 							you utilize and access most naturally, but each of the Seven
 							Frequencies can become a part of your communication toolkit over
 							time.{'\n'}
+							{'\n'}
 							Your #1 frequency is what we call your core or{' '}
 							<Text style={styles.bold}>primary frequency</Text>. Discovering
 							the power and potential of your primary frequency will
@@ -416,108 +414,6 @@ export const ResultsPDF = ({
 						src={frequencyMapImage}
 						style={{ width: '100%', height: '100%', objectFit: 'contain' }}
 					/>
-				</Page>
-			)}
-
-			{/* Fallback: Render map using react-pdf if no image provided but allFrequencies exists */}
-			{!frequencyMapImage && allFrequencies && allFrequencies.length === 7 && (
-				<Page size="A4" style={styles.mapPage}>
-					<View style={styles.mapPageContainer}>
-						<Text style={styles.frequencyMapTitle}>YOUR FREQUENCIES MAP</Text>
-						<View style={styles.mapContainer}>
-							{/* Top Center - Position 0 (Highest) */}
-							<View style={styles.mapRow}>
-								<View style={styles.mapItemCenter}>
-									<Image
-										style={styles.mapFrequencyImage}
-										src={getFrequencyImageUrl(allFrequencies[0].name)}
-									/>
-									<Text style={styles.mapFrequencyLabel}>
-										{allFrequencies[0].name} | {allFrequencies[0].value}
-									</Text>
-								</View>
-							</View>
-
-							{/* Top Row - Positions 1 & 2 */}
-							<View style={styles.mapRow}>
-								<View style={styles.mapItemLeft}>
-									<Image
-										style={styles.mapFrequencyImage}
-										src={getFrequencyImageUrl(allFrequencies[1].name)}
-									/>
-									<Text style={styles.mapFrequencyLabel}>
-										{allFrequencies[1].value} | {allFrequencies[1].name}
-									</Text>
-								</View>
-								<View style={styles.mapItemRight}>
-									<Image
-										style={styles.mapFrequencyImage}
-										src={getFrequencyImageUrl(allFrequencies[2].name)}
-									/>
-									<Text style={styles.mapFrequencyLabel}>
-										{allFrequencies[2].name} | {allFrequencies[2].value}
-									</Text>
-								</View>
-							</View>
-
-							{/* Upward Triangle */}
-							<View style={[styles.mapTriangle, styles.mapTriangleUp]} />
-
-							{/* Middle Center - Position 3 */}
-							<View style={styles.mapRow}>
-								<View style={styles.mapItemCenter}>
-									<Image
-										style={styles.mapFrequencyImage}
-										src={getFrequencyImageUrl(allFrequencies[3].name)}
-									/>
-									<Text style={styles.mapFrequencyLabel}>
-										{allFrequencies[3].name} | {allFrequencies[3].value}
-									</Text>
-								</View>
-							</View>
-
-							{/* Downward Triangle */}
-							<View style={[styles.mapTriangle, styles.mapTriangleDown]} />
-
-							{/* Bottom Row - Positions 4 & 5 */}
-							<View style={styles.mapRow}>
-								<View style={styles.mapItemLeft}>
-									<Image
-										style={styles.mapFrequencyImage}
-										src={getFrequencyImageUrl(allFrequencies[4].name)}
-									/>
-									<Text style={styles.mapFrequencyLabel}>
-										{allFrequencies[4].value} | {allFrequencies[4].name}
-									</Text>
-								</View>
-								<View style={styles.mapItemRight}>
-									<Image
-										style={styles.mapFrequencyImage}
-										src={getFrequencyImageUrl(allFrequencies[5].name)}
-									/>
-									<Text style={styles.mapFrequencyLabel}>
-										{allFrequencies[5].name} | {allFrequencies[5].value}
-									</Text>
-								</View>
-							</View>
-
-							{/* Bottom Center - Position 6 (Lowest) */}
-							<View style={styles.mapRow}>
-								<View style={styles.mapItemCenter}>
-									<Image
-										style={styles.mapFrequencyImage}
-										src={getFrequencyImageUrl(allFrequencies[6].name)}
-									/>
-									<Text style={styles.mapFrequencyLabel}>
-										{allFrequencies[6].name} | {allFrequencies[6].value}
-									</Text>
-								</View>
-							</View>
-						</View>
-						<Text style={styles.mapFooterNote}>
-							*All scores are out of a maximum of 60
-						</Text>
-					</View>
 				</Page>
 			)}
 		</Document>

@@ -340,6 +340,17 @@ a {
 	--sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Dark mode autofill styling */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 30px oklch(0.24 0 0) inset !important;
+	-webkit-text-fill-color: oklch(0.985 0 0) !important;
+	caret-color: oklch(0.985 0 0) !important;
+	transition: background-color 5000s ease-in-out 0s;
+}
+
 @layer base {
 	* {
 		@apply border-border outline-ring/50;

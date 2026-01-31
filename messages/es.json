@@ -1,47 +1,132 @@
 {
-  "$schema": "https://inlang.com/schema/inlang-message-format",
-  "welcome": "Bienvenido a La Arena de Campeones",
-  "quiz": {
-    "start": "Comenzar Cuestionario",
-    "next": "Siguiente",
-    "previous": "Anterior",
-    "submit": "Enviar",
-    "question": "Pregunta {number}",
-    "greeting": {
-      "title": "POR FAVOR AGREGUE DATOS ADICIONALES",
-      "subtitle": "PARA ACCEDER A LA EVALUACIÓN",
-      "licenseCodePlaceholder": "CÓDIGO DE LICENCIA*",
-      "firstNamePlaceholder": "NOMBRE*",
-      "lastNamePlaceholder": "APELLIDO*",
-      "emailPlaceholder": "CORREO ELECTRÓNICO*",
-      "agreeToEmail": "Acepto recibir los resultados del cuestionario por correo electrónico",
-      "startQuiz": "COMENZAR CUESTIONARIO",
-      "validation": {
-        "licenseRequired": "El código de licencia es requerido",
-        "licenseInvalid": "Este código de licencia es inválido o ya fue utilizado.",
-        "licenseLength": "El código de licencia debe tener exactamente 6 caracteres.",
-        "licenseError": "Error al validar el código de licencia. Por favor intente nuevamente.",
-        "firstNameRequired": "El nombre es requerido",
-        "lastNameRequired": "El apellido es requerido",
-        "emailRequired": "El correo electrónico es requerido",
-        "emailInvalid": "Por favor ingrese un correo electrónico válido"
-      }
-    },
-    "results": {
-      "title": "Tus Resultados",
-      "archetype": "Tu Arquetipo",
-      "download": "Descargar Resultados"
-    }
-  },
-  "navigation": {
-    "home": "Inicio",
-    "quiz": "Cuestionario",
-    "about": "Acerca de",
-    "contact": "Contacto"
-  },
-  "common": {
-    "loading": "Cargando...",
-    "error": "Ocurrió un error",
-    "tryAgain": "Intentar de Nuevo"
-  }
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"welcome": "Bienvenido a La Arena de Campeones",
+	"home": {
+		"title": "ENCUENTRA TU FRECUENCIA",
+		"subtitle": "LAS SIETE FRECUENCIAS DE LA COMUNICACIÓN"
+	},
+	"quiz": {
+		"start": "Comenzar Cuestionario",
+		"next": "Siguiente",
+		"previous": "Anterior",
+		"submit": "Enviar",
+		"question": "Pregunta {number}",
+		"stronglyDisagree": "TOTALMENTE EN DESACUERDO",
+		"stronglyAgree": "TOTALMENTE DE ACUERDO",
+		"back": "ATRÁS",
+		"moreInfo": "Más Información",
+		"greeting": {
+			"title": "POR FAVOR AGREGA INFORMACIÓN ADICIONAL",
+			"subtitle": "PARA ACCEDER A LA EVALUACIÓN",
+			"licenseCodePlaceholder": "CANJEAR CÓDIGO DE LICENCIA*",
+			"firstNamePlaceholder": "NOMBRE*",
+			"lastNamePlaceholder": "APELLIDO*",
+			"emailPlaceholder": "CORREO ELECTRÓNICO*",
+			"agreeToEmail": "Acepto recibir los resultados de mi cuestionario por correo electrónico proporcionado en el formulario",
+			"startQuiz": "INICIAR LA EVALUACIÓN",
+			"validation": {
+				"licenseRequired": "El código de licencia es requerido",
+				"licenseInvalid": "Este código de licencia es inválido o ya fue utilizado.",
+				"licenseLength": "El código de licencia debe tener exactamente 6 caracteres.",
+				"licenseError": "Error al validar el código de licencia. Por favor intente nuevamente.",
+				"firstNameRequired": "El nombre es requerido",
+				"lastNameRequired": "El apellido es requerido",
+				"emailRequired": "El correo electrónico es requerido",
+				"emailInvalid": "Por favor ingrese un correo electrónico válido"
+			}
+		},
+		"results": {
+			"title": "Tus Resultados",
+			"archetype": "Tu Arquetipo",
+			"download": "Descargar Resultados"
+		},
+		"footer": {
+			"author": "Por Erwin Raphael McManus"
+		}
+	},
+	"results": {
+		"noResults": "No Se Encontraron Resultados",
+		"completeQuizFirst": "Por favor completa el cuestionario primero para ver tus resultados.",
+		"takeQuiz": "Tomar el Cuestionario",
+		"moreInfo": "Más Información",
+		"congratulations": "¡Felicidades!",
+		"emailResults": "¡LOS RESULTADOS DE TU FRECUENCIA DE COMUNICACIÓN TE SERÁN ENVIADOS POR CORREO ELECTRÓNICO!",
+		"downloadResults": "Descargar Resultados"
+	},
+	"navigation": {
+		"home": "Inicio",
+		"quiz": "Cuestionario",
+		"about": "Acerca de",
+		"contact": "Contacto"
+	},
+	"common": {
+		"loading": "Cargando...",
+		"loadingQuiz": "Cargando cuestionario...",
+		"loadingQuestions": "Cargando preguntas...",
+		"calculatingResults": "Calculando tus resultados...",
+		"loadingResults": "Cargando resultados...",
+		"error": "Ocurrió un error",
+		"tryAgain": "Intentar de Nuevo",
+		"dismiss": "Descartar"
+	},
+	"frequencies": {
+		"Maven": "Cuando te comunicas con esta frecuencia, transmites una nueva realidad y generas cambios de paradigma en los demás. Los Maven son atípicos e iconoclastas, cuyas cosmovisiones revolucionarias pueden ser vistas por algunos como heréticas o transgresoras.",
+		"Challenger": "Cuando te comunicas con esta frecuencia, transmites valentía y despiertas un llamado en los demás. Los Retadores son persuasivos, dinámicos y no temen la confrontación para lograr resultados.",
+		"Commander": "Cuando te comunicas con esta frecuencia, transmites confianza y brindas dirección a los demás. Los Comandantes son autoritarios, claros y dirigen a otros con seguridad para ejecutar objetivos.",
+		"Motivator": "Cuando te comunicas desde esta frecuencia, transmites energía e infundes confianza en los demás. Los Motivadores son positivos, alentadores y entusiastas defensores de los sueños y las metas de otros.",
+		"Seer": "Cuando te comunicas con esta frecuencia, transmites visión y generas innovación en los demás. Los Visionarios son originales, pioneros y dirigen el enfoque de otros lejos de los logros del pasado hacia las posibilidades futuras.",
+		"Professor": "Cuando te comunicas con esta frecuencia, transmites conocimiento y aseguras competencia en los demás. Los Profesores son instructivos, mentores y usan los datos como la columna vertebral de su cosmovisión y sus ideas.",
+		"Healer": "Cuando te comunicas con esta frecuencia, transmites aceptación y extiendes plenitud a los demás. Los Sanadores son terapéuticos, intencionales y capaces de hablar a las heridas y al quebranto de quienes los rodean."
+	},
+	"upgrade": {
+		"verifying": "Verificando tu actualización...",
+		"verificationPending": "Verificación Pendiente",
+		"verificationPendingMessage": "No pudimos verificar tu actualización aún. Esto puede tomar unos momentos. Por favor intenta actualizar la página.",
+		"refreshPage": "Actualizar Página",
+		"returnHome": "Volver al Inicio",
+		"backToResults": "Volver a Resultados",
+		"successful": "¡Actualización Exitosa!",
+		"accessAll": "Ahora tienes acceso a las 7 frecuencias. Descarga tu reporte completo a continuación.",
+		"accessTop": "Ahora tienes acceso a las {count} frecuencias principales. Descarga tu reporte completo a continuación.",
+		"newTier": "Nuevo Nivel",
+		"tier": "Nivel {n}",
+		"upgradedOn": "Actualizado El",
+		"generating": "Generando...",
+		"downloadCompleteReport": "Descargar Reporte Completo",
+		"viewResults": "Ver Resultados",
+		"emailNote": "Tu reporte completo también será enviado a tu correo electrónico. ¡Revisa tu bandeja de entrada!",
+		"invalidSession": "Sesión inválida. Por favor contacta soporte.",
+		"upgradeSuccessToast": "¡Actualización exitosa! Ahora puedes descargar tu reporte completo.",
+		"paymentProcessing": "El pago aún se está procesando. Por favor espera un momento y actualiza.",
+		"verificationFailed": "La verificación de actualización falló. Por favor contacta soporte.",
+		"unableToVerify": "No se pudo verificar la actualización. Por favor contacta soporte.",
+		"quizNotFound": "Resultados del cuestionario no encontrados. Por favor contacta soporte.",
+		"reportDownloaded": "¡Tu reporte completo ha sido descargado!",
+		"pdfFailed": "Error al generar el PDF. Por favor intenta de nuevo."
+	},
+	"pdf": {
+		"greeting": "¡Hola {firstName} {lastName}!",
+		"resultsIntro": "Tus resultados de las Siete Frecuencias:",
+		"thisIsThe": "Esta es la",
+		"theseAreThe": "Estas son las",
+		"top": "principal",
+		"topTwo": "dos principales",
+		"topThree": "tres principales",
+		"topN": "{count} principales",
+		"frequency": "frecuencia",
+		"frequencyPlural": "frecuencias",
+		"mainParagraph1": "de comunicación que utilizas y a las que accedes de forma más natural; sin embargo, cada una de las Siete Frecuencias puede convertirse, con el tiempo, en parte de tu caja de herramientas de comunicación.",
+		"primaryFrequencyIntro": "Tu frecuencia #1 es lo que llamamos tu frecuencia central o frecuencia primaria. Descubrir el poder y el potencial de tu frecuencia primaria revolucionará la manera en cómo impactas al mundo que te rodea.",
+		"workbookIntro": "Por eso hemos creado un cuaderno de trabajo especialmente para tu frecuencia.",
+		"downloadWorkbook": "DESCARGAR CUADERNO DE TRABAJO",
+		"workbookInsights": "Los aprendizajes y aplicaciones del cuaderno de trabajo te darán una comprensión integral de cómo utilizar tu frecuencia para convertirte en un mejor orador, líder, autor, padre o madre, pareja o miembro de un equipo.",
+		"visitUsPrefix": "Visítanos en",
+		"visitUsSuffix": "para conocer más sobre Las Siete Frecuencias.",
+		"learnMore": "Conoce más sobre Las Siete Frecuencias en el libro Las Siete Frecuencias de la Comunicación: El Lenguaje Oculto de la Comunicación Humana de Erwin Raphael McManus.",
+		"buyItNow": "¡Cómpralo ahora!",
+		"buyTheBook": "COMPRAR EL LIBRO",
+		"signature": "- El equipo de las Siete Frecuencias",
+		"ps": "PD: Si tienes alguna pregunta sobre tus resultados personales o deseas ayuda para llevar Siete Frecuencias a tu equipo o lugar de trabajo, contáctanos aquí.",
+		"contactUs": "Contáctanos:"
+	}
 }

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocaleNavigate } from '../hooks/useLocaleNavigate'
 import GreetingForm from '../components/quiz/GreetingForm'
 import useQuizStore from '../stores/quizStore'
 
@@ -13,7 +13,7 @@ interface FormData {
 }
 
 const QuizStart = () => {
-	const navigate = useNavigate()
+	const navigate = useLocaleNavigate()
 	const setUserData = useQuizStore((state) => state.setUserData)
 	const resetQuiz = useQuizStore((state) => state.resetQuiz)
 

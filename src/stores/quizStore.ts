@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 import * as m from '../paraglide/messages'
+import { getLocale } from '../paraglide/runtime'
 import { apiService } from '../services/api'
 import { trackEvent } from '../services/posthog'
 import type {
@@ -54,7 +55,8 @@ const useQuizStore = create<QuizState>()(
 				fetchQuestions: async () => {
 					set({ isLoading: true, error: null })
 					try {
-						const questions = await apiService.getQuestions()
+						const locale = getLocale()
+						const questions = await apiService.getQuestions(locale)
 						// Reset answers when fetching new questions to prevent stale data
 						set({
 							questions,
@@ -145,7 +147,7 @@ const useQuizStore = create<QuizState>()(
 
 					try {
 						const response = await apiService.submitQuizResponse({
-							userData,
+							userData: { ...userData, locale: getLocale() },
 							answers: validAnswers,
 						})
 

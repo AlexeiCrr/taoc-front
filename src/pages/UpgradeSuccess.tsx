@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams, Link } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import LocaleLink from '../components/LocaleLink'
 import { CheckCircle, Download, ArrowLeft, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { pdf } from '@react-pdf/renderer'
@@ -9,6 +10,7 @@ import { getUpgradeStatus } from '../services/stripeService'
 import { trackEvent } from '../services/posthog'
 import useQuizStore from '../stores/quizStore'
 import LoadingSpinner from '../components/common/LoadingSpinner'
+import * as m from '../paraglide/messages'
 
 /**
  * Post-payment success page.
@@ -29,7 +31,7 @@ export function UpgradeSuccess() {
 	useEffect(() => {
 		async function verifyUpgrade() {
 			if (!sessionId) {
-				toast.error('Invalid session. Please contact support.')
+				toast.error(m['upgrade.invalidSession']())
 				setIsVerifying(false)
 				return
 			}
@@ -51,20 +53,20 @@ export function UpgradeSuccess() {
 					})
 
 					toast.success(
-						'Upgrade successful! You can now download your complete report.'
+						m['upgrade.upgradeSuccessToast']()
 					)
 				} else if (status.status === 'pending') {
 					toast.info(
-						'Payment is still processing. Please wait a moment and refresh.'
+						m['upgrade.paymentProcessing']()
 					)
 				} else {
 					toast.error(
-						'Upgrade verification failed. Please contact support.'
+						m['upgrade.verificationFailed']()
 					)
 				}
 			} catch (error) {
 				console.error('Verification error:', error)
-				toast.error('Unable to verify upgrade. Please contact support.')
+				toast.error(m['upgrade.unableToVerify']())
 			} finally {
 				setIsVerifying(false)
 			}
@@ -75,7 +77,7 @@ export function UpgradeSuccess() {
 
 	const handleDownload = async () => {
 		if (!quizResponse) {
-			toast.error('Quiz results not found. Please contact support.')
+			toast.error(m['upgrade.quizNotFound']())
 			return
 		}
 
@@ -100,10 +102,10 @@ export function UpgradeSuccess() {
 				tier: upgradeData?.newTier,
 			})
 
-			toast.success('Your complete report has been downloaded!')
+			toast.success(m['upgrade.reportDownloaded']())
 		} catch (error) {
 			console.error('Error generating PDF:', error)
-			toast.error('Failed to generate PDF. Please try again.')
+			toast.error(m['upgrade.pdfFailed']())
 		} finally {
 			setIsGenerating(false)
 		}
@@ -115,7 +117,7 @@ export function UpgradeSuccess() {
 				<div className="text-center">
 					<Loader2 className="w-12 h-12 animate-spin text-main mx-auto mb-4" />
 					<p className="text-main font-family-helvetica">
-						Verifying your upgrade...
+						{m['upgrade.verifying']()}
 					</p>
 				</div>
 			</div>
@@ -131,11 +133,10 @@ export function UpgradeSuccess() {
 							<span className="text-3xl">!</span>
 						</div>
 						<h1 className="text-2xl font-bold text-main mb-2 uppercase">
-							Verification Pending
+							{m['upgrade.verificationPending']()}
 						</h1>
 						<p className="text-main font-family-helvetica mb-6">
-							We couldn&apos;t verify your upgrade yet. This may
-							take a few moments. Please try refreshing the page.
+							{m['upgrade.verificationPendingMessage']()}
 						</p>
 						{sessionId && (
 							<p className="text-xs text-gray-500 mb-6 font-mono bg-gray-100 p-2 rounded break-all">
@@ -148,16 +149,16 @@ export function UpgradeSuccess() {
 								variant="primary"
 								className="w-full flex justify-center"
 							>
-								Refresh Page
+								{m['upgrade.refreshPage']()}
 							</QuizButton>
-							<Link to="/" className="block">
+							<LocaleLink to="/" className="block">
 								<QuizButton
 									variant="primary-outline"
 									className="w-full flex justify-center"
 								>
-									Return Home
+									{m['upgrade.returnHome']()}
 								</QuizButton>
-							</Link>
+							</LocaleLink>
 						</div>
 					</div>
 				</div>
@@ -170,15 +171,15 @@ export function UpgradeSuccess() {
 		<div className="min-h-screen flex flex-col bg-off-white">
 			{/* Header */}
 			<header className="flex items-center justify-between p-4 lg:p-6">
-				<Link
+				<LocaleLink
 					to="/results"
 					className="text-main hover:opacity-70 transition-opacity flex items-center gap-2"
 				>
 					<ArrowLeft className="w-5 h-5" />
 					<span className="uppercase tracking-wide text-sm font-semibold">
-						Back to Results
+						{m['upgrade.backToResults']()}
 					</span>
-				</Link>
+				</LocaleLink>
 			</header>
 
 			{/* Main Content */}
@@ -194,15 +195,13 @@ export function UpgradeSuccess() {
 
 					{/* Heading */}
 					<h1 className="text-2xl font-bold text-main mb-3 uppercase tracking-wide">
-						Upgrade Successful!
+						{m['upgrade.successful']()}
 					</h1>
 
 					<p className="text-main font-family-helvetica mb-8">
-						You now have access to{' '}
 						{upgradeData.newTier === 7
-							? 'all 7'
-							: `the top ${upgradeData.newTier}`}{' '}
-						frequencies. Download your complete report below.
+							? m['upgrade.accessAll']()
+							: m['upgrade.accessTop']({ count: String(upgradeData.newTier) })}
 					</p>
 
 					{/* Upgrade Details */}
@@ -210,15 +209,15 @@ export function UpgradeSuccess() {
 						<div className="grid grid-cols-2 gap-4 text-center">
 							<div>
 								<p className="text-sm text-gray-500 mb-1 uppercase tracking-wide">
-									New Tier
+									{m['upgrade.newTier']()}
 								</p>
 								<p className="text-2xl font-bold text-main">
-									Tier {upgradeData.newTier}
+									{m['upgrade.tier']({ n: String(upgradeData.newTier) })}
 								</p>
 							</div>
 							<div>
 								<p className="text-sm text-gray-500 mb-1 uppercase tracking-wide">
-									Upgraded On
+									{m['upgrade.upgradedOn']()}
 								</p>
 								<p className="text-lg font-semibold text-main">
 									{new Date(
@@ -241,31 +240,30 @@ export function UpgradeSuccess() {
 							{isGenerating ? (
 								<>
 									<LoadingSpinner size="sm" />
-									<span>Generating...</span>
+									<span>{m['upgrade.generating']()}</span>
 								</>
 							) : (
 								<>
 									<Download className="w-5 h-5" />
-									<span>Download Complete Report</span>
+									<span>{m['upgrade.downloadCompleteReport']()}</span>
 								</>
 							)}
 						</QuizButton>
 
-						<Link to="/results" className="block">
+						<LocaleLink to="/results" className="block">
 							<QuizButton
 								variant="primary-outline"
 								className="w-full flex justify-center items-center gap-2"
 							>
 								<ArrowLeft className="w-5 h-5" />
-								<span>View Results</span>
+								<span>{m['upgrade.viewResults']()}</span>
 							</QuizButton>
-						</Link>
+						</LocaleLink>
 					</div>
 
 					{/* Footer Note */}
 					<p className="mt-6 text-sm text-gray-500 font-family-helvetica">
-						Your complete report will also be emailed to you. Check
-						your inbox!
+						{m['upgrade.emailNote']()}
 					</p>
 				</div>
 			</main>

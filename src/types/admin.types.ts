@@ -7,6 +7,7 @@ export interface AdminResponse {
   createdOn: string;
   licenseCode?: string;
   licenseTier?: number;
+  locale?: string;
   quizStartedAt?: Date;
   frequencies: FrequencyMap;
   answers?: Answer[];
@@ -97,11 +98,18 @@ export interface TimeSpentStatistics {
   timeByFrequency: TimeByFrequency[]
 }
 
+export interface LanguageStatistic {
+  locale: string
+  userCount: number
+  percentage: number
+}
+
 export interface StatisticsResponse {
   frequencyAverageScores: FrequencyAverageScore[]
   frequencyUserCounts: FrequencyUserCount[]
   timeSpentStatistics: TimeSpentStatistics
   monthlyUserStatistics: MonthlyTrendData[]
+  languageStatistics: LanguageStatistic[]
 }
 
 export interface MonthlyTrendData {

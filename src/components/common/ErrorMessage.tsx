@@ -1,4 +1,5 @@
 import { CrossCircledIcon } from '@radix-ui/react-icons'
+import * as m from '../../paraglide/messages'
 
 interface ErrorMessageProps {
 	message: string
@@ -17,7 +18,7 @@ export default function ErrorMessage({
 				<CrossCircledIcon className="w-5 h-5 text-red-400 mt-0.5" />
 				<div className="ml-3 flex-1">
 					<h3 className="text-sm font-medium text-red-800">
-						An error occurred
+						{m['common.error']()}
 					</h3>
 					<p className="mt-1 text-sm text-red-700">{message}</p>
 					<div className="mt-3 flex space-x-3">
@@ -26,7 +27,7 @@ export default function ErrorMessage({
 								onClick={onRetry}
 								className="text-sm font-medium text-red-600 hover:text-red-500 transition-colors"
 							>
-								Try again
+								{m['common.tryAgain']()}
 							</button>
 						)}
 						{onDismiss && (
@@ -34,7 +35,7 @@ export default function ErrorMessage({
 								onClick={onDismiss}
 								className="text-sm font-medium text-gray-600 hover:text-gray-500 transition-colors"
 							>
-								Dismiss
+								{m['common.dismiss']()}
 							</button>
 						)}
 					</div>

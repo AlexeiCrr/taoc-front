@@ -1,12 +1,20 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"welcome": "Welcome to The Arena of Champions",
+	"home": {
+		"title": "FIND YOUR FREQUENCY",
+		"subtitle": "THE SEVEN FREQUENCIES OF COMMUNICATION"
+	},
 	"quiz": {
 		"start": "Start the assessment",
 		"next": "Next",
 		"previous": "Previous",
 		"submit": "Submit",
 		"question": "Question {number}",
+		"stronglyDisagree": "STRONGLY DISAGREE",
+		"stronglyAgree": "STRONGLY AGREE",
+		"back": "BACK",
+		"moreInfo": "More Info",
 		"greeting": {
 			"title": "PLEASE ADD ADDITIONAL DATA",
 			"subtitle": "TO ACCESS THE ASSESSMENT",
@@ -31,7 +39,19 @@
 			"title": "Your Results",
 			"archetype": "Your Archetype",
 			"download": "Download Results"
+		},
+		"footer": {
+			"author": "By Erwin Raphael McManus"
 		}
+	},
+	"results": {
+		"noResults": "No Results Found",
+		"completeQuizFirst": "Please complete the quiz first to see your results.",
+		"takeQuiz": "Take the Quiz",
+		"moreInfo": "More Info",
+		"congratulations": "Congratulations!",
+		"emailResults": "Your communication frequency results will be emailed to you!",
+		"downloadResults": "Download Results"
 	},
 	"navigation": {
 		"home": "Home",
@@ -41,8 +61,13 @@
 	},
 	"common": {
 		"loading": "Loading...",
+		"loadingQuiz": "Loading quiz...",
+		"loadingQuestions": "Loading questions...",
+		"calculatingResults": "Calculating your results...",
+		"loadingResults": "Loading results...",
 		"error": "An error occurred",
-		"tryAgain": "Try Again"
+		"tryAgain": "Try Again",
+		"dismiss": "Dismiss"
 	},
 	"frequencies": {
 		"Maven": "When you communicate with this frequency, you transmit a new reality and create paradigm shifts in others. Mavens are outliers and iconoclasts whose revolutionary worldviews can be seen by some as heretical or violating.",
@@ -52,5 +77,56 @@
 		"Seer": "When you communicate with this frequency, you transmit vision and generate innovation in others. Seers are originative, pioneering, and direct the focus of others away from past achievements to future possibilities.",
 		"Professor": "When you communicate with this frequency, you transmit knowledge and assure competency in others. Professors are instructive, mentoring, and use data as the backbone for their worldview and ideas.",
 		"Healer": "When you communicate with this frequency, you transmit acceptance and extend wholeness to others. Healers are therapeutic, intentional, and capable of speaking into the wounding and brokenness in those around them."
+	},
+	"upgrade": {
+		"verifying": "Verifying your upgrade...",
+		"verificationPending": "Verification Pending",
+		"verificationPendingMessage": "We couldn't verify your upgrade yet. This may take a few moments. Please try refreshing the page.",
+		"refreshPage": "Refresh Page",
+		"returnHome": "Return Home",
+		"backToResults": "Back to Results",
+		"successful": "Upgrade Successful!",
+		"accessAll": "You now have access to all 7 frequencies. Download your complete report below.",
+		"accessTop": "You now have access to the top {count} frequencies. Download your complete report below.",
+		"newTier": "New Tier",
+		"tier": "Tier {n}",
+		"upgradedOn": "Upgraded On",
+		"generating": "Generating...",
+		"downloadCompleteReport": "Download Complete Report",
+		"viewResults": "View Results",
+		"emailNote": "Your complete report will also be emailed to you. Check your inbox!",
+		"invalidSession": "Invalid session. Please contact support.",
+		"upgradeSuccessToast": "Upgrade successful! You can now download your complete report.",
+		"paymentProcessing": "Payment is still processing. Please wait a moment and refresh.",
+		"verificationFailed": "Upgrade verification failed. Please contact support.",
+		"unableToVerify": "Unable to verify upgrade. Please contact support.",
+		"quizNotFound": "Quiz results not found. Please contact support.",
+		"reportDownloaded": "Your complete report has been downloaded!",
+		"pdfFailed": "Failed to generate PDF. Please try again."
+	},
+	"pdf": {
+		"greeting": "Hello {firstName} {lastName}!",
+		"resultsIntro": "Your Seven Frequencies results:",
+		"thisIsThe": "This is the",
+		"theseAreThe": "These are the",
+		"top": "top",
+		"topTwo": "top two",
+		"topThree": "top three",
+		"topN": "top {count}",
+		"frequency": "frequency",
+		"frequencyPlural": "frequencies",
+		"mainParagraph1": "you utilize and access most naturally, but each of the Seven Frequencies can become a part of your communication toolkit over time.",
+		"primaryFrequencyIntro": "Your #1 frequency is what we call your core or primary frequency. Discovering the power and potential of your primary frequency will revolutionize how you impact the world around you.",
+		"workbookIntro": "This is why we've created a unique workbook just for your frequency.",
+		"downloadWorkbook": "Download Workbook",
+		"workbookInsights": "The workbook insights and applications will give you a comprehensive understanding of how to utilize your frequency to become a better speaker, leader, author, parent, partner, or teammate.",
+		"visitUsPrefix": "Visit us at",
+		"visitUsSuffix": "to find out more about the Seven Frequencies.",
+		"learnMore": "Learn more about the Seven Frequencies in The Seven Frequencies of Communication: The Hidden Language of Human Connection book by Erwin Raphael McManus.",
+		"buyItNow": "Buy It Now!",
+		"buyTheBook": "BUY THE BOOK",
+		"signature": "- The Seven Frequencies Team",
+		"ps": "PS: If you have any questions about your personal results or want assistance bringing the Seven Frequencies to your team or workplace, reach out to us here!",
+		"contactUs": "Contact us:"
 	}
 }

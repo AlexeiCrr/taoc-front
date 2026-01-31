@@ -136,8 +136,10 @@ export const handleApiError = (error: unknown): string => {
 }
 
 export const apiService = {
-	getQuestions: async (): Promise<Question[]> => {
-		return await publicApi.get('questions').json()
+	getQuestions: async (locale: string = 'en'): Promise<Question[]> => {
+		return await publicApi.get('questions', {
+			searchParams: { locale },
+		}).json()
 	},
 
 	submitQuizResponse: async (

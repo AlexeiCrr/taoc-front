@@ -1,13 +1,14 @@
 import { pdf } from '@react-pdf/renderer'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocaleNavigate } from '../hooks/useLocaleNavigate'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import { QuizButton, QuizFooter } from '../components/quiz'
 import { ResultsPDF } from '../components/quiz/ResultsPDF'
 import useQuizStore from '../stores/quizStore'
+import * as m from '../paraglide/messages'
 
 export const Results = () => {
-	const navigate = useNavigate()
+	const navigate = useLocaleNavigate()
 	const { quizResponse } = useQuizStore()
 	const [isGenerating, setIsGenerating] = useState(false)
 
@@ -30,7 +31,7 @@ export const Results = () => {
 			URL.revokeObjectURL(url)
 		} catch (error) {
 			console.error('Error generating PDF:', error)
-			alert('Failed to generate PDF. Please try again.')
+			alert(m['upgrade.pdfFailed']())
 		} finally {
 			setTimeout(() => {
 				setIsGenerating(false)
@@ -43,16 +44,16 @@ export const Results = () => {
 			<div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
 				<div className="text-center max-w-md">
 					<h2 className="text-2xl font-bold text-main mb-4">
-						No Results Found
+						{m['results.noResults']()}
 					</h2>
 					<p className="text-lg text-main mb-6">
-						Please complete the quiz first to see your results.
+						{m['results.completeQuizFirst']()}
 					</p>
 					<button
 						onClick={() => navigate('/')}
 						className="bg-main text-off-white px-8 py-3 rounded-md text-lg font-semibold uppercase hover:opacity-80 transition-opacity"
 					>
-						Take the Quiz
+						{m['results.takeQuiz']()}
 					</button>
 				</div>
 			</div>
@@ -92,7 +93,7 @@ export const Results = () => {
 					rel="noopener noreferrer"
 					className="text-main font-semibold uppercase tracking-wider hover:opacity-70 transition-opacity"
 				>
-					More Info
+					{m['results.moreInfo']()}
 				</a>
 			</header>
 
@@ -100,11 +101,11 @@ export const Results = () => {
 			<main className="flex-1 flex items-center justify-center p-6 lg:p-8">
 				<div className="max-w-2xl w-full text-center">
 					<h1 className=" font-bold text-main mb-4 uppercase">
-						Congratulations!
+						{m['results.congratulations']()}
 					</h1>
 
 					<p className="text-base font-family-helvetica text-main mb-8 uppercase">
-						Your communication frequency results will be emailed to you!
+						{m['results.emailResults']()}
 					</p>
 
 					<QuizButton
@@ -114,7 +115,7 @@ export const Results = () => {
 						variant="primary"
 						className="flex justify-center items-center flex-nowrap w-[240px]"
 					>
-						{isGenerating ? <LoadingSpinner size="sm" /> : 'Download Results'}
+						{isGenerating ? <LoadingSpinner size="sm" /> : m['results.downloadResults']()}
 					</QuizButton>
 
 					{/* Upgrade Upsell - show if user has room to upgrade */}

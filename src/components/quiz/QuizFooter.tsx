@@ -1,4 +1,5 @@
 import type { FC } from 'react'
+import * as m from '../../paraglide/messages'
 
 interface QuizFooterProps {
 	inverted?: boolean
@@ -12,7 +13,7 @@ const QuizFooter: FC<QuizFooterProps> = ({ inverted = false }) => {
 	const textColor = inverted ? 'text-main' : 'text-off-white'
 
 	return (
-		<footer className="quiz-footer w-full p-4 lg:p-6 flex max-lg:flex-col max-lg:gap-3 items-center justify-between backdrop-blur-sm">
+		<footer className="quiz-footer w-full p-4 lg:p-6 flex max-md:flex-col max-lg:gap-3 items-center justify-between backdrop-blur-sm">
 			{/* Mobile Logos Container - visible on mobile */}
 			<div className="mobile-logos flex items-center gap-4 md:hidden">
 				<img src={logoSrc} alt="Logo" className="logo-footer h-8 w-auto" />
@@ -34,7 +35,7 @@ const QuizFooter: FC<QuizFooterProps> = ({ inverted = false }) => {
 			<p
 				className={`footer-text ${textColor} text-xs font-helvetica uppercase tracking-wider`}
 			>
-				By Erwin Raphael McManus
+				{m['quiz.footer.author']()}
 			</p>
 
 			{/* Desktop Right Logo - visible on desktop */}

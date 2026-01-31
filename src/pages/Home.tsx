@@ -1,4 +1,5 @@
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import LocaleLink from '../components/LocaleLink'
 import HeroSection from '../components/quiz/HeroSection'
 import QuizLayout from '../components/quiz/QuizLayout'
 import * as m from '../paraglide/messages'
@@ -8,7 +9,7 @@ const Home = () => {
 		const [searchParams] = useSearchParams()
 
 		return (
-			<Link
+			<LocaleLink
 				to={{
 					pathname: '/quiz-start',
 					search: searchParams.toString(),
@@ -16,7 +17,7 @@ const Home = () => {
 				className="inline-block transition-all duration-300 uppercase leading-none cursor-pointer border border-off-white text-off-white hover:bg-off-white hover:text-main px-8 py-4 text-base max-lg:w-full"
 			>
 				{m['quiz.start']()}
-			</Link>
+			</LocaleLink>
 		)
 	}
 
@@ -29,8 +30,8 @@ const Home = () => {
 
 			<div className="flex-1 flex items-center justify-center px-4 lg:px-8">
 				<HeroSection
-					title="FIND YOUR FREQUENCY"
-					subtitle="THE SEVEN FREQUENCIES OF COMMUNICATION"
+					title={m['home.title']()}
+					subtitle={m['home.subtitle']()}
 				>
 					<LocationPreservingLink />
 				</HeroSection>

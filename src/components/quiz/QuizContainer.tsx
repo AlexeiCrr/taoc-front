@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocaleNavigate } from '../../hooks/useLocaleNavigate'
+import * as m from '../../paraglide/messages'
 import { identifyUser, trackEvent } from '../../services/posthog'
 import useQuizStore from '../../stores/quizStore'
 import type { UserData } from '../../types/quiz.types'
@@ -10,7 +11,7 @@ import QuestionCard from './QuestionCard'
 import QuizProgressBar from './QuizProgressBar'
 
 export default function QuizContainer() {
-	const navigate = useNavigate()
+	const navigate = useLocaleNavigate()
 	const {
 		userData,
 		currentQuestion,
@@ -72,7 +73,6 @@ export default function QuizContainer() {
 		const isLastQuestion = currentQuestionIndex === questions.length - 1
 
 		if (isLastQuestion) {
-			// Submit the quiz
 			submitQuiz()
 		} else {
 			// Go to next question with animation
@@ -97,7 +97,7 @@ export default function QuizContainer() {
 	if (isLoading && !userData) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
-				<LoadingSpinner message="Loading quiz..." />
+				<LoadingSpinner message={m['common.loadingQuiz']()} />
 			</div>
 		)
 	}
@@ -124,7 +124,7 @@ export default function QuizContainer() {
 	if (isLoading && questions.length === 0) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
-				<LoadingSpinner message="Loading questions..." />
+				<LoadingSpinner message={m['common.loadingQuestions']()} />
 			</div>
 		)
 	}
@@ -132,7 +132,7 @@ export default function QuizContainer() {
 	if (isLoading && userData) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
-				<LoadingSpinner message="Calculating your results..." size="lg" />
+				<LoadingSpinner message={m['common.calculatingResults']()} size="lg" />
 			</div>
 		)
 	}
@@ -140,7 +140,7 @@ export default function QuizContainer() {
 	if (quizResponse) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
-				<LoadingSpinner message="Loading results..." />
+				<LoadingSpinner message={m['common.loadingResults']()} />
 			</div>
 		)
 	}

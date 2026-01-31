@@ -388,7 +388,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 							name="agreeToEmail"
 							checked={formData.agreeToEmail}
 							onChange={handleInputChange}
-							className="quiz-checkbox"
+							className="quiz-checkbox shrink-0"
 						/>
 						<label htmlFor="agreeToEmail" className="quiz-checkbox-label">
 							{m['quiz.greeting.agreeToEmail']()}

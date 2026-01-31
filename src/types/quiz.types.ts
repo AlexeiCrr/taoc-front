@@ -20,10 +20,11 @@ export interface UserData {
 	hasSubscribed?: boolean
 	quizStartedAt?: string
 	responseId?: number
+	locale?: string
 }
 
 export interface Frequency {
-	id?: number
+	id: number
 	name: string
 	value: number
 	description: string

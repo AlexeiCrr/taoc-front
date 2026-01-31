@@ -139,6 +139,10 @@ const useAdminStore = create<AdminState>((set, get) => ({
 				throw new Error('Invalid statistics response structure')
 			}
 
+			if (!Array.isArray(response.languageStatistics)) {
+				response.languageStatistics = []
+			}
+
 			const invalidMonths = response.monthlyUserStatistics.filter(
 				(item) => !item.month || !/^\d{4}-\d{2}$/.test(item.month)
 			)

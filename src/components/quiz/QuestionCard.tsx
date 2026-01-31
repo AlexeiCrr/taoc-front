@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import '../../styles/QuestionCard.css'
 import type { Question } from '../../types/quiz.types'
+import * as m from '../../paraglide/messages'
+import { useLanguage } from '@/hooks/useLanguage'
+import { cn, LANGUAGE } from '@/lib/utils'
 
 interface QuestionCardProps {
 	question: Question
@@ -30,6 +33,9 @@ const QuestionCard = ({
 	const [selectedValue, setSelectedValue] = useState<number | undefined>(
 		currentValue
 	)
+
+	const { currentLanguage } = useLanguage()
+	const isSpanish = currentLanguage === LANGUAGE.SPANISH
 
 	// Update selected value when currentValue changes (navigation)
 	useEffect(() => {
@@ -63,8 +69,8 @@ const QuestionCard = ({
 			<h2 className="question-text">{question.description}</h2>
 
 			<div className="rating-container">
-				<span className="rating-label rating-label-desktop">
-					STRONGLY DISAGREE
+				<span className={cn('rating-label rating-label-desktop')}>
+					{m['quiz.stronglyDisagree']()}
 				</span>
 				<div className="rating-buttons-wrapper">
 					<div className="rating-buttons">
@@ -81,19 +87,25 @@ const QuestionCard = ({
 					</div>
 
 					<div className="rating-labels-mobile">
-						<span className="rating-label-mobile">
-							STRONGLY <br />
-							DISAGREE
+						<span
+							className={cn('rating-label-mobile', {
+								'rating-label-es': isSpanish,
+							})}
+						>
+							{m['quiz.stronglyDisagree']()}
 						</span>
-						<span className="rating-label-mobile">
-							STRONGLY <br />
-							AGREE
+						<span
+							className={cn('rating-label-mobile', {
+								'rating-label-es': isSpanish,
+							})}
+						>
+							{m['quiz.stronglyAgree']()}
 						</span>
 					</div>
 				</div>
 
 				<span className="rating-label rating-label-desktop">
-					STRONGLY AGREE
+					{m['quiz.stronglyAgree']()}
 				</span>
 			</div>
 
@@ -101,16 +113,20 @@ const QuestionCard = ({
 				<button
 					onClick={handlePrevious}
 					disabled={!canGoBack}
-					className="nav-button back-button"
+					className={cn('nav-button back-button', {
+						'nav-button--es': isSpanish,
+					})}
 				>
-					BACK
+					{m['quiz.back']()}
 				</button>
 				<button
 					onClick={handleNext}
 					disabled={!canGoForward}
-					className="nav-button next-button"
+					className={cn('nav-button next-button', {
+						'nav-button--es': isSpanish,
+					})}
 				>
-					{isLastQuestion ? 'SUBMIT' : 'NEXT'}
+					{isLastQuestion ? m['quiz.submit']() : m['quiz.next']()}
 				</button>
 			</div>
 		</div>

@@ -11,6 +11,10 @@ import './App.css'
 import { PageTransition } from './components/common/PageTransition'
 import { LanguageProvider } from './components/LanguageProvider'
 import { PostHogProvider } from './components/PostHogProvider'
+import LocaleLayout from './components/LocaleLayout'
+import EnglishRedirect from './components/EnglishRedirect'
+import { deLocalizeHref } from './paraglide/runtime'
+import * as m from './paraglide/messages'
 import useAuthStore from './stores/authStore'
 
 // Lazy load admin components (only loaded when admin routes are accessed)
@@ -41,8 +45,22 @@ const PostHogTest = lazy(() => import('./pages/PostHogTest'))
 function PageLoader() {
 	return (
 		<div className="flex items-center justify-center min-h-screen">
-			<div className="text-muted-foreground">Loading...</div>
+			<div className="text-muted-foreground">{m['common.loading']()}</div>
 		</div>
+	)
+}
+
+function publicRoutes() {
+	return (
+		<>
+			<Route index element={<Home />} />
+			<Route path="quiz-start" element={<QuizStart />} />
+			<Route path="quiz" element={<Quiz />} />
+			<Route path="results" element={<Results />} />
+			<Route path="upgrade/success" element={<UpgradeSuccess />} />
+			<Route path="pdf-preview" element={<PDFPreview />} />
+			<Route path="posthog-test" element={<PostHogTest />} />
+		</>
 	)
 }
 
@@ -52,14 +70,7 @@ function AnimatedRoutes() {
 	return (
 		<PageTransition>
 			<Suspense fallback={<PageLoader />}>
-				<Routes location={location} key={location.pathname}>
-					<Route path="/" element={<Home />} />
-					<Route path="/quiz-start" element={<QuizStart />} />
-					<Route path="/quiz" element={<Quiz />} />
-					<Route path="/results" element={<Results />} />
-					<Route path="/upgrade/success" element={<UpgradeSuccess />} />
-					<Route path="/pdf-preview" element={<PDFPreview />} />
-					<Route path="/posthog-test" element={<PostHogTest />} />
+				<Routes location={location} key={deLocalizeHref(location.pathname)}>
 					<Route path="/login" element={<Login />} />
 					<Route path="/admin" element={<Admin />} />
 					<Route
@@ -92,6 +103,23 @@ function AnimatedRoutes() {
 							</AdminGuard>
 						}
 					/>
+
+					<Route path="/es" element={<LocaleLayout />}>
+						{publicRoutes()}
+					</Route>
+
+					<Route path="/en/*" element={<EnglishRedirect />} />
+
+					<Route element={<LocaleLayout />}>
+						<Route path="/" element={<Home />} />
+						<Route path="/quiz-start" element={<QuizStart />} />
+						<Route path="/quiz" element={<Quiz />} />
+						<Route path="/results" element={<Results />} />
+						<Route path="/upgrade/success" element={<UpgradeSuccess />} />
+						<Route path="/pdf-preview" element={<PDFPreview />} />
+						<Route path="/posthog-test" element={<PostHogTest />} />
+					</Route>
+
 					<Route path="*" element={<Navigate to="/" replace />} />
 				</Routes>
 			</Suspense>
@@ -107,14 +135,14 @@ function App() {
 	}, [checkAuth])
 
 	return (
-		<LanguageProvider>
-			<BrowserRouter>
+		<BrowserRouter>
+			<LanguageProvider>
 				<PostHogProvider>
 					<AnimatedRoutes />
 				</PostHogProvider>
-			</BrowserRouter>
+			</LanguageProvider>
 			<Toaster position="top-right" richColors closeButton duration={4000} />
-		</LanguageProvider>
+		</BrowserRouter>
 	)
 }
 

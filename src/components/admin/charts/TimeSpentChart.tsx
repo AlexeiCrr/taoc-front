@@ -94,8 +94,8 @@ export function TimeSpentChart({ data }: Props) {
 					<h4 className="text-sm font-medium text-foreground mb-3">
 						Average Time by Primary Frequency
 					</h4>
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-						{data.timeByFrequency.map((item) => (
+					<div className="flex flex-col gap-2">
+						{[...data.timeByFrequency].sort((a, b) => b.averageTimeMinutes - a.averageTimeMinutes).map((item) => (
 							<div
 								key={item.frequency}
 								className="flex items-center justify-between bg-muted/30 rounded-md px-3 py-2"

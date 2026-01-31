@@ -80,6 +80,19 @@ export default function AdminDataGrid() {
 				cell: (info) => info.getValue() || '—',
 			},
 			{
+				accessorKey: 'locale',
+				header: 'Language',
+				cell: (info) => {
+					const locale = info.getValue() as string | undefined
+					if (!locale) return '—'
+					const localeNames: Record<string, string> = {
+						en: 'English',
+						es: 'Spanish',
+					}
+					return localeNames[locale] || locale
+				},
+			},
+			{
 				accessorKey: 'createdOn',
 				header: 'Created At',
 				// Decision Log: date-fns formatting (handles timezone edge cases, improves readability)

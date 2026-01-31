@@ -3,6 +3,7 @@ import useAdminStore from '@/stores/adminStore'
 import { useEffect, useCallback } from 'react'
 import { FrequencyAverageScoresChart } from '@/components/admin/charts/FrequencyAverageScoresChart'
 import { FrequencyUserCountChart } from '@/components/admin/charts/FrequencyUserCountChart'
+import { LanguageDistributionChart } from '@/components/admin/charts/LanguageDistributionChart'
 import { MonthlyTrendsChart } from '@/components/admin/charts/MonthlyTrendsChart'
 import { TimeSpentChart } from '@/components/admin/charts/TimeSpentChart'
 import { StatisticsDateFilter, type StatisticsFilters } from '@/components/admin/StatisticsDateFilter'
@@ -183,7 +184,17 @@ export default function Statistics() {
               </CardContent>
             </Card>
 
-            {/* Chart 3: Monthly Trends */}
+            {/* Chart 3: Time Analysis (spans 2 rows) */}
+            <Card className="lg:row-span-2">
+              <CardHeader>
+                <CardTitle>Time to Complete Analysis</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TimeSpentChart data={statistics.timeSpentStatistics} />
+              </CardContent>
+            </Card>
+
+            {/* Chart 4: Monthly Trends */}
             <Card>
               <CardHeader>
                 <CardTitle>Monthly User Activity Trends</CardTitle>
@@ -193,13 +204,13 @@ export default function Statistics() {
               </CardContent>
             </Card>
 
-            {/* Chart 4: Time Analysis */}
+            {/* Chart 5: Language Distribution */}
             <Card>
               <CardHeader>
-                <CardTitle>Time to Complete Analysis</CardTitle>
+                <CardTitle>Language Distribution</CardTitle>
               </CardHeader>
               <CardContent>
-                <TimeSpentChart data={statistics.timeSpentStatistics} />
+                <LanguageDistributionChart data={statistics.languageStatistics} />
               </CardContent>
             </Card>
           </div>

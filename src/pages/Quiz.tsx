@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocaleNavigate } from '../hooks/useLocaleNavigate'
 import Layout from '../components/common/Layout'
 import QuizContainer from '../components/quiz/QuizContainer'
 import useQuizStore from '../stores/quizStore'
 
 export default function Quiz() {
-	const navigate = useNavigate()
+	const navigate = useLocaleNavigate()
 	const fetchQuestions = useQuizStore((state) => state.fetchQuestions)
 	const userData = useQuizStore((state) => state.userData)
 	const questions = useQuizStore((state) => state.questions)

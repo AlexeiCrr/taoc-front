@@ -3,8 +3,8 @@ import { getFrequencyColor } from '../../utils/chartUtils'
 
 const S3_BASE_URL = 'https://taoc-quiz-media.s3.us-west-1.amazonaws.com'
 
-export const getFrequencyImageUrl = (frequencyName: string): string =>
-	`${S3_BASE_URL}/images/${frequencyName.toLowerCase()}.png`
+export const getFrequencyImageUrl = (frequencyId: number): string =>
+	`${S3_BASE_URL}/images/${frequencyId}.png`
 
 /**
  * Generates the HTML template for the frequency map.
@@ -153,31 +153,31 @@ export function generateFrequencyMapHTML(
 			<div class="freq-map-content">
 				<!-- Top Center - Position 0 (Highest) -->
 				<div class="freq-item freq-item--top">
-					<img src="${getFrequencyImageUrl(top1.name)}" alt="${top1.name}" crossorigin="anonymous" />
+					<img src="${getFrequencyImageUrl(top1.id)}" alt="${top1.name}" crossorigin="anonymous" />
 					<span class="freq-label freq-label--right" style="color: ${getFrequencyColor(top1.name)}">${top1.name} | ${top1.value}</span>
 				</div>
 
 				<!-- Top Row with Triangle - Positions 1 & 2 -->
 				<div class="freq-row">
 					<div class="freq-item freq-item--top-side">
-						<img src="${getFrequencyImageUrl(top2.name)}" alt="${top2.name}" crossorigin="anonymous" />
+						<img src="${getFrequencyImageUrl(top2.id)}" alt="${top2.name}" crossorigin="anonymous" />
 						<span class="freq-label freq-label--left" style="color: ${getFrequencyColor(top2.name)}">${top2.value} | ${top2.name}</span>
 					</div>
 
 					<div class="triangle-up"></div>
 
 					<div class="freq-item freq-item--top-side">
-						<img src="${getFrequencyImageUrl(top3.name)}" alt="${top3.name}" crossorigin="anonymous" />
+						<img src="${getFrequencyImageUrl(top3.id)}" alt="${top3.name}" crossorigin="anonymous" />
 						<span class="freq-label freq-label--right" style="color: ${getFrequencyColor(top3.name)}">${top3.name} | ${top3.value}</span>
 					</div>
 				</div>
 
 				<!-- Vertical Line -->
 				<div class="vertical-line"></div>
- 
+
 				<!-- Middle Center - Position 3 -->
 				<div class="freq-item">
-					<img src="${getFrequencyImageUrl(middle.name)}" alt="${middle.name}" crossorigin="anonymous" />
+					<img src="${getFrequencyImageUrl(middle.id)}" alt="${middle.name}" crossorigin="anonymous" />
 					<span class="freq-label freq-label--right" style="color: ${getFrequencyColor(middle.name)}">${middle.name} | ${middle.value}</span>
 				</div>
 
@@ -187,26 +187,26 @@ export function generateFrequencyMapHTML(
 				<!-- Bottom Row with Triangle - Positions 4 & 5 -->
 				<div class="freq-row">
 					<div class="freq-item freq-item--bottom-side">
-						<img src="${getFrequencyImageUrl(bottom1.name)}" alt="${bottom1.name}" crossorigin="anonymous" />
+						<img src="${getFrequencyImageUrl(bottom1.id)}" alt="${bottom1.name}" crossorigin="anonymous" />
 						<span class="freq-label freq-label--left" style="color: ${getFrequencyColor(bottom1.name)}">${bottom1.value} | ${bottom1.name}</span>
 					</div>
 
 					<div class="triangle-down"></div>
 
 					<div class="freq-item freq-item--bottom-side">
-						<img src="${getFrequencyImageUrl(bottom2.name)}" alt="${bottom2.name}" crossorigin="anonymous" />
+						<img src="${getFrequencyImageUrl(bottom2.id)}" alt="${bottom2.name}" crossorigin="anonymous" />
 						<span class="freq-label freq-label--right" style="color: ${getFrequencyColor(bottom2.name)}">${bottom2.name} | ${bottom2.value}</span>
 					</div>
 				</div>
 
 				<!-- Bottom Center - Position 6 (Lowest) -->
 				<div class="freq-item freq-item--bottom">
-					<img src="${getFrequencyImageUrl(bottom3.name)}" alt="${bottom3.name}" crossorigin="anonymous" />
+					<img src="${getFrequencyImageUrl(bottom3.id)}" alt="${bottom3.name}" crossorigin="anonymous" />
 					<span class="freq-label freq-label--right" style="color: ${getFrequencyColor(bottom3.name)}">${bottom3.name} | ${bottom3.value}</span>
 				</div>
 			</div>
 
-			<p class="freq-footer">*All scores are out of a maximum of 60</p>
+			<p class="freq-footer">*All scores are out of a maximum of 100</p>
 		</div>
 	`
 }

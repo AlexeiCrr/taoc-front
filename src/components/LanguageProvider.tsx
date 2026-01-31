@@ -5,10 +5,14 @@ import React, {
 	useState,
 	type FC,
 } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
-	getLocale,
 	locales,
 	setLocale,
+	isLocale,
+	baseLocale,
+	localizeHref,
+	deLocalizeHref,
 	type Locale,
 } from '../paraglide/runtime'
 
@@ -23,40 +27,48 @@ export const LanguageContext = createContext<LanguageContextType | undefined>(
 	undefined
 )
 
+/** Derive locale from a URL pathname: '/es/quiz' → 'es', '/quiz' → baseLocale */
+function localeFromPath(pathname: string): Locale {
+	const firstSegment = pathname.split('/')[1]
+	return firstSegment && isLocale(firstSegment) ? firstSegment : baseLocale
+}
+
 export const LanguageProvider: FC<{ children: React.ReactNode }> = ({
 	children,
 }) => {
-	const [currentLanguage, setCurrentLanguage] = useState(getLocale())
+	const navigate = useNavigate()
+	const location = useLocation()
 
+	// Derive initial locale from URL so it's correct on first render / refresh
+	const [currentLanguage, setCurrentLanguage] = useState<string>(() => {
+		const urlLocale = localeFromPath(location.pathname)
+		setLocale(urlLocale, { reload: false })
+		return urlLocale
+	})
+
+	// Keep state in sync when the URL changes (e.g. browser back/forward)
 	useEffect(() => {
-		// Get language from localStorage or browser preference
-		const savedLang = localStorage.getItem('preferredLanguage')
-		const browserLang = navigator.language.split('-')[0]
-
-		const isValidLocale = (lang: string): lang is Locale => {
-			return locales.includes(lang as Locale)
+		const urlLocale = localeFromPath(location.pathname)
+		if (urlLocale !== currentLanguage) {
+			setLocale(urlLocale, { reload: false })
+			setCurrentLanguage(urlLocale)
 		}
-
-		const defaultLang =
-			savedLang || (isValidLocale(browserLang) ? browserLang : 'en')
-
-		if (defaultLang !== currentLanguage) {
-			changeLanguage(defaultLang)
-		}
-	}, [])
+	}, [location.pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
 	const changeLanguage = (lang: string) => {
-		const isValidLocale = (lang: string): lang is Locale => {
-			return locales.includes(lang as Locale)
-		}
+		if (!isLocale(lang)) return
 
-		if (isValidLocale(lang)) {
-			setLocale(lang, { reload: false })
-			setCurrentLanguage(lang)
-			localStorage.setItem('preferredLanguage', lang)
-			// Force re-render of the entire app
-			window.location.reload()
+		setLocale(lang, { reload: false })
+		setCurrentLanguage(lang)
+		localStorage.setItem('preferredLanguage', lang)
+
+		const currentPathWithoutLocale = deLocalizeHref(location.pathname)
+		let newPath = localizeHref(currentPathWithoutLocale, { locale: lang })
+		// Strip trailing slash so '/es/' becomes '/es' (but keep bare '/')
+		if (newPath.length > 1 && newPath.endsWith('/')) {
+			newPath = newPath.slice(0, -1)
 		}
+		navigate(newPath + location.search, { replace: true })
 	}
 
 	return (

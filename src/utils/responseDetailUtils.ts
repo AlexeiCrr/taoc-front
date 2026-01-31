@@ -2,6 +2,16 @@ import * as m from '@/paraglide/messages'
 import type { AdminResponse } from '@/types/admin.types'
 import type { Frequency, QuizResponse } from '@/types/quiz.types'
 
+const FREQUENCY_NAME_TO_ID: Record<string, number> = {
+	Maven: 1,
+	Challenger: 2,
+	Commander: 3,
+	Motivator: 4,
+	Seer: 5,
+	Professor: 6,
+	Healer: 7,
+}
+
 export interface ResponseDetailDto extends Omit<AdminResponse, 'answers'> {
 	phoneNumber?: string | null
 	country?: string | null
@@ -33,11 +43,11 @@ export function getAllFrequenciesSorted(data: ResponseDetailDto): Frequency[] {
 			name,
 			value: value as number,
 			description: getFrequencyDescription(name),
-			id: undefined,
+			id: FREQUENCY_NAME_TO_ID[name] ?? 0,
 		}))
 		.sort((a, b) => {
 			if (b.value !== a.value) return b.value - a.value
-			return a.name.localeCompare(b.name)
+			return a.id - b.id
 		})
 }
 

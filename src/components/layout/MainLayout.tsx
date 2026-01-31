@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import LocaleLink from '../LocaleLink'
 
 interface MainLayoutProps {
 	children: ReactNode
@@ -17,18 +18,18 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 							</h1>
 						</div>
 						<nav className="flex space-x-8">
-							<a
-								href="/"
+							<LocaleLink
+								to="/"
 								className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
 							>
 								Home
-							</a>
-							<a
-								href="/quiz"
+							</LocaleLink>
+							<LocaleLink
+								to="/quiz"
 								className="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
 							>
 								Quiz
-							</a>
+							</LocaleLink>
 						</nav>
 					</div>
 				</div>

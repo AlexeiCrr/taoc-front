@@ -62,11 +62,16 @@
 }
 
 .rating-label-desktop {
-	@apply block;
+	@apply hidden lg:block;
+}
+
+.rating-label-es {
+	@apply inline-block;
+	max-width: 100px;
 }
 
 .rating-labels-mobile {
-	@apply hidden;
+	@apply lg:hidden w-full flex justify-between;
 }
 
 .rating-label-mobile {
@@ -189,6 +194,9 @@
 	}
 	.nav-button {
 		@apply w-full py-3.5 px-8;
+	}
+	.nav-button--es {
+		@apply px-6 py-3 w-36;
 	}
 }
 

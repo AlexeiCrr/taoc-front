@@ -8,6 +8,8 @@ import {
 	View,
 } from '@react-pdf/renderer'
 import type { QuizResponse } from '../../types/quiz.types'
+import * as m from '../../paraglide/messages'
+import { getLocale } from '../../paraglide/runtime'
 
 // Create styles
 const styles = StyleSheet.create({
@@ -221,11 +223,11 @@ const styles = StyleSheet.create({
 
 const S3_BASE_URL = 'https://taoc-quiz-media.s3.us-west-1.amazonaws.com'
 
-const getFrequencyImageUrl = (frequencyName: string): string =>
-	`${S3_BASE_URL}/images/${frequencyName.toLowerCase()}.png`
+const getFrequencyImageUrl = (frequencyId: number): string =>
+	`${S3_BASE_URL}/images/${frequencyId}.png`
 
-const getWorkbookUrl = (frequencyName: string): string =>
-	`${S3_BASE_URL}/workbook/${frequencyName.toLowerCase()}.pdf`
+const getWorkbookUrl = (frequencyId: number, locale: string): string =>
+	`${S3_BASE_URL}/workbook/${locale}/${frequencyId}.pdf`
 
 interface ResultsPDFProps {
 	quizResponse: QuizResponse
@@ -238,29 +240,30 @@ export const ResultsPDF = ({
 	frequencyMapImage,
 }: ResultsPDFProps) => {
 	const { firstName, lastName, frequencies } = quizResponse
+	const locale = getLocale()
 
 	// Helper function to generate the appropriate text based on number of frequencies
 	const getFrequenciesIntro = () => {
 		const count = frequencies.length
 		if (count === 1) {
 			return {
-				prefix: 'This is the',
-				number: 'top',
+				prefix: m['pdf.thisIsThe'](),
+				number: m['pdf.top'](),
 			}
 		} else if (count === 2) {
 			return {
-				prefix: 'These are the',
-				number: 'top two',
+				prefix: m['pdf.theseAreThe'](),
+				number: m['pdf.topTwo'](),
 			}
 		} else if (count === 3) {
 			return {
-				prefix: 'These are the',
-				number: 'top three',
+				prefix: m['pdf.theseAreThe'](),
+				number: m['pdf.topThree'](),
 			}
 		} else {
 			return {
-				prefix: 'These are the',
-				number: `top ${count}`,
+				prefix: m['pdf.theseAreThe'](),
+				number: m['pdf.topN']({ count: String(count) }),
 			}
 		}
 	}
@@ -273,14 +276,12 @@ export const ResultsPDF = ({
 				<View style={styles.container}>
 					{/* Greeting */}
 					<Text style={styles.greeting}>
-						Hello {firstName} {lastName}!
+						{m['pdf.greeting']({ firstName, lastName })}
 					</Text>
 
 					{/* Results Intro */}
 					<View>
-						<Text style={styles.resultsIntro}>
-							Your <Text style={styles.bold}>Seven Frequencies</Text> results:
-						</Text>
+						<Text style={styles.resultsIntro}>{m['pdf.resultsIntro']()}</Text>
 					</View>
 
 					{/* Frequencies Grid with Images */}
@@ -289,7 +290,7 @@ export const ResultsPDF = ({
 							<View key={frequency.id || index} style={styles.frequencyItem}>
 								<Image
 									style={styles.frequencyImage}
-									src={getFrequencyImageUrl(frequency.name)}
+									src={getFrequencyImageUrl(frequency.id!)}
 								/>
 								<View style={styles.frequencyData}>
 									<Text style={styles.frequencyName}>{frequency.name}</Text>
@@ -320,85 +321,62 @@ export const ResultsPDF = ({
 						<Text style={styles.paragraph}>
 							{frequenciesIntro.prefix}{' '}
 							<Text style={styles.bold}>
-								{frequenciesIntro.number} communication{' '}
-								{frequencies.length === 1 ? 'frequency' : 'frequencies'}
+								{frequenciesIntro.number}{' '}
+								{frequencies.length === 1
+									? m['pdf.frequency']()
+									: m['pdf.frequencyPlural']()}
 							</Text>{' '}
-							you utilize and access most naturally, but each of the Seven
-							Frequencies can become a part of your communication toolkit over
-							time.{'\n'}
+							{m['pdf.mainParagraph1']()}
 							{'\n'}
-							Your #1 frequency is what we call your core or{' '}
-							<Text style={styles.bold}>primary frequency</Text>. Discovering
-							the power and potential of your primary frequency will
-							revolutionize how you impact the world around you.
+							{'\n'}
+							{m['pdf.primaryFrequencyIntro']()}
 						</Text>
 
-						<Text style={styles.paragraph}>
-							This is why we've created a{' '}
-							<Text style={styles.bold}>unique workbook</Text> just for your
-							frequency.
-						</Text>
+						<Text style={styles.paragraph}>{m['pdf.workbookIntro']()}</Text>
 
 						<Link
 							style={styles.button}
-							src={getWorkbookUrl(frequencies[0].name)}
+							src={getWorkbookUrl(frequencies[0].id!, locale)}
 						>
-							Download Workbook
+							{m['pdf.downloadWorkbook']()}
 						</Link>
 
-						<Text style={styles.paragraph}>
-							The workbook insights and applications will give you a
-							comprehensive understanding of how to utilize your frequency to
-							become a better speaker, leader, author, parent, partner, or
-							teammate.
-						</Text>
+						<Text style={styles.paragraph}>{m['pdf.workbookInsights']()}</Text>
 
 						<Text style={styles.paragraph}>
-							Visit us at{' '}
+							{m['pdf.visitUsPrefix']()}{' '}
 							<Link
-								style={styles.link}
+								style={{ color: '#5e6153', fontWeight: 'bold', textDecoration: 'none' }}
 								src="https://www.thesevenfrequencies.com/"
 							>
 								thesevenfrequencies.com
 							</Link>{' '}
-							to find out more about the Seven Frequencies.
+							{m['pdf.visitUsSuffix']()}
 						</Text>
 
 						<Text style={styles.paragraph}>
-							Learn more about the Seven Frequencies in{' '}
-							<Text style={{ fontStyle: 'italic' }}>
-								The Seven Frequencies of Communication: The Hidden Language of
-								Human Connection
-							</Text>{' '}
-							book by Erwin Raphael McManus.{' '}
+							{m['pdf.learnMore']()}{' '}
 							<Link
 								style={styles.link}
 								src="https://shop.erwinmcmanus.com/collections/the-seven-frequencies-top/products/the-7-frequencies-of-communication"
 							>
-								Buy It Now!
+								{m['pdf.buyItNow']()}
 							</Link>
 						</Text>
 
-						<Text style={styles.signature}>- The Seven Frequencies Team</Text>
+						<Text style={styles.signature}>{m['pdf.signature']()}</Text>
 					</View>
 
 					{/* PS Section */}
 					<View style={styles.footer}>
-						<Text>
-							PS: If you have any questions about your personal results or want
-							assistance bringing the Seven Frequencies to your team or
-							workplace, reach out to us{' '}
-							<Link style={styles.link} src="https://erwinmcmanus.com/contact">
-								here
-							</Link>
-							!
-						</Text>
+						<Text>{m['pdf.ps']()}</Text>
 					</View>
 
 					{/* Footer */}
 					<View style={styles.contactFooter}>
 						<Text>
-							Contact us:{'\n'}
+							{m['pdf.contactUs']()}
+							{'\n'}
 							<Link style={styles.link} src="mailto:info@erwinmcmanus.com">
 								info@erwinmcmanus.com
 							</Link>

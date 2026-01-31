@@ -1,5 +1,4 @@
 import LocaleLink from '../LocaleLink'
-import { LanguageSelector } from '../LanguageSelector'
 import QuizButton from './QuizButton'
 import * as m from '../../paraglide/messages'
 

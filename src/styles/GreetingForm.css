@@ -128,3 +128,26 @@
 
 	@apply text-black text-3xl text-center mb-12;
 }
+
+/* Phone input - single border container matching quiz-input */
+.quiz-phone-input {
+	@apply w-full border border-border-input transition-colors;
+}
+
+.quiz-phone-input:focus-within {
+	@apply border-border-input-hover;
+}
+
+.quiz-phone-input input {
+	font-family: var(--font-family-helvetica);
+	letter-spacing: var(--letter-spacing-form);
+	@apply text-black;
+}
+
+.quiz-phone-input input::placeholder {
+	@apply text-text-placeholder;
+}
+
+.quiz-phone-input-error {
+	@apply border-error;
+}

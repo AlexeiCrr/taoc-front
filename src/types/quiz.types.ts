@@ -15,6 +15,7 @@ export interface UserData {
 	firstName: string
 	lastName: string
 	email: string
+	phoneNumber?: string
 	licenseCode: string
 	licenseTier?: number
 	hasSubscribed?: boolean

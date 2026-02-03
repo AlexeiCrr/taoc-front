@@ -22,6 +22,7 @@
 			"firstNamePlaceholder": "FIRST NAME*",
 			"lastNamePlaceholder": "LAST NAME*",
 			"emailPlaceholder": "EMAIL*",
+			"phoneNumberPlaceholder": "PHONE NUMBER*",
 			"agreeToEmail": "I agree to receive my quiz results via email provided in the form",
 			"startQuiz": "START the assesment",
 			"validation": {
@@ -32,7 +33,9 @@
 				"firstNameRequired": "First name is required",
 				"lastNameRequired": "Last name is required",
 				"emailRequired": "Email is required",
-				"emailInvalid": "Please enter a valid email"
+				"emailInvalid": "Please enter a valid email",
+				"phoneNumberRequired": "Phone number is required",
+				"phoneNumberInvalid": "Please enter a valid phone number"
 			}
 		},
 		"results": {

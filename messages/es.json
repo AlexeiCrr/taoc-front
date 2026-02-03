@@ -22,6 +22,7 @@
 			"firstNamePlaceholder": "NOMBRE*",
 			"lastNamePlaceholder": "APELLIDO*",
 			"emailPlaceholder": "CORREO ELECTRÓNICO*",
+			"phoneNumberPlaceholder": "NÚMERO DE TELÉFONO*",
 			"agreeToEmail": "Acepto recibir los resultados de mi cuestionario por correo electrónico proporcionado en el formulario",
 			"startQuiz": "INICIAR LA EVALUACIÓN",
 			"validation": {
@@ -32,7 +33,9 @@
 				"firstNameRequired": "El nombre es requerido",
 				"lastNameRequired": "El apellido es requerido",
 				"emailRequired": "El correo electrónico es requerido",
-				"emailInvalid": "Por favor ingrese un correo electrónico válido"
+				"emailInvalid": "Por favor ingrese un correo electrónico válido",
+				"phoneNumberRequired": "El número de teléfono es requerido",
+				"phoneNumberInvalid": "Por favor ingrese un número de teléfono válido"
 			}
 		},
 		"results": {

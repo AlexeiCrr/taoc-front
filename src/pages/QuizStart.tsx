@@ -8,6 +8,7 @@ interface FormData {
 	firstName: string
 	lastName: string
 	email: string
+	phoneNumber: string
 	agreeToEmail: boolean
 	licenseTier?: number
 }
@@ -28,6 +29,7 @@ const QuizStart = () => {
 			firstName: data.firstName,
 			lastName: data.lastName,
 			email: data.email,
+			phoneNumber: data.phoneNumber,
 			licenseCode: data.licenseCode,
 			licenseTier: data.licenseTier,
 			hasSubscribed: data.agreeToEmail,

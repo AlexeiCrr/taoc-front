@@ -9,6 +9,8 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import * as m from '../../paraglide/messages'
 import { validateLicenseCode } from '../../services/licenseApi'
+import { PhoneInput } from '@/components/ui/phone-input'
+import type { Value } from 'react-phone-number-input'
 
 interface GreetingFormProps {
 	onSubmit: (data: FormData) => void
@@ -19,6 +21,7 @@ interface FormData {
 	firstName: string
 	lastName: string
 	email: string
+	phoneNumber: string
 	agreeToEmail: boolean
 	licenseTier?: number
 }
@@ -31,6 +34,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 		firstName: '',
 		lastName: '',
 		email: '',
+		phoneNumber: '',
 		agreeToEmail: false,
 	})
 
@@ -49,6 +53,7 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 			formData.firstName.trim() !== '' &&
 			formData.lastName.trim() !== '' &&
 			formData.email.trim() !== '' &&
+			formData.phoneNumber.trim() !== '' &&
 			formData.agreeToEmail
 		)
 	}
@@ -234,6 +239,12 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 		} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
 			newErrors.email = m['quiz.greeting.validation.emailInvalid']()
 		}
+		const phoneDigits = formData.phoneNumber.replace(/\D/g, '')
+		if (!formData.phoneNumber.trim() || phoneDigits.length < 7) {
+			newErrors.phoneNumber = m['quiz.greeting.validation.phoneNumberRequired']()
+		} else if (phoneDigits.length > 15) {
+			newErrors.phoneNumber = m['quiz.greeting.validation.phoneNumberInvalid']()
+		}
 		if (!formData.agreeToEmail) {
 			newErrors.agreeToEmail = false
 		}
@@ -377,6 +388,31 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 						/>
 						{errors.email && (
 							<p className="quiz-error-message">{errors.email}</p>
+						)}
+					</div>
+
+					{/* Phone Number */}
+					<div>
+						<PhoneInput
+							defaultCountry="US"
+							international
+							countryCallingCodeEditable={false}
+							countryOptionsOrder={['US', 'CA', 'GB', '|', '...']}
+							value={formData.phoneNumber as Value}
+							onChange={(value) => {
+								setFormData((prev) => ({
+									...prev,
+									phoneNumber: value?.toString() ?? '',
+								}))
+								if (errors.phoneNumber) {
+									setErrors((prev) => ({ ...prev, phoneNumber: undefined }))
+								}
+							}}
+							placeholder={m['quiz.greeting.phoneNumberPlaceholder']()}
+							className={`quiz-phone-input ${errors.phoneNumber ? 'quiz-phone-input-error' : ''}`}
+						/>
+						{errors.phoneNumber && (
+							<p className="quiz-error-message">{errors.phoneNumber}</p>
 						)}
 					</div>
 

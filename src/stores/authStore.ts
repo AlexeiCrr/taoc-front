@@ -219,8 +219,9 @@ const useAuthStore = create<AuthStore>()(
 					const currentUser = await getCurrentUser()
 
 					if (currentUser) {
-						const { user, token, isAdmin } =
-							await fetchUserFromSession(currentUser.username)
+						const { user, token, isAdmin } = await fetchUserFromSession(
+							currentUser.username
+						)
 
 						set({
 							isAuthenticated: true,

@@ -7,7 +7,10 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
 	useEffect(() => {
 		// Initialize PostHog
-		if (import.meta.env.VITE_PUBLIC_POSTHOG_KEY && import.meta.env.VITE_PUBLIC_POSTHOG_HOST) {
+		if (
+			import.meta.env.VITE_PUBLIC_POSTHOG_KEY &&
+			import.meta.env.VITE_PUBLIC_POSTHOG_HOST
+		) {
 			posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
 				api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
 				person_profiles: 'identified_only',

@@ -87,7 +87,9 @@ export async function captureFrequencyMap(
 		await new Promise((resolve) => setTimeout(resolve, 100))
 
 		// Get the element to capture (the .freq-map-container from the template)
-		const element = iframeDoc.querySelector('.freq-map-container') as HTMLElement | null
+		const element = iframeDoc.querySelector(
+			'.freq-map-container'
+		) as HTMLElement | null
 		if (!element) {
 			throw new Error('Failed to find frequency map element')
 		}

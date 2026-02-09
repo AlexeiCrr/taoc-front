@@ -8,8 +8,14 @@ interface AdminGuardProps {
 }
 
 export function AdminGuard({ children }: AdminGuardProps) {
-	const { isAuthenticated, isAdmin, isLoading, checkAuth, signOut, accessToken } =
-		useAuthStore()
+	const {
+		isAuthenticated,
+		isAdmin,
+		isLoading,
+		checkAuth,
+		signOut,
+		accessToken,
+	} = useAuthStore()
 	const location = useLocation()
 	const hasChecked = useRef(false)
 	const hasLoggedOut = useRef(false)

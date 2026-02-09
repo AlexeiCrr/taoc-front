@@ -6,6 +6,10 @@ import { QuizButton, QuizFooter } from '../components/quiz'
 import { ResultsPDF } from '../components/quiz/ResultsPDF'
 import useQuizStore from '../stores/quizStore'
 import * as m from '../paraglide/messages'
+// TODO: Re-enable after Stripe integration is finalized
+// import { PaymentErrorBoundary } from '../components/checkout/PaymentErrorBoundary'
+// import { UpgradeCard } from '../components/checkout/UpgradeCard'
+// import type { LicenseTier } from '../services/licenseApi'
 
 export const Results = () => {
 	const navigate = useLocaleNavigate()
@@ -115,17 +119,24 @@ export const Results = () => {
 						variant="primary"
 						className="flex justify-center items-center flex-nowrap w-[240px]"
 					>
-						{isGenerating ? <LoadingSpinner size="sm" /> : m['results.downloadResults']()}
+						{isGenerating ? (
+							<LoadingSpinner size="sm" />
+						) : (
+							m['results.downloadResults']()
+						)}
 					</QuizButton>
 
-					{/* Upgrade Upsell - show if user has room to upgrade */}
-					{/* {userData?.licenseTier && userData.licenseTier < 7 && (
-						<UpgradeCard
-							currentTier={userData.licenseTier as LicenseTier}
-							email={userData.email}
-							responseId={quizResponse.id}
-						/>
-					)} */}
+					{/* TODO: Re-enable after Stripe integration is finalized
+					<PaymentErrorBoundary>
+						{userData?.licenseTier && userData.licenseTier < 7 && quizResponse && (
+							<UpgradeCard
+								currentTier={userData.licenseTier as LicenseTier}
+								email={userData.email}
+								responseId={String(quizResponse.id)}
+							/>
+						)}
+					</PaymentErrorBoundary>
+					*/}
 				</div>
 			</main>
 			<QuizFooter inverted />

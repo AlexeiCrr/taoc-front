@@ -27,15 +27,25 @@ export function TimeSpentChart({ data }: Props) {
 						{data.fastestCompletion && (
 							<div className="bg-green-500/10 border border-green-500/20 rounded-md px-3 py-1.5">
 								<span className="text-green-400">Fastest:</span>{' '}
-								<span className="text-foreground">{data.fastestCompletion.timeMinutes} min</span>
-								<span className="text-muted-foreground"> — {data.fastestCompletion.primaryFrequency}</span>
+								<span className="text-foreground">
+									{data.fastestCompletion.timeMinutes} min
+								</span>
+								<span className="text-muted-foreground">
+									{' '}
+									— {data.fastestCompletion.primaryFrequency}
+								</span>
 							</div>
 						)}
 						{data.slowestCompletion && (
 							<div className="bg-orange-500/10 border border-orange-500/20 rounded-md px-3 py-1.5">
 								<span className="text-orange-400">Slowest:</span>{' '}
-								<span className="text-foreground">{data.slowestCompletion.timeMinutes} min</span>
-								<span className="text-muted-foreground"> — {data.slowestCompletion.primaryFrequency}</span>
+								<span className="text-foreground">
+									{data.slowestCompletion.timeMinutes} min
+								</span>
+								<span className="text-muted-foreground">
+									{' '}
+									— {data.slowestCompletion.primaryFrequency}
+								</span>
 							</div>
 						)}
 					</div>
@@ -95,28 +105,34 @@ export function TimeSpentChart({ data }: Props) {
 						Average Time by Primary Frequency
 					</h4>
 					<div className="flex flex-col gap-2">
-						{[...data.timeByFrequency].sort((a, b) => b.averageTimeMinutes - a.averageTimeMinutes).map((item) => (
-							<div
-								key={item.frequency}
-								className="flex items-center justify-between bg-muted/30 rounded-md px-3 py-2"
-							>
-								<div className="flex items-center gap-2">
-									<div
-										className="w-3 h-3 rounded-sm"
-										style={{ backgroundColor: getFrequencyColor(item.frequency) }}
-									/>
-									<span className="text-sm text-foreground">{item.frequency}</span>
+						{[...data.timeByFrequency]
+							.sort((a, b) => b.averageTimeMinutes - a.averageTimeMinutes)
+							.map((item) => (
+								<div
+									key={item.frequency}
+									className="flex items-center justify-between bg-muted/30 rounded-md px-3 py-2"
+								>
+									<div className="flex items-center gap-2">
+										<div
+											className="w-3 h-3 rounded-sm"
+											style={{
+												backgroundColor: getFrequencyColor(item.frequency),
+											}}
+										/>
+										<span className="text-sm text-foreground">
+											{item.frequency}
+										</span>
+									</div>
+									<div className="text-right">
+										<span className="text-sm font-medium text-foreground">
+											{item.averageTimeMinutes.toFixed(1)} min
+										</span>
+										<span className="text-xs text-muted-foreground ml-2">
+											({item.userCount} users)
+										</span>
+									</div>
 								</div>
-								<div className="text-right">
-									<span className="text-sm font-medium text-foreground">
-										{item.averageTimeMinutes.toFixed(1)} min
-									</span>
-									<span className="text-xs text-muted-foreground ml-2">
-										({item.userCount} users)
-									</span>
-								</div>
-							</div>
-						))}
+							))}
 					</div>
 				</div>
 			)}

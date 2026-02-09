@@ -15,10 +15,7 @@ export function useLocaleNavigate() {
 
 		// Object form: { pathname, search, hash }
 		if (to.pathname) {
-			return navigate(
-				{ ...to, pathname: localizeHref(to.pathname) },
-				options
-			)
+			return navigate({ ...to, pathname: localizeHref(to.pathname) }, options)
 		}
 
 		return navigate(to, options)

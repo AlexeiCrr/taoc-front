@@ -23,6 +23,7 @@ import type {
 } from '../types/quiz.types'
 import useAuthStore from '../stores/authStore'
 import type { LicenseTier } from './licenseApi'
+import { toast } from 'sonner'
 
 interface LicenseValidationResponse {
 	isValid: boolean
@@ -58,6 +59,12 @@ export const publicApi: KyInstance = ky.create({
 		],
 		afterResponse: [
 			async (_request, _options, response) => {
+				if (response.status === 503) {
+					toast.error(
+						'Service temporarily unavailable. Please try again later.'
+					)
+				}
+
 				if (!response.ok) {
 					const error = (await response
 						.json()
@@ -107,6 +114,12 @@ export const adminApi: KyInstance = ky.create({
 					throw new Error('Unauthorized - Please login again')
 				}
 
+				if (response.status === 503) {
+					toast.error(
+						'Service temporarily unavailable. Please try again later.'
+					)
+				}
+
 				// Handle other API errors
 				if (!response.ok) {
 					const error = (await response
@@ -137,9 +150,11 @@ export const handleApiError = (error: unknown): string => {
 
 export const apiService = {
 	getQuestions: async (locale: string = 'en'): Promise<Question[]> => {
-		return await publicApi.get('questions', {
-			searchParams: { locale },
-		}).json()
+		return await publicApi
+			.get('questions', {
+				searchParams: { locale },
+			})
+			.json()
 	},
 
 	submitQuizResponse: async (
@@ -194,16 +209,24 @@ export const apiService = {
 	 *   const blob = await apiService.generateLicenses(100, LicenseTier.TIER_3)
 	 *   downloadBlob(blob, 'license_codes_2025-01-15.csv')
 	 */
-	generateLicenses: async (amount: number, licenseTier: LicenseTier): Promise<Blob> => {
+	generateLicenses: async (
+		amount: number,
+		licenseTier: LicenseTier
+	): Promise<Blob> => {
 		const response = await adminApi.post('tac-generate-codes', {
-			json: { amount, licenseTier }
+			json: { amount, licenseTier },
 		})
 
 		// Validate content-type to detect API errors returned as JSON instead of CSV
 		const contentType = response.headers.get('content-type')
-		if (!contentType?.includes('text/csv') && !contentType?.includes('application/octet-stream')) {
+		if (
+			!contentType?.includes('text/csv') &&
+			!contentType?.includes('application/octet-stream')
+		) {
 			const text = await response.text()
-			throw new Error(`Expected CSV file but received: ${text.substring(0, 100)}`)
+			throw new Error(
+				`Expected CSV file but received: ${text.substring(0, 100)}`
+			)
 		}
 
 		return response.blob()

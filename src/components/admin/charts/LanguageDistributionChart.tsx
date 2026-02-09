@@ -26,8 +26,7 @@ const LOCALE_NAMES: Record<string, string> = {
 const getLocaleColor = (locale: string): string =>
 	LOCALE_COLORS[locale] || '#888888'
 
-const getLocaleName = (locale: string): string =>
-	LOCALE_NAMES[locale] || locale
+const getLocaleName = (locale: string): string => LOCALE_NAMES[locale] || locale
 
 export function LanguageDistributionChart({ data }: Props) {
 	if (!data || data.length === 0) {
@@ -115,10 +114,7 @@ export function LanguageDistributionChart({ data }: Props) {
 					}}
 				>
 					{chartData.map((entry, index) => (
-						<Cell
-							key={`cell-${index}`}
-							fill={getLocaleColor(entry.locale)}
-						/>
+						<Cell key={`cell-${index}`} fill={getLocaleColor(entry.locale)} />
 					))}
 				</Pie>
 				<Tooltip isAnimationActive={false} content={<CustomTooltip />} />

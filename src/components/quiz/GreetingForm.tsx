@@ -241,7 +241,8 @@ const GreetingForm = ({ onSubmit }: GreetingFormProps) => {
 		}
 		const phoneDigits = formData.phoneNumber.replace(/\D/g, '')
 		if (!formData.phoneNumber.trim() || phoneDigits.length < 7) {
-			newErrors.phoneNumber = m['quiz.greeting.validation.phoneNumberRequired']()
+			newErrors.phoneNumber =
+				m['quiz.greeting.validation.phoneNumberRequired']()
 		} else if (phoneDigits.length > 15) {
 			newErrors.phoneNumber = m['quiz.greeting.validation.phoneNumberInvalid']()
 		}

@@ -22,12 +22,12 @@ export interface CheckoutSessionResponse {
 	url: string
 }
 
-export interface UpgradeStatus {
-	responseId: string
-	currentTier: number
-	targetTier: number
-	status: 'pending' | 'completed' | 'failed' | 'refunded'
-	completedAt: string | null
+export interface SessionStatus {
+	status: 'completed' | 'pending' | 'failed'
+	responseId?: string
+	targetTier?: number
+	completedAt?: string
+	message?: string
 }
 
 export interface TierPricing {
@@ -124,18 +124,16 @@ export async function createCheckoutSession(
  */
 export async function getUpgradeStatus(
 	sessionId: string
-): Promise<UpgradeStatus> {
+): Promise<SessionStatus> {
 	try {
 		const response = await publicApi
-			.get('checkout/status', {
-				searchParams: { session_id: sessionId },
-			})
-			.json<UpgradeStatus>()
+			.get(`checkout/status?session_id=${encodeURIComponent(sessionId)}`)
+			.json<SessionStatus>()
 
 		return response
 	} catch (error) {
 		console.error('Failed to get upgrade status:', error)
-		throw new Error('Unable to verify upgrade status.')
+		throw new Error('Unable to verify upgrade status. Please try again.')
 	}
 }
 

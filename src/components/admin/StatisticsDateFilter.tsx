@@ -20,9 +20,18 @@ interface Props {
 	initialFilters?: StatisticsFilters
 }
 
-export type PresetKey = 'week' | '30days' | '60days' | '90days' | 'custom' | null
+export type PresetKey =
+	| 'week'
+	| '30days'
+	| '60days'
+	| '90days'
+	| 'custom'
+	| null
 
-export function StatisticsDateFilter({ onFilterChange, initialFilters }: Props) {
+export function StatisticsDateFilter({
+	onFilterChange,
+	initialFilters,
+}: Props) {
 	const [activePreset, setActivePreset] = useState<PresetKey>(null)
 	const [dateFrom, setDateFrom] = useState<Date | undefined>()
 	const [dateTo, setDateTo] = useState<Date | undefined>()
@@ -43,7 +52,9 @@ export function StatisticsDateFilter({ onFilterChange, initialFilters }: Props) 
 			// Try to detect which preset matches
 			if (from && to) {
 				const today = new Date()
-				const daysDiff = Math.round((today.getTime() - from.getTime()) / (1000 * 60 * 60 * 24))
+				const daysDiff = Math.round(
+					(today.getTime() - from.getTime()) / (1000 * 60 * 60 * 24)
+				)
 
 				if (daysDiff === 7) setActivePreset('week')
 				else if (daysDiff === 30) setActivePreset('30days')
@@ -142,7 +153,9 @@ export function StatisticsDateFilter({ onFilterChange, initialFilters }: Props) 
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button
-							variant={activePreset === 'custom' && dateFrom ? 'default' : 'outline'}
+							variant={
+								activePreset === 'custom' && dateFrom ? 'default' : 'outline'
+							}
 							size="sm"
 							className={cn(
 								'justify-start text-left font-normal min-w-[140px]',
@@ -172,7 +185,9 @@ export function StatisticsDateFilter({ onFilterChange, initialFilters }: Props) 
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button
-							variant={activePreset === 'custom' && dateTo ? 'default' : 'outline'}
+							variant={
+								activePreset === 'custom' && dateTo ? 'default' : 'outline'
+							}
 							size="sm"
 							className={cn(
 								'justify-start text-left font-normal min-w-[140px]',

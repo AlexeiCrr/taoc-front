@@ -179,114 +179,118 @@ export default function Login() {
 						<CardHeader className="space-y-1 text-center pb-6">
 							<div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
 								<KeyRound className="h-6 w-6 text-primary" />
-						</div>
-						<CardTitle className="text-2xl font-bold">
-							Set New Password
-						</CardTitle>
-						<CardDescription className="text-base">
-							Your temporary password has expired. Please create a new secure
-							password to continue.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="pt-6">
-						<form onSubmit={handleNewPasswordSubmit} className="space-y-4">
-							{(error || passwordError) && (
-								<Alert variant="destructive">
-									<AlertCircle className="h-4 w-4" />
-									<AlertDescription>{error || passwordError}</AlertDescription>
-								</Alert>
-							)}
-
-							<div className="space-y-2">
-								<Label htmlFor="newPassword">New Password</Label>
-								<PasswordInput
-									id="newPassword"
-									placeholder="Enter new password"
-									value={newPassword}
-									onChange={(e) => setNewPassword(e.target.value)}
-									required
-									disabled={isLoading}
-								/>
 							</div>
+							<CardTitle className="text-2xl font-bold">
+								Set New Password
+							</CardTitle>
+							<CardDescription className="text-base">
+								Your temporary password has expired. Please create a new secure
+								password to continue.
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="pt-6">
+							<form onSubmit={handleNewPasswordSubmit} className="space-y-4">
+								{(error || passwordError) && (
+									<Alert variant="destructive">
+										<AlertCircle className="h-4 w-4" />
+										<AlertDescription>
+											{error || passwordError}
+										</AlertDescription>
+									</Alert>
+								)}
 
-							<div className="space-y-2">
-								<Label htmlFor="confirmPassword">Confirm Password</Label>
-								<PasswordInput
-									id="confirmPassword"
-									placeholder="Confirm new password"
-									value={confirmPassword}
-									onChange={(e) => setConfirmPassword(e.target.value)}
-									required
-									disabled={isLoading}
-								/>
-							</div>
+								<div className="space-y-2">
+									<Label htmlFor="newPassword">New Password</Label>
+									<PasswordInput
+										id="newPassword"
+										placeholder="Enter new password"
+										value={newPassword}
+										onChange={(e) => setNewPassword(e.target.value)}
+										required
+										disabled={isLoading}
+									/>
+								</div>
 
-							<div className="bg-muted/50 rounded-lg p-4 space-y-2">
-								<p className="text-sm font-medium text-muted-foreground mb-2">
-									Password requirements:
-								</p>
-								<ul className="space-y-1">
-									{PASSWORD_REQUIREMENTS.map((req, index) => {
-										const passed = req.test(newPassword)
-										return (
-											<li
-												key={index}
-												className={`text-sm flex items-center gap-2 ${
-													newPassword
-														? passed
-															? 'text-green-500'
-															: 'text-muted-foreground'
-														: 'text-muted-foreground'
-												}`}
-											>
-												<span
-													className={`w-4 h-4 rounded-full flex items-center justify-center text-xs ${
+								<div className="space-y-2">
+									<Label htmlFor="confirmPassword">Confirm Password</Label>
+									<PasswordInput
+										id="confirmPassword"
+										placeholder="Confirm new password"
+										value={confirmPassword}
+										onChange={(e) => setConfirmPassword(e.target.value)}
+										required
+										disabled={isLoading}
+									/>
+								</div>
+
+								<div className="bg-muted/50 rounded-lg p-4 space-y-2">
+									<p className="text-sm font-medium text-muted-foreground mb-2">
+										Password requirements:
+									</p>
+									<ul className="space-y-1">
+										{PASSWORD_REQUIREMENTS.map((req, index) => {
+											const passed = req.test(newPassword)
+											return (
+												<li
+													key={index}
+													className={`text-sm flex items-center gap-2 ${
 														newPassword
 															? passed
-																? 'bg-green-500/20 text-green-500'
-																: 'bg-muted text-muted-foreground'
-															: 'bg-muted text-muted-foreground'
+																? 'text-green-500'
+																: 'text-muted-foreground'
+															: 'text-muted-foreground'
 													}`}
 												>
-													{newPassword && passed ? '✓' : '○'}
-												</span>
-												{req.label}
-											</li>
-										)
-									})}
-								</ul>
-							</div>
+													<span
+														className={`w-4 h-4 rounded-full flex items-center justify-center text-xs ${
+															newPassword
+																? passed
+																	? 'bg-green-500/20 text-green-500'
+																	: 'bg-muted text-muted-foreground'
+																: 'bg-muted text-muted-foreground'
+														}`}
+													>
+														{newPassword && passed ? '✓' : '○'}
+													</span>
+													{req.label}
+												</li>
+											)
+										})}
+									</ul>
+								</div>
 
-							{confirmPassword && (
-								<div
-									className={`text-sm flex items-center gap-2 ${
-										newPassword === confirmPassword
-											? 'text-green-500'
-											: 'text-destructive'
-									}`}
-								>
-									<span
-										className={`w-4 h-4 rounded-full flex items-center justify-center text-xs ${
+								{confirmPassword && (
+									<div
+										className={`text-sm flex items-center gap-2 ${
 											newPassword === confirmPassword
-												? 'bg-green-500/20 text-green-500'
-												: 'bg-destructive/10 text-destructive'
+												? 'text-green-500'
+												: 'text-destructive'
 										}`}
 									>
-										{newPassword === confirmPassword ? '✓' : '✗'}
-									</span>
-									{newPassword === confirmPassword
-										? 'Passwords match'
-										: 'Passwords do not match'}
-								</div>
-							)}
+										<span
+											className={`w-4 h-4 rounded-full flex items-center justify-center text-xs ${
+												newPassword === confirmPassword
+													? 'bg-green-500/20 text-green-500'
+													: 'bg-destructive/10 text-destructive'
+											}`}
+										>
+											{newPassword === confirmPassword ? '✓' : '✗'}
+										</span>
+										{newPassword === confirmPassword
+											? 'Passwords match'
+											: 'Passwords do not match'}
+									</div>
+								)}
 
-							<Button type="submit" className="w-full" disabled={isLoading}>
-								{isLoading ? 'Setting password...' : 'Set Password & Continue'}
-							</Button>
-						</form>
-					</CardContent>
-				</Card>
-			</div>
+								<Button type="submit" className="w-full" disabled={isLoading}>
+									{isLoading
+										? 'Setting password...'
+										: 'Set Password & Continue'}
+								</Button>
+							</form>
+						</CardContent>
+					</Card>
+				</div>
 			</ThemeProvider>
 		)
 	}
@@ -299,60 +303,60 @@ export default function Login() {
 						<CardTitle className="text-2xl font-bold">
 							Admin Dashboard
 						</CardTitle>
-					<CardDescription>
-						Sign in to access the admin dashboard
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<form onSubmit={handleSubmit} className="space-y-4">
-						{sessionExpired && (
-							<Alert>
-								<AlertCircle className="h-4 w-4" />
-								<AlertDescription>
-									Your session expired. Please sign in again.
-								</AlertDescription>
-							</Alert>
-						)}
+						<CardDescription>
+							Sign in to access the admin dashboard
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<form onSubmit={handleSubmit} className="space-y-4">
+							{sessionExpired && (
+								<Alert>
+									<AlertCircle className="h-4 w-4" />
+									<AlertDescription>
+										Your session expired. Please sign in again.
+									</AlertDescription>
+								</Alert>
+							)}
 
-						{error && (
-							<Alert variant="destructive">
-								<AlertCircle className="h-4 w-4" />
-								<AlertDescription>{error}</AlertDescription>
-							</Alert>
-						)}
+							{error && (
+								<Alert variant="destructive">
+									<AlertCircle className="h-4 w-4" />
+									<AlertDescription>{error}</AlertDescription>
+								</Alert>
+							)}
 
-						<div className="space-y-2">
-							<Label htmlFor="email">Email</Label>
-							<Input
-								id="email"
-								type="email"
-								placeholder="you@example.com"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								required
-								disabled={isLoading}
-							/>
-						</div>
+							<div className="space-y-2">
+								<Label htmlFor="email">Email</Label>
+								<Input
+									id="email"
+									type="email"
+									placeholder="you@example.com"
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+									required
+									disabled={isLoading}
+								/>
+							</div>
 
-						<div className="space-y-2">
-							<Label htmlFor="password">Password</Label>
-							<PasswordInput
-								id="password"
-								placeholder="Enter your password"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								required
-								disabled={isLoading}
-							/>
-						</div>
+							<div className="space-y-2">
+								<Label htmlFor="password">Password</Label>
+								<PasswordInput
+									id="password"
+									placeholder="Enter your password"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									required
+									disabled={isLoading}
+								/>
+							</div>
 
-						<Button type="submit" className="w-full" disabled={isLoading}>
-							{isLoading ? 'Signing in...' : 'Sign in'}
-						</Button>
-					</form>
-				</CardContent>
-			</Card>
-		</div>
+							<Button type="submit" className="w-full" disabled={isLoading}>
+								{isLoading ? 'Signing in...' : 'Sign in'}
+							</Button>
+						</form>
+					</CardContent>
+				</Card>
+			</div>
 		</ThemeProvider>
 	)
 }

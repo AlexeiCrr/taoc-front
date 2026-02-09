@@ -25,7 +25,10 @@ interface AdminState {
 	statisticsError: string | null
 
 	fetchResponses: (page?: number) => Promise<void>
-	fetchStatistics: (filters?: { dateFrom?: string; dateTo?: string }) => Promise<void>
+	fetchStatistics: (filters?: {
+		dateFrom?: string
+		dateTo?: string
+	}) => Promise<void>
 	updateUserData: (params: UpdateUserDataParams) => Promise<void>
 	setFilter: (filters: Partial<ResponseFilters>) => void
 	clearFilters: () => void
@@ -47,7 +50,8 @@ const useAdminStore = create<AdminState>((set, get) => ({
 		try {
 			// Invariant: empty filter values omitted from API request
 			const params = new URLSearchParams({ page: page.toString() })
-			const { search, email, licenseCode, date, dateFrom, dateTo } = get().filters
+			const { search, email, licenseCode, date, dateFrom, dateTo } =
+				get().filters
 
 			if (search) params.append('name', search)
 			if (email) params.append('email', email)
@@ -122,11 +126,11 @@ const useAdminStore = create<AdminState>((set, get) => ({
 			if (filters?.dateTo) params.append('dateTo', filters.dateTo)
 
 			const queryString = params.toString()
-			const url = queryString ? `responses/statistics?${queryString}` : 'responses/statistics'
+			const url = queryString
+				? `responses/statistics?${queryString}`
+				: 'responses/statistics'
 
-			const response = await adminApi
-				.get(url)
-				.json<StatisticsResponse>()
+			const response = await adminApi.get(url).json<StatisticsResponse>()
 
 			if (
 				!response ||

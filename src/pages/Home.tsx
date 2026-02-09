@@ -29,10 +29,7 @@ const Home = () => {
 			</div> */}
 
 			<div className="flex-1 flex items-center justify-center px-4 lg:px-8">
-				<HeroSection
-					title={m['home.title']()}
-					subtitle={m['home.subtitle']()}
-				>
+				<HeroSection title={m['home.title']()} subtitle={m['home.subtitle']()}>
 					<LocationPreservingLink />
 				</HeroSection>
 			</div>

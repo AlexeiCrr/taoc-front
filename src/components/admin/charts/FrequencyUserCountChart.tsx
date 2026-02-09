@@ -7,7 +7,11 @@ import {
 	ResponsiveContainer,
 	Tooltip,
 } from 'recharts'
-import { FREQUENCY_COLORS, foregroundColor, getFrequencyColor } from '@/utils/chartUtils'
+import {
+	FREQUENCY_COLORS,
+	foregroundColor,
+	getFrequencyColor,
+} from '@/utils/chartUtils'
 
 interface Props {
 	data: FrequencyUserCount[]
@@ -22,7 +26,13 @@ export function FrequencyUserCountChart({ data }: Props) {
 		name: item.frequency,
 	}))
 
-	const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: FrequencyUserCount }> }) => {
+	const CustomTooltip = ({
+		active,
+		payload,
+	}: {
+		active?: boolean
+		payload?: Array<{ payload: FrequencyUserCount }>
+	}) => {
 		if (active && payload && payload.length) {
 			const item = payload[0].payload
 			return (
@@ -77,7 +87,10 @@ export function FrequencyUserCountChart({ data }: Props) {
 					cy="50%"
 					outerRadius={100}
 					label={(props) => {
-						const entry = props as unknown as FrequencyUserCount & { frequency: string; percentage: number }
+						const entry = props as unknown as FrequencyUserCount & {
+							frequency: string
+							percentage: number
+						}
 						return `${entry.frequency} (${entry.percentage.toFixed(1)}%)`
 					}}
 				>

@@ -16,6 +16,9 @@ import * as m from '../paraglide/messages'
  * Post-payment success page.
  * Verifies upgrade status and allows downloading upgraded PDF.
  */
+const MAX_POLLS = 10
+const POLL_INTERVAL = 3000
+
 export function UpgradeSuccess() {
 	const [searchParams] = useSearchParams()
 	const [isVerifying, setIsVerifying] = useState(true)
@@ -24,11 +27,18 @@ export function UpgradeSuccess() {
 		completedAt: string
 	} | null>(null)
 	const [isGenerating, setIsGenerating] = useState(false)
+	const [pollCount, setPollCount] = useState(0)
+	const [retryTrigger, setRetryTrigger] = useState(0)
 
 	const { quizResponse } = useQuizStore()
 	const sessionId = searchParams.get('session_id')
 
 	useEffect(() => {
+		let pollTimeout: ReturnType<typeof setTimeout> | null = null
+		let isMounted = true
+
+		setPollCount(0)
+
 		async function verifyUpgrade() {
 			if (!sessionId) {
 				toast.error(m['upgrade.invalidSession']())
@@ -39,41 +49,57 @@ export function UpgradeSuccess() {
 			try {
 				const status = await getUpgradeStatus(sessionId)
 
+				if (!isMounted) return
+
 				if (status.status === 'completed' && status.targetTier) {
 					setUpgradeData({
 						newTier: status.targetTier,
-						completedAt:
-							status.completedAt || new Date().toISOString(),
+						completedAt: status.completedAt || new Date().toISOString(),
 					})
+					setIsVerifying(false)
 
-					// Track successful upgrade
 					trackEvent('upgrade_completed', {
 						new_tier: status.targetTier,
 						session_id: sessionId,
+						polls_required: pollCount,
 					})
 
-					toast.success(
-						m['upgrade.upgradeSuccessToast']()
-					)
+					toast.success(m['upgrade.upgradeSuccessToast']())
 				} else if (status.status === 'pending') {
-					toast.info(
-						m['upgrade.paymentProcessing']()
-					)
-				} else {
-					toast.error(
-						m['upgrade.verificationFailed']()
-					)
+					if (pollCount < MAX_POLLS) {
+						setPollCount((prev) => prev + 1)
+						pollTimeout = setTimeout(verifyUpgrade, POLL_INTERVAL)
+
+						if (pollCount === 0) {
+							toast.info(m['upgrade.paymentProcessing']())
+						}
+					} else {
+						setIsVerifying(false)
+					}
+				} else if (status.status === 'failed') {
+					setIsVerifying(false)
+					toast.error(m['upgrade.verificationFailed']())
 				}
 			} catch (error) {
-				console.error('Verification error:', error)
-				toast.error(m['upgrade.unableToVerify']())
-			} finally {
-				setIsVerifying(false)
+				if (!isMounted) return
+
+				if (pollCount < MAX_POLLS) {
+					setPollCount((prev) => prev + 1)
+					pollTimeout = setTimeout(verifyUpgrade, POLL_INTERVAL)
+				} else {
+					setIsVerifying(false)
+					toast.error(m['upgrade.unableToVerify']())
+				}
 			}
 		}
 
 		verifyUpgrade()
-	}, [sessionId])
+
+		return () => {
+			isMounted = false
+			if (pollTimeout) clearTimeout(pollTimeout)
+		}
+	}, [sessionId, retryTrigger])
 
 	const handleDownload = async () => {
 		if (!quizResponse) {
@@ -145,11 +171,14 @@ export function UpgradeSuccess() {
 						)}
 						<div className="space-y-3">
 							<QuizButton
-								onClick={() => window.location.reload()}
+								onClick={() => {
+									setRetryTrigger((prev) => prev + 1)
+									setIsVerifying(true)
+								}}
 								variant="primary"
 								className="w-full flex justify-center"
 							>
-								{m['upgrade.refreshPage']()}
+								Check Again
 							</QuizButton>
 							<LocaleLink to="/" className="block">
 								<QuizButton
@@ -220,9 +249,7 @@ export function UpgradeSuccess() {
 									{m['upgrade.upgradedOn']()}
 								</p>
 								<p className="text-lg font-semibold text-main">
-									{new Date(
-										upgradeData.completedAt
-									).toLocaleDateString()}
+									{new Date(upgradeData.completedAt).toLocaleDateString()}
 								</p>
 							</div>
 						</div>

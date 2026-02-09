@@ -38,6 +38,7 @@ const Results = lazy(() =>
 	import('./pages/Results').then((module) => ({ default: module.Results }))
 )
 const UpgradeSuccess = lazy(() => import('./pages/UpgradeSuccess'))
+const UpgradeCancel = lazy(() => import('./pages/UpgradeCancel'))
 const PDFPreview = lazy(() => import('./pages/PDFPreview'))
 const PostHogTest = lazy(() => import('./pages/PostHogTest'))
 
@@ -58,6 +59,7 @@ function publicRoutes() {
 			<Route path="quiz" element={<Quiz />} />
 			<Route path="results" element={<Results />} />
 			<Route path="upgrade/success" element={<UpgradeSuccess />} />
+			<Route path="upgrade/cancel" element={<UpgradeCancel />} />
 			<Route path="pdf-preview" element={<PDFPreview />} />
 			<Route path="posthog-test" element={<PostHogTest />} />
 		</>
@@ -116,6 +118,7 @@ function AnimatedRoutes() {
 						<Route path="/quiz" element={<Quiz />} />
 						<Route path="/results" element={<Results />} />
 						<Route path="/upgrade/success" element={<UpgradeSuccess />} />
+						<Route path="/upgrade/cancel" element={<UpgradeCancel />} />
 						<Route path="/pdf-preview" element={<PDFPreview />} />
 						<Route path="/posthog-test" element={<PostHogTest />} />
 					</Route>

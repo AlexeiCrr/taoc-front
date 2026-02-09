@@ -174,7 +174,9 @@ export default function AdminFilters() {
 					<Popover>
 						<PopoverTrigger asChild>
 							<Button
-								variant={activePreset === 'custom' && dateFrom ? 'default' : 'outline'}
+								variant={
+									activePreset === 'custom' && dateFrom ? 'default' : 'outline'
+								}
 								size="sm"
 								className={cn(
 									'justify-start text-left font-normal min-w-[140px]',
@@ -185,7 +187,10 @@ export default function AdminFilters() {
 								{dateFrom ? format(dateFrom, 'MMM d, yyyy') : 'From'}
 							</Button>
 						</PopoverTrigger>
-						<PopoverContent className="dark w-[250px] p-0 bg-popover" align="start">
+						<PopoverContent
+							className="dark w-[250px] p-0 bg-popover"
+							align="start"
+						>
 							<Calendar
 								mode="single"
 								selected={dateFrom}
@@ -204,7 +209,9 @@ export default function AdminFilters() {
 					<Popover>
 						<PopoverTrigger asChild>
 							<Button
-								variant={activePreset === 'custom' && dateTo ? 'default' : 'outline'}
+								variant={
+									activePreset === 'custom' && dateTo ? 'default' : 'outline'
+								}
 								size="sm"
 								className={cn(
 									'justify-start text-left font-normal min-w-[140px]',
@@ -215,7 +222,10 @@ export default function AdminFilters() {
 								{dateTo ? format(dateTo, 'MMM d, yyyy') : 'To'}
 							</Button>
 						</PopoverTrigger>
-						<PopoverContent className="dark w-[250px] p-0 bg-popover" align="start">
+						<PopoverContent
+							className="dark w-[250px] p-0 bg-popover"
+							align="start"
+						>
 							<Calendar
 								mode="single"
 								selected={dateTo}

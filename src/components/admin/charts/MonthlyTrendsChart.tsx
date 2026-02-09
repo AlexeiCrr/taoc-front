@@ -29,12 +29,15 @@ interface MonthSelectProps {
 	availableMonths: string[]
 }
 
-function MonthSelect({ label, value, onChange, availableMonths }: MonthSelectProps) {
+function MonthSelect({
+	label,
+	value,
+	onChange,
+	availableMonths,
+}: MonthSelectProps) {
 	return (
 		<div className="flex items-center gap-2">
-			<label className="text-sm font-medium">
-				{label}
-			</label>
+			<label className="text-sm font-medium">{label}</label>
 			<Select value={value} onValueChange={onChange}>
 				<SelectTrigger className="w-[180px] bg-card">
 					<SelectValue placeholder="All" />
@@ -84,7 +87,8 @@ export function MonthlyTrendsChart({ data }: MonthlyTrendsChartProps) {
 
 		return sortedMonths.filter((item) => {
 			const itemMonth = item.month
-			const meetsStart = startMonth === ALL_MONTHS_VALUE || itemMonth >= startMonth
+			const meetsStart =
+				startMonth === ALL_MONTHS_VALUE || itemMonth >= startMonth
 			const meetsEnd = endMonth === ALL_MONTHS_VALUE || itemMonth <= endMonth
 			return meetsStart && meetsEnd
 		})
@@ -146,7 +150,10 @@ export function MonthlyTrendsChart({ data }: MonthlyTrendsChartProps) {
 						}}
 						labelStyle={{ color: '#ffffff' }}
 						itemStyle={{ color: '#ffffff' }}
-						formatter={(value?: number) => [`${value ?? 0} users`, 'User Count']}
+						formatter={(value?: number) => [
+							`${value ?? 0} users`,
+							'User Count',
+						]}
 						isAnimationActive={false}
 					/>
 					<Legend />

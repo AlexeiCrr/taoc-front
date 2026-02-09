@@ -43,10 +43,14 @@ interface ManageLicensesDialogProps {
 	children: React.ReactNode
 }
 
-export default function ManageLicensesDialog({ children }: ManageLicensesDialogProps) {
+export default function ManageLicensesDialog({
+	children,
+}: ManageLicensesDialogProps) {
 	const [open, setOpen] = useState(false)
 	const [amount, setAmount] = useState(100)
-	const [licenseTier, setLicenseTier] = useState<LicenseTier>(LicenseTier.TIER_3)
+	const [licenseTier, setLicenseTier] = useState<LicenseTier>(
+		LicenseTier.TIER_3
+	)
 	const [isLoading, setIsLoading] = useState(false)
 
 	/**
@@ -66,14 +70,14 @@ export default function ManageLicensesDialog({ children }: ManageLicensesDialogP
 		document.body.appendChild(link)
 		link.click()
 		document.body.removeChild(link)
-		window.URL.revokeObjectURL(url)  // Prevent memory leak
+		window.URL.revokeObjectURL(url) // Prevent memory leak
 	}
 
 	const handleGenerate = async () => {
 		// Client-side validation prevents unnecessary API calls for invalid amounts
 		if (amount < 1 || amount > 10000) {
 			toast.error('Invalid amount', {
-				description: 'Please enter a number between 1 and 10,000'
+				description: 'Please enter a number between 1 and 10,000',
 			})
 			return
 		}
@@ -82,11 +86,14 @@ export default function ManageLicensesDialog({ children }: ManageLicensesDialogP
 		try {
 			const blob = await apiService.generateLicenses(amount, licenseTier)
 			// Timestamp in filename enables chronological sorting of downloaded files
-			const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0]
+			const timestamp = new Date()
+				.toISOString()
+				.replace(/[:.]/g, '-')
+				.split('T')[0]
 			downloadBlob(blob, `license_codes_${timestamp}.csv`)
 
 			toast.success('License codes generated', {
-				description: `Successfully generated ${amount} license code${amount > 1 ? 's' : ''}`
+				description: `Successfully generated ${amount} license code${amount > 1 ? 's' : ''}`,
 			})
 			// Reset to defaults after successful generation for next use
 			setOpen(false)
@@ -95,7 +102,10 @@ export default function ManageLicensesDialog({ children }: ManageLicensesDialogP
 		} catch (error) {
 			console.error('Failed to generate licenses:', error)
 			toast.error('Failed to generate licenses', {
-				description: error instanceof Error ? error.message : 'An unexpected error occurred'
+				description:
+					error instanceof Error
+						? error.message
+						: 'An unexpected error occurred',
 			})
 		} finally {
 			setIsLoading(false)
@@ -103,10 +113,10 @@ export default function ManageLicensesDialog({ children }: ManageLicensesDialogP
 	}
 
 	return (
-		<Dialog open={open} onOpenChange={isLoading ? undefined : setOpen}>  {/* Lock dialog during API call to prevent premature closure */}
-			<DialogTrigger asChild>
-				{children}
-			</DialogTrigger>
+		<Dialog open={open} onOpenChange={isLoading ? undefined : setOpen}>
+			{' '}
+			{/* Lock dialog during API call to prevent premature closure */}
+			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
 					<DialogTitle>Generate License Codes</DialogTitle>
@@ -134,16 +144,24 @@ export default function ManageLicensesDialog({ children }: ManageLicensesDialogP
 						<Label htmlFor="tier">License Tier</Label>
 						<Select
 							value={licenseTier.toString()}
-							onValueChange={(value) => setLicenseTier(parseInt(value) as LicenseTier)}
+							onValueChange={(value) =>
+								setLicenseTier(parseInt(value) as LicenseTier)
+							}
 							disabled={isLoading}
 						>
 							<SelectTrigger id="tier">
 								<SelectValue placeholder="Select tier" />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value={LicenseTier.TIER_1.toString()}>Tier 1</SelectItem>
-								<SelectItem value={LicenseTier.TIER_3.toString()}>Tier 3</SelectItem>
-								<SelectItem value={LicenseTier.TIER_7.toString()}>Tier 7</SelectItem>
+								<SelectItem value={LicenseTier.TIER_1.toString()}>
+									Tier 1
+								</SelectItem>
+								<SelectItem value={LicenseTier.TIER_3.toString()}>
+									Tier 3
+								</SelectItem>
+								<SelectItem value={LicenseTier.TIER_7.toString()}>
+									Tier 7
+								</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
@@ -157,11 +175,7 @@ export default function ManageLicensesDialog({ children }: ManageLicensesDialogP
 					>
 						Cancel
 					</Button>
-					<Button
-						type="button"
-						onClick={handleGenerate}
-						disabled={isLoading}
-					>
+					<Button type="button" onClick={handleGenerate} disabled={isLoading}>
 						{isLoading ? 'Generating...' : 'Generate & Download'}
 					</Button>
 				</DialogFooter>

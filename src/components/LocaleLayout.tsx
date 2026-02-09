@@ -1,5 +1,10 @@
 import { Outlet, useLocation } from 'react-router-dom'
-import { setLocale, getLocale, isLocale, baseLocale } from '../paraglide/runtime'
+import {
+	setLocale,
+	getLocale,
+	isLocale,
+	baseLocale,
+} from '../paraglide/runtime'
 import type { Locale } from '../paraglide/runtime'
 
 export default function LocaleLayout() {

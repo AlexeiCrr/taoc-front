@@ -129,9 +129,7 @@ const CountrySelect = ({
 		const { scrollTop, scrollHeight, clientHeight } = list
 		// Load more when scrolled to 80% of the list
 		if (scrollTop + clientHeight >= scrollHeight * 0.8) {
-			setVisibleCount((prev) =>
-				Math.min(prev + 20, filteredCountries.length)
-			)
+			setVisibleCount((prev) => Math.min(prev + 20, filteredCountries.length))
 		}
 	}, [filteredCountries.length])
 

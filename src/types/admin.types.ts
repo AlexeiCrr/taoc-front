@@ -1,118 +1,118 @@
 // Admin related types
 export interface AdminResponse {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  createdOn: string;
-  licenseCode?: string;
-  licenseTier?: number;
-  locale?: string;
-  quizStartedAt?: Date;
-  frequencies: FrequencyMap;
-  answers?: Answer[];
+	id: number
+	firstName: string
+	lastName: string
+	email: string
+	createdOn: string
+	licenseCode?: string
+	licenseTier?: number
+	locale?: string
+	quizStartedAt?: Date
+	frequencies: FrequencyMap
+	answers?: Answer[]
 }
 
 export interface FrequencyMap {
-  [key: string]: number;
+	[key: string]: number
 }
 
 export interface Answer {
-  questionId: number;
-  frequencyId?: string;
-  value: number;
+	questionId: number
+	frequencyId?: string
+	value: number
 }
 
 export interface ResponseFilters {
-  search?: string
-  email?: string
-  licenseCode?: string
-  date?: string
-  dateFrom?: string
-  dateTo?: string
+	search?: string
+	email?: string
+	licenseCode?: string
+	date?: string
+	dateFrom?: string
+	dateTo?: string
 }
 
 export interface DateRange {
-  start: Date;
-  end: Date;
+	start: Date
+	end: Date
 }
 
 export interface PaginatedAdminResponses {
-  items: AdminResponse[]
-  page: number
-  pageSize: number
-  total: number
-  totalPages: number
+	items: AdminResponse[]
+	page: number
+	pageSize: number
+	total: number
+	totalPages: number
 }
 
 export interface ResendEmailResult {
-  success: boolean;
-  message: string;
+	success: boolean
+	message: string
 }
 
 export interface UpdateUserDataParams {
-  responseId: number;
-  firstName: string;
-  lastName: string;
-  email: string;
+	responseId: number
+	firstName: string
+	lastName: string
+	email: string
 }
 
 // Statistics API types (from /responses/statistics endpoint)
 
 export interface FrequencyAverageScore {
-  frequency: string
-  averageScore: number
-  totalResponses: number
+	frequency: string
+	averageScore: number
+	totalResponses: number
 }
 
 export interface FrequencyUserCount {
-  frequency: string
-  userCount: number
-  percentage: number
+	frequency: string
+	userCount: number
+	percentage: number
 }
 
 export interface TimeSpentCategory {
-  category: string
-  userCount: number
-  percentage: number
+	category: string
+	userCount: number
+	percentage: number
 }
 
 export interface TimeByFrequency {
-  frequency: string
-  averageTimeMinutes: number
-  userCount: number
+	frequency: string
+	averageTimeMinutes: number
+	userCount: number
 }
 
 export interface TimeSpentStatistics {
-  sampleSize: number
-  averageTimeMinutes: number
-  categories: TimeSpentCategory[]
-  fastestCompletion?: {
-    timeMinutes: number
-    primaryFrequency: string
-  }
-  slowestCompletion?: {
-    timeMinutes: number
-    primaryFrequency: string
-  }
-  timeByFrequency: TimeByFrequency[]
+	sampleSize: number
+	averageTimeMinutes: number
+	categories: TimeSpentCategory[]
+	fastestCompletion?: {
+		timeMinutes: number
+		primaryFrequency: string
+	}
+	slowestCompletion?: {
+		timeMinutes: number
+		primaryFrequency: string
+	}
+	timeByFrequency: TimeByFrequency[]
 }
 
 export interface LanguageStatistic {
-  locale: string
-  userCount: number
-  percentage: number
+	locale: string
+	userCount: number
+	percentage: number
 }
 
 export interface StatisticsResponse {
-  frequencyAverageScores: FrequencyAverageScore[]
-  frequencyUserCounts: FrequencyUserCount[]
-  timeSpentStatistics: TimeSpentStatistics
-  monthlyUserStatistics: MonthlyTrendData[]
-  languageStatistics: LanguageStatistic[]
+	frequencyAverageScores: FrequencyAverageScore[]
+	frequencyUserCounts: FrequencyUserCount[]
+	timeSpentStatistics: TimeSpentStatistics
+	monthlyUserStatistics: MonthlyTrendData[]
+	languageStatistics: LanguageStatistic[]
 }
 
 export interface MonthlyTrendData {
-  month: string // "YYYY-MM" format
-  userCount: number
+	month: string // "YYYY-MM" format
+	userCount: number
 }

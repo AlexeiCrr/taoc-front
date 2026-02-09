@@ -226,8 +226,14 @@ const S3_BASE_URL = 'https://taoc-quiz-media.s3.us-west-1.amazonaws.com'
 const getFrequencyImageUrl = (frequencyId: number): string =>
 	`${S3_BASE_URL}/images/${frequencyId}.png`
 
-const getWorkbookUrl = (frequencyId: number, locale: string): string =>
-	`${S3_BASE_URL}/workbook/${locale}/${frequencyId}.pdf`
+const getWorkbookUrl = (
+	frequencyId: number,
+	locale: string,
+	isTier7: boolean
+): string =>
+	isTier7
+		? `${S3_BASE_URL}/workbook/${locale}/seven-frequencies-workbook.pdf`
+		: `${S3_BASE_URL}/workbook/${locale}/${frequencyId}.pdf`
 
 interface ResultsPDFProps {
 	quizResponse: QuizResponse
@@ -241,6 +247,7 @@ export const ResultsPDF = ({
 }: ResultsPDFProps) => {
 	const { firstName, lastName, frequencies } = quizResponse
 	const locale = getLocale()
+	const isTier7 = frequencies.length === 7
 
 	// Helper function to generate the appropriate text based on number of frequencies
 	const getFrequenciesIntro = () => {
@@ -336,7 +343,7 @@ export const ResultsPDF = ({
 
 						<Link
 							style={styles.button}
-							src={getWorkbookUrl(frequencies[0].id!, locale)}
+							src={getWorkbookUrl(frequencies[0].id!, locale, isTier7)}
 						>
 							{m['pdf.downloadWorkbook']()}
 						</Link>
@@ -346,7 +353,11 @@ export const ResultsPDF = ({
 						<Text style={styles.paragraph}>
 							{m['pdf.visitUsPrefix']()}{' '}
 							<Link
-								style={{ color: '#5e6153', fontWeight: 'bold', textDecoration: 'none' }}
+								style={{
+									color: '#5e6153',
+									fontWeight: 'bold',
+									textDecoration: 'none',
+								}}
 								src="https://www.thesevenfrequencies.com/"
 							>
 								thesevenfrequencies.com

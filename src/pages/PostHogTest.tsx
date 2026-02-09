@@ -24,7 +24,9 @@ export default function PostHogTest() {
 		} catch (error) {
 			// PostHog will automatically capture this
 			console.error('Test error:', error)
-			alert('Exception thrown! Check your PostHog dashboard under "Exceptions".')
+			alert(
+				'Exception thrown! Check your PostHog dashboard under "Exceptions".'
+			)
 		}
 	}
 
@@ -33,7 +35,9 @@ export default function PostHogTest() {
 		setTimeout(() => {
 			throw new Error('Test uncaught exception')
 		}, 100)
-		alert('Uncaught exception will be thrown in 100ms. Check your PostHog dashboard.')
+		alert(
+			'Uncaught exception will be thrown in 100ms. Check your PostHog dashboard.'
+		)
 	}
 
 	const checkPostHogStatus = () => {

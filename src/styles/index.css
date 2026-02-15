@@ -42,6 +42,15 @@
 	font-display: swap;
 }
 
+/* Silka Font Family */
+@font-face {
+	font-family: 'Silka';
+	src: url('/fonts/Silka-Bold.otf') format('opentype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
 @theme {
 	/* Custom colors */
 	--color-main: #5e6153;
@@ -72,6 +81,7 @@
 	--font-family-mono: 'Courier New', monospace;
 	--font-family-pompei: 'PompeiPro', system-ui, sans-serif;
 	--font-family-helvetica: 'Helvetica', Arial, sans-serif;
+	--font-family-silka: 'Silka', Arial, sans-serif;
 	--font-family-roboto:
 		'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
@@ -220,6 +230,10 @@ a {
 
 	.font-roboto {
 		font-family: var(--font-family-roboto);
+	}
+
+	.font-silka {
+		font-family: var(--font-family-silka);
 	}
 
 	/* Container width override */

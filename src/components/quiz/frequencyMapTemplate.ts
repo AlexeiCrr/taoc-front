@@ -25,6 +25,7 @@ export function generateFrequencyMapHTML(
 		bgColor: '#f4efe9',
 		textColor: '#5e6153',
 		titleFont: "'PompeiPro', system-ui, sans-serif",
+		subtitleFont: "'Silka', system-ui, sans-serif",
 		bodyFont: 'Helvetica, Arial, sans-serif',
 	}
 
@@ -54,8 +55,18 @@ export function generateFrequencyMapHTML(
 				text-align: center;
 				text-transform: uppercase;
 				letter-spacing: 3px;
-				margin-bottom: 30px;
+				margin-bottom: 8px;
 				font-family: ${styles.titleFont};
+				color: ${styles.textColor};
+			}
+			.freq-map-subtitle {
+				font-size: 16px;
+				font-weight: 700;
+				text-align: center;
+				text-transform: uppercase;
+				letter-spacing: 2px;
+				margin-bottom: 30px;
+				font-family: ${styles.subtitleFont};
 				color: ${styles.textColor};
 			}
 			.freq-map-content {
@@ -139,16 +150,38 @@ export function generateFrequencyMapHTML(
 				background-color: ${styles.textColor};
 			}
 			.freq-footer {
-				font-size: 11px;
-				font-style: italic;
-				text-align: left;
-				margin-top: 20px;
+				display: flex;
+				align-items: flex-end;
+				justify-content: space-between;
+				margin-top: auto;
+				padding-top: 20px;
 				color: ${styles.textColor};
+				font-family: ${styles.titleFont};
+			}
+			.freq-footer-left {
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
+			}
+			.freq-footer-title {
+				font-size: 10px;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+			}
+			.freq-footer-copyright {
+				font-size: 10px;
+			}
+			.freq-footer-badge {
+				font-size: 32px;
+				line-height: 1;
+				letter-spacing: -1px;
 			}
 		</style>
 
 		<div class="freq-map-container">
-			<h1 class="freq-map-title">${userName ? `${userName}'s<br/>Frequencies Map` : 'Your<br/>Frequency Map'}</h1>
+			<h1 class="freq-map-title">Frequency Map</h1>
+			${userName ? `<p class="freq-map-subtitle">${userName}</p>` : ''}
 
 			<div class="freq-map-content">
 				<!-- Top Center - Position 0 (Highest) -->
@@ -206,7 +239,13 @@ export function generateFrequencyMapHTML(
 				</div>
 			</div>
 
-			<p class="freq-footer">*All scores are out of a maximum of 100</p>
+			<div class="freq-footer">
+				<div class="freq-footer-left">
+					<span class="freq-footer-title">The Seven Frequencies of Communication Report</span>
+					<span class="freq-footer-copyright">&copy;${new Date().getFullYear()}, The Arena Community, LLC. All rights reserved.</span>
+				</div>
+				<span class="freq-footer-badge">7F</span>
+			</div>
 		</div>
 	`
 }

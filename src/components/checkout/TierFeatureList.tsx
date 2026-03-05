@@ -17,13 +17,13 @@ export function TierFeatureList({
 }: TierFeatureListProps) {
 	return (
 		<ul className={`space-y-2 ${className}`}>
-			{features.map((feature, index) => (
-				<li key={index} className="flex items-start gap-2">
+			{features.map((feature) => (
+				<li key={feature} className="flex items-start gap-2 text-left">
 					<Check
 						className={`w-5 h-5 ${iconColor} flex-shrink-0 mt-0.5`}
 						aria-hidden="true"
 					/>
-					<span className="text-sm text-main">{feature}</span>
+					<span className="text-sm text-main text-left">{feature}</span>
 				</li>
 			))}
 		</ul>

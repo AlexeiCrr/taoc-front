@@ -388,8 +388,8 @@ export const ResultsPDF = ({
 						<Text>
 							{m['pdf.contactUs']()}
 							{'\n'}
-							<Link style={styles.link} src="mailto:info@erwinmcmanus.com">
-								info@erwinmcmanus.com
+							<Link style={styles.link} src="mailto:info@thesevenfrequencies.com">
+								info@thesevenfrequencies.com
 							</Link>
 						</Text>
 					</View>

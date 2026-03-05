@@ -6,14 +6,13 @@ import { QuizButton, QuizFooter } from '../components/quiz'
 import { ResultsPDF } from '../components/quiz/ResultsPDF'
 import useQuizStore from '../stores/quizStore'
 import * as m from '../paraglide/messages'
-// TODO: Re-enable after Stripe integration is finalized
 // import { PaymentErrorBoundary } from '../components/checkout/PaymentErrorBoundary'
 // import { UpgradeCard } from '../components/checkout/UpgradeCard'
 // import type { LicenseTier } from '../services/licenseApi'
 
 export const Results = () => {
 	const navigate = useLocaleNavigate()
-	const { quizResponse } = useQuizStore()
+	const { quizResponse, userData } = useQuizStore()
 	const [isGenerating, setIsGenerating] = useState(false)
 
 	const generatePDF = async () => {

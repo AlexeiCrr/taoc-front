@@ -12,7 +12,8 @@ import * as m from '../paraglide/messages'
 
 export const Results = () => {
 	const navigate = useLocaleNavigate()
-	const { quizResponse, userData } = useQuizStore()
+	const { quizResponse } = useQuizStore()
+	// const { quizResponse, userData } = useQuizStore()
 	const [isGenerating, setIsGenerating] = useState(false)
 
 	const generatePDF = async () => {

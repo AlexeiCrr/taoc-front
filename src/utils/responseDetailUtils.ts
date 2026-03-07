@@ -12,9 +12,17 @@ const FREQUENCY_NAME_TO_ID: Record<string, number> = {
 	Healer: 7,
 }
 
+export interface ResponseDetailCoach {
+	id: number
+	firstName: string
+	lastName: string
+	email: string
+}
+
 export interface ResponseDetailDto extends Omit<AdminResponse, 'answers'> {
 	phoneNumber?: string | null
 	country?: string | null
+	coach?: ResponseDetailCoach | null
 	answers?: Array<{
 		id: number
 		description: string

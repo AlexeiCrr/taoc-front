@@ -230,6 +230,7 @@ export default function ResponseDetail() {
 						email={response.email}
 						licenseCode={response.licenseCode}
 						licenseTier={response.licenseTier}
+						coach={response.coach}
 						onDataUpdated={refetchResponse}
 					/>
 

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { adminApi } from '@/services/api'
+import type { ResponseDetailCoach } from '@/utils/responseDetailUtils'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -13,6 +14,7 @@ interface UserDataCardProps {
 	email: string
 	licenseCode?: string
 	licenseTier?: number
+	coach?: ResponseDetailCoach | null
 	onDataUpdated: () => void
 }
 
@@ -23,6 +25,7 @@ export default function UserDataCard({
 	email,
 	licenseCode,
 	licenseTier,
+	coach,
 	onDataUpdated,
 }: UserDataCardProps) {
 	const [isEditing, setIsEditing] = useState(false)
@@ -127,6 +130,23 @@ export default function UserDataCard({
 							</label>
 							<p className="text-base">{licenseTier ?? 'Not available'}</p>
 						</div>
+						{coach != null && (
+							<div>
+								<label className="text-sm font-medium text-muted-foreground">
+									Assigned Coach
+								</label>
+								<p className="text-base">
+									<a
+										href={`https://www.coaching.thesevenfrequenciestest.com/admin/coaches/${coach.id}`}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="underline hover:text-foreground transition-colors"
+									>
+										{coach.firstName} {coach.lastName}
+									</a>
+								</p>
+							</div>
+						)}
 					</div>
 				) : (
 					<div className="space-y-4">

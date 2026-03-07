@@ -44,6 +44,7 @@ export default function ResponseDetail() {
 	const [isResendingEmail, setIsResendingEmail] = useState(false)
 	// Tier 7 fallback ensures selector has valid value even when licenseTier is null
 	const [selectedTier, setSelectedTier] = useState<number>(LicenseTier.TIER_7)
+	const [isSavingTier, setIsSavingTier] = useState(false)
 
 	const fetchResponse = async (signal?: AbortSignal) => {
 		if (!id) return
@@ -175,6 +176,26 @@ export default function ResponseDetail() {
 		}
 	}
 
+	const handleSaveTier = async () => {
+		if (!id) return
+
+		setIsSavingTier(true)
+
+		try {
+			await adminApi
+				.patch(`responses/${id}/tier`, { json: { licenseTier: selectedTier } })
+				.json()
+			toast.success(`License tier updated to Tier ${selectedTier}`)
+			await refetchResponse()
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : 'Failed to update tier'
+			toast.error(errorMessage)
+		} finally {
+			setIsSavingTier(false)
+		}
+	}
+
 	if (isLoading) {
 		return (
 			<div className="min-h-screen bg-background font-roboto flex items-center justify-center">
@@ -292,24 +313,32 @@ export default function ResponseDetail() {
 				</div>
 
 				<Card>
-					<CardHeader>
-						<CardTitle>Select Tier for PDF/Email</CardTitle>
+					<CardHeader className="flex flex-row items-center justify-between gap-4 flex-wrap">
+						<CardTitle className="shrink-0">Select Tier for PDF/Email</CardTitle>
+						<div className="flex items-center gap-2">
+							<Select
+								value={selectedTier.toString()}
+								onValueChange={(value) => setSelectedTier(Number(value))}
+							>
+								<SelectTrigger className="w-[120px] bg-card">
+									<SelectValue placeholder="Select tier" />
+								</SelectTrigger>
+								<SelectContent className="dark bg-popover">
+									<SelectItem value="1">Tier 1</SelectItem>
+									<SelectItem value="3">Tier 3</SelectItem>
+									<SelectItem value="7">Tier 7</SelectItem>
+								</SelectContent>
+							</Select>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={handleSaveTier}
+								disabled={isSavingTier}
+							>
+								{isSavingTier ? <LoadingSpinner size="sm" /> : 'Save new tier'}
+							</Button>
+						</div>
 					</CardHeader>
-					<CardContent>
-						<Select
-							value={selectedTier.toString()}
-							onValueChange={(value) => setSelectedTier(Number(value))}
-						>
-							<SelectTrigger className="w-[200px] bg-card">
-								<SelectValue placeholder="Select tier" />
-							</SelectTrigger>
-							<SelectContent className="dark bg-popover">
-								<SelectItem value="1">Tier 1</SelectItem>
-								<SelectItem value="3">Tier 3</SelectItem>
-								<SelectItem value="7">Tier 7</SelectItem>
-							</SelectContent>
-						</Select>
-					</CardContent>
 				</Card>
 
 				<div className="flex flex-col sm:flex-row gap-3">

@@ -377,4 +377,10 @@ a {
 	[data-radix-popper-content-wrapper] {
 		width: var(--radix-popper-anchor-width) !important;
 	}
+
+	/* Prevent Radix scroll-lock from adding margin-right to body */
+	body[data-scroll-locked] {
+		margin-right: 0 !important;
+		overflow: auto !important;
+	}
 }

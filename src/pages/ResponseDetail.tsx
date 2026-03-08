@@ -77,8 +77,24 @@ export default function ResponseDetail() {
 		}
 	}
 
+	/** Background refetch — keeps existing content visible, no full-page spinner */
 	const refetchResponse = async () => {
-		await fetchResponse()
+		if (!id) return
+
+		try {
+			const data = await adminApi
+				.get(`responses/${id}`)
+				.json<ResponseDetailDto>()
+
+			setResponse(data)
+			if (data.licenseTier) {
+				setSelectedTier(data.licenseTier)
+			}
+		} catch (err) {
+			const errorMessage =
+				err instanceof Error ? err.message : 'Failed to refresh response'
+			toast.error(errorMessage)
+		}
 	}
 
 	useEffect(() => {
@@ -335,7 +351,8 @@ export default function ResponseDetail() {
 								onClick={handleSaveTier}
 								disabled={isSavingTier}
 							>
-								{isSavingTier ? <LoadingSpinner size="sm" /> : 'Save new tier'}
+								{isSavingTier && <LoadingSpinner size="sm" />}
+								Save new tier
 							</Button>
 						</div>
 					</CardHeader>
@@ -347,14 +364,8 @@ export default function ResponseDetail() {
 						disabled={isGeneratingPDF}
 						className="flex-1"
 					>
-						{isGeneratingPDF ? (
-							<LoadingSpinner size="sm" />
-						) : (
-							<>
-								<Download className="mr-2 h-4 w-4" />
-								Download PDF
-							</>
-						)}
+						{isGeneratingPDF ? <LoadingSpinner size="sm" /> : <Download className="mr-2 h-4 w-4" />}
+						Download PDF
 					</Button>
 					<Button
 						onClick={handleResendEmail}
@@ -362,14 +373,8 @@ export default function ResponseDetail() {
 						variant="outline"
 						className="flex-1"
 					>
-						{isResendingEmail ? (
-							<LoadingSpinner size="sm" />
-						) : (
-							<>
-								<Mail className="mr-2 h-4 w-4" />
-								Resend Email
-							</>
-						)}
+						{isResendingEmail ? <LoadingSpinner size="sm" /> : <Mail className="mr-2 h-4 w-4" />}
+						Resend Email
 					</Button>
 				</div>
 
@@ -384,14 +389,8 @@ export default function ResponseDetail() {
 								variant="outline"
 								size="sm"
 							>
-								{isGeneratingMap ? (
-									<LoadingSpinner size="sm" />
-								) : (
-									<>
-										<Download className="mr-2 h-4 w-4" />
-										Download
-									</>
-								)}
+								{isGeneratingMap ? <LoadingSpinner size="sm" /> : <Download className="mr-2 h-4 w-4" />}
+								Download
 							</Button>
 						</CardHeader>
 						<CardContent className="flex justify-center">

@@ -200,7 +200,8 @@ export default function UserDataCard({
 								onClick={handleSave}
 								disabled={!isFormValid() || isSaving}
 							>
-								{isSaving ? <LoadingSpinner size="sm" /> : 'Save'}
+								{isSaving && <LoadingSpinner size="sm" />}
+								Save
 							</Button>
 							<Button
 								onClick={handleCancel}

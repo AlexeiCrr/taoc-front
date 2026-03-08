@@ -44,6 +44,7 @@ export default function ResponseDetail() {
 	const [isResendingEmail, setIsResendingEmail] = useState(false)
 	// Tier 7 fallback ensures selector has valid value even when licenseTier is null
 	const [selectedTier, setSelectedTier] = useState<number>(LicenseTier.TIER_7)
+	const [isSavingTier, setIsSavingTier] = useState(false)
 
 	const fetchResponse = async (signal?: AbortSignal) => {
 		if (!id) return
@@ -76,8 +77,24 @@ export default function ResponseDetail() {
 		}
 	}
 
+	/** Background refetch — keeps existing content visible, no full-page spinner */
 	const refetchResponse = async () => {
-		await fetchResponse()
+		if (!id) return
+
+		try {
+			const data = await adminApi
+				.get(`responses/${id}`)
+				.json<ResponseDetailDto>()
+
+			setResponse(data)
+			if (data.licenseTier) {
+				setSelectedTier(data.licenseTier)
+			}
+		} catch (err) {
+			const errorMessage =
+				err instanceof Error ? err.message : 'Failed to refresh response'
+			toast.error(errorMessage)
+		}
 	}
 
 	useEffect(() => {
@@ -172,6 +189,26 @@ export default function ResponseDetail() {
 			toast.error(errorMessage)
 		} finally {
 			setIsResendingEmail(false)
+		}
+	}
+
+	const handleSaveTier = async () => {
+		if (!id) return
+
+		setIsSavingTier(true)
+
+		try {
+			await adminApi
+				.patch(`responses/${id}/tier`, { json: { licenseTier: selectedTier } })
+				.json()
+			toast.success(`License tier updated to Tier ${selectedTier}`)
+			await refetchResponse()
+		} catch (error) {
+			const errorMessage =
+				error instanceof Error ? error.message : 'Failed to update tier'
+			toast.error(errorMessage)
+		} finally {
+			setIsSavingTier(false)
 		}
 	}
 
@@ -292,24 +329,33 @@ export default function ResponseDetail() {
 				</div>
 
 				<Card>
-					<CardHeader>
-						<CardTitle>Select Tier for PDF/Email</CardTitle>
+					<CardHeader className="flex flex-row items-center justify-between gap-4 flex-wrap">
+						<CardTitle className="shrink-0">Select Tier for PDF/Email</CardTitle>
+						<div className="flex items-center gap-2">
+							<Select
+								value={selectedTier.toString()}
+								onValueChange={(value) => setSelectedTier(Number(value))}
+							>
+								<SelectTrigger className="w-[120px] bg-card">
+									<SelectValue placeholder="Select tier" />
+								</SelectTrigger>
+								<SelectContent className="dark bg-popover">
+									<SelectItem value="1">Tier 1</SelectItem>
+									<SelectItem value="3">Tier 3</SelectItem>
+									<SelectItem value="7">Tier 7</SelectItem>
+								</SelectContent>
+							</Select>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={handleSaveTier}
+								disabled={isSavingTier}
+							>
+								{isSavingTier && <LoadingSpinner size="sm" />}
+								Save new tier
+							</Button>
+						</div>
 					</CardHeader>
-					<CardContent>
-						<Select
-							value={selectedTier.toString()}
-							onValueChange={(value) => setSelectedTier(Number(value))}
-						>
-							<SelectTrigger className="w-[200px] bg-card">
-								<SelectValue placeholder="Select tier" />
-							</SelectTrigger>
-							<SelectContent className="dark bg-popover">
-								<SelectItem value="1">Tier 1</SelectItem>
-								<SelectItem value="3">Tier 3</SelectItem>
-								<SelectItem value="7">Tier 7</SelectItem>
-							</SelectContent>
-						</Select>
-					</CardContent>
 				</Card>
 
 				<div className="flex flex-col sm:flex-row gap-3">
@@ -318,14 +364,8 @@ export default function ResponseDetail() {
 						disabled={isGeneratingPDF}
 						className="flex-1"
 					>
-						{isGeneratingPDF ? (
-							<LoadingSpinner size="sm" />
-						) : (
-							<>
-								<Download className="mr-2 h-4 w-4" />
-								Download PDF
-							</>
-						)}
+						{isGeneratingPDF ? <LoadingSpinner size="sm" /> : <Download className="mr-2 h-4 w-4" />}
+						Download PDF
 					</Button>
 					<Button
 						onClick={handleResendEmail}
@@ -333,14 +373,8 @@ export default function ResponseDetail() {
 						variant="outline"
 						className="flex-1"
 					>
-						{isResendingEmail ? (
-							<LoadingSpinner size="sm" />
-						) : (
-							<>
-								<Mail className="mr-2 h-4 w-4" />
-								Resend Email
-							</>
-						)}
+						{isResendingEmail ? <LoadingSpinner size="sm" /> : <Mail className="mr-2 h-4 w-4" />}
+						Resend Email
 					</Button>
 				</div>
 
@@ -355,14 +389,8 @@ export default function ResponseDetail() {
 								variant="outline"
 								size="sm"
 							>
-								{isGeneratingMap ? (
-									<LoadingSpinner size="sm" />
-								) : (
-									<>
-										<Download className="mr-2 h-4 w-4" />
-										Download
-									</>
-								)}
+								{isGeneratingMap ? <LoadingSpinner size="sm" /> : <Download className="mr-2 h-4 w-4" />}
+								Download
 							</Button>
 						</CardHeader>
 						<CardContent className="flex justify-center">

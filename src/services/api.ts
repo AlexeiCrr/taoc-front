@@ -17,6 +17,7 @@
 import ky, { type KyInstance } from 'ky'
 import type { AdminResponse, UpdateUserDataParams } from '../types/admin.types'
 import type {
+	EmailResultsResponse,
 	Question,
 	QuizResponse,
 	QuizResponseCreate,
@@ -230,6 +231,10 @@ export const apiService = {
 		}
 
 		return response.blob()
+	},
+
+	getResponseByToken: async (token: string): Promise<EmailResultsResponse> => {
+		return await publicApi.get(`responses/by-token/${token}`).json()
 	},
 
 	// resendEmail: async (responseId: number): Promise<ResendEmailResult> => {

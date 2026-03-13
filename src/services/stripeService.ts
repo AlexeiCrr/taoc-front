@@ -16,6 +16,7 @@ export interface CheckoutSessionRequest {
 	currentTier: LicenseTier
 	targetTier: LicenseTier
 	responseId: string
+	accessToken?: string
 }
 
 export interface CheckoutSessionResponse {

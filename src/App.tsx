@@ -41,6 +41,7 @@ const UpgradeSuccess = lazy(() => import('./pages/UpgradeSuccess'))
 const UpgradeCancel = lazy(() => import('./pages/UpgradeCancel'))
 const PDFPreview = lazy(() => import('./pages/PDFPreview'))
 const PostHogTest = lazy(() => import('./pages/PostHogTest'))
+const EmailResults = lazy(() => import('./pages/EmailResults'))
 
 // Loading fallback component
 function PageLoader() {
@@ -62,6 +63,7 @@ function publicRoutes() {
 			<Route path="upgrade/cancel" element={<UpgradeCancel />} />
 			<Route path="pdf-preview" element={<PDFPreview />} />
 			<Route path="posthog-test" element={<PostHogTest />} />
+			<Route path="results/:token" element={<EmailResults />} />
 		</>
 	)
 }
@@ -121,6 +123,7 @@ function AnimatedRoutes() {
 						<Route path="/upgrade/cancel" element={<UpgradeCancel />} />
 						<Route path="/pdf-preview" element={<PDFPreview />} />
 						<Route path="/posthog-test" element={<PostHogTest />} />
+					<Route path="/results/:token" element={<EmailResults />} />
 					</Route>
 
 					<Route path="*" element={<Navigate to="/" replace />} />

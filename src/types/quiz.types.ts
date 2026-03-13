@@ -57,3 +57,15 @@ export interface QuizResult {
 	answers: Answer[]
 	frequencies: Frequency[]
 }
+
+export interface EmailResultsResponse {
+	id: number
+	firstName: string
+	lastName: string
+	email: string
+	createdOn: string
+	licenseTier: number
+	locale: string
+	accessToken: string
+	frequencies: Frequency[]
+}

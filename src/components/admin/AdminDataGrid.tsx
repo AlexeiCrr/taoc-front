@@ -1,3 +1,4 @@
+import FrequencyBreakdownDialog from '@/components/admin/FrequencyBreakdownDialog'
 import { Button } from '@/components/ui/button'
 import {
 	Table,
@@ -14,7 +15,8 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/tooltip'
 import useAdminStore from '@/stores/adminStore'
-import type { AdminResponse } from '@/types/admin.types'
+import type { AdminResponse, FrequencyMap } from '@/types/admin.types'
+import { getFrequencyColor } from '@/utils/chartUtils'
 import {
 	flexRender,
 	getCoreRowModel,
@@ -24,26 +26,34 @@ import {
 	type SortingState,
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { BarChart3, ChevronDown, ChevronUp } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+/** Returns the primary frequency: highest score, alphabetical tiebreaker */
+function getPrimaryFrequency(frequencies: FrequencyMap): { name: string; score: number } | null {
+	const entries = Object.entries(frequencies)
+	if (entries.length === 0) return null
+	entries.sort(([nameA, scoreA], [nameB, scoreB]) => {
+		if (scoreB !== scoreA) return scoreB - scoreA
+		return nameA.localeCompare(nameB)
+	})
+	return { name: entries[0][0], score: entries[0][1] }
+}
 
 export default function AdminDataGrid() {
 	const { responses, pagination, isLoading, fetchResponses } = useAdminStore()
 	const navigate = useNavigate()
 	const [sorting, setSorting] = useState<SortingState>([])
+	const [breakdownResponse, setBreakdownResponse] = useState<AdminResponse | null>(null)
 
-	// Decision Log: Dynamic frequency columns (API schema has arbitrary keys, prevents desync)
-	// Invariant: alphabetical ordering for predictable user experience
-	const frequencyNames = useMemo(() => {
-		if (responses.length === 0) return []
-		const firstResponse = responses[0]
-		return Object.keys(firstResponse.frequencies).sort()
-	}, [responses])
+	const handleOpenBreakdown = useCallback((e: React.MouseEvent, response: AdminResponse) => {
+		e.stopPropagation()
+		setBreakdownResponse(response)
+	}, [])
 
-	// Invariant: User Data columns before Frequency columns (matches requirement specification)
 	const columns = useMemo<ColumnDef<AdminResponse>[]>(() => {
-		const userDataColumns: ColumnDef<AdminResponse>[] = [
+		return [
 			{
 				accessorKey: 'firstName',
 				header: 'First Name',
@@ -76,8 +86,33 @@ export default function AdminDataGrid() {
 			{
 				accessorKey: 'licenseCode',
 				header: 'License Code',
-				// Em dash for null values (better visual indicator than empty cell)
-				cell: (info) => info.getValue() || '—',
+				cell: ({ row }) => {
+					const code = row.original.licenseCode
+					const tier = row.original.licenseTier
+					if (!code) return <span className="text-muted-foreground">—</span>
+					return (
+						<div className="flex items-center gap-2">
+							<span className="inline-block w-[6ch] font-mono">{code}</span>
+							{tier != null && (
+								<span
+									className="text-[11px] font-roboto font-bold px-1.5 py-0.5 rounded-sm tracking-wide"
+									style={{
+										backgroundColor:
+											tier === 7 ? 'rgba(182, 206, 232, 0.15)' :
+											tier === 3 ? 'rgba(199, 147, 58, 0.15)' :
+											'rgba(255, 255, 255, 0.07)',
+										color:
+											tier === 7 ? '#B6CEE8' :
+											tier === 3 ? '#C7933A' :
+											'rgba(255, 255, 255, 0.5)',
+									}}
+								>
+									T{tier}
+								</span>
+							)}
+						</div>
+					)
+				},
 			},
 			{
 				accessorKey: 'locale',
@@ -95,8 +130,6 @@ export default function AdminDataGrid() {
 			{
 				accessorKey: 'createdOn',
 				header: 'Created At',
-				// Decision Log: date-fns formatting (handles timezone edge cases, improves readability)
-				// Error handling prevents grid crash from malformed API dates
 				cell: (info) => {
 					const dateValue = info.getValue() as string
 					try {
@@ -108,29 +141,43 @@ export default function AdminDataGrid() {
 					}
 				},
 			},
-		]
-
-		// Decision Log: Dynamic generation prevents coupling frontend to backend frequency types
-		const frequencyColumns: ColumnDef<AdminResponse>[] = frequencyNames.map(
-			(frequencyName) => ({
-				id: `frequency-${frequencyName}`,
-				header: frequencyName,
-				accessorFn: (row) => row.frequencies[frequencyName],
-				cell: (info) => {
-					const score = info.getValue() as number | null | undefined
-					// Handle null/undefined gracefully (incomplete quiz responses)
-					if (score === null || score === undefined)
-						return <span className="text-muted-foreground">—</span>
-					// Risk Mitigation: tabular-nums ensures consistent digit width for large scores
-					return <span className="tabular-nums">{score}</span>
+			{
+				id: 'primaryFrequency',
+				header: 'Primary Frequency',
+				accessorFn: (row) => {
+					const primary = getPrimaryFrequency(row.frequencies)
+					return primary ? primary.score : 0
 				},
-				// Risk Mitigation: min-w-[80px] accommodates 4-digit scores without breaking layout
-				minSize: 80,
-			})
-		)
-
-		return [...userDataColumns, ...frequencyColumns]
-	}, [frequencyNames])
+				cell: ({ row }) => {
+					const primary = getPrimaryFrequency(row.original.frequencies)
+					if (!primary) return <span className="text-muted-foreground">—</span>
+					const color = getFrequencyColor(primary.name)
+					return (
+						<div className="flex items-center gap-2">
+							<span
+								className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
+								style={{ backgroundColor: color }}
+							/>
+							<span className="whitespace-nowrap">
+								{primary.name}
+							</span>
+							<span className="tabular-nums text-muted-foreground">
+								{primary.score}
+							</span>
+							<button
+								type="button"
+								onClick={(e) => handleOpenBreakdown(e, row.original)}
+								className="ml-auto inline-flex items-center justify-center rounded p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+								aria-label="View all frequency scores"
+							>
+								<BarChart3 className="h-5 w-5" />
+							</button>
+						</div>
+					)
+				},
+			},
+		]
+	}, [handleOpenBreakdown])
 
 	const table = useReactTable({
 		data: responses,
@@ -245,6 +292,18 @@ export default function AdminDataGrid() {
 					</Button>
 				</div>
 			</div>
+
+			{/* Frequency breakdown dialog */}
+			{breakdownResponse && (
+				<FrequencyBreakdownDialog
+					open={!!breakdownResponse}
+					onOpenChange={(open) => {
+						if (!open) setBreakdownResponse(null)
+					}}
+					frequencies={breakdownResponse.frequencies}
+					userName={`${breakdownResponse.firstName} ${breakdownResponse.lastName}`}
+				/>
+			)}
 		</div>
 	)
 }

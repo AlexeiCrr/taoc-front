@@ -117,6 +117,7 @@ interface UpgradeCardProps {
 	currentTier: LicenseTier
 	email: string
 	responseId: string
+	accessToken?: string
 }
 
 /**
@@ -128,6 +129,7 @@ export function UpgradeCard({
 	currentTier,
 	email,
 	responseId,
+	accessToken,
 }: UpgradeCardProps) {
 	const [isLoading, setIsLoading] = useState(false)
 	const [selectedTier, setSelectedTier] = useState<number | null>(null)
@@ -162,6 +164,7 @@ export function UpgradeCard({
 				currentTier,
 				targetTier,
 				responseId,
+				accessToken,
 			})
 
 			window.location.href = url

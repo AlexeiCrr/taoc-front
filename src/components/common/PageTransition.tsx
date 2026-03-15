@@ -19,18 +19,6 @@ const fadeVariants = {
 	},
 }
 
-const adminFadeVariants = {
-	initial: {
-		opacity: 0.7,
-	},
-	in: {
-		opacity: 1,
-	},
-	out: {
-		opacity: 0.7,
-	},
-}
-
 const slideVariants = {
 	initial: {
 		opacity: 0,
@@ -89,25 +77,11 @@ const variantsMap = {
 	scale: scaleVariants,
 }
 
-const adminVariantsMap = {
-	fade: adminFadeVariants,
-	slide: slideVariants,
-	slideUp: slideUpVariants,
-	scale: scaleVariants,
-}
-
 export const PageTransition = ({
 	children,
 	type = 'fade',
 }: PageTransitionProps) => {
 	const location = useLocation()
-
-	const isAdminRoute =
-		location.pathname.startsWith('/dashboard') ||
-		location.pathname.startsWith('/admin') ||
-		location.pathname.startsWith('/response/')
-
-	const variants = isAdminRoute ? adminVariantsMap[type] : variantsMap[type]
 
 	return (
 		<AnimatePresence mode="wait">
@@ -116,9 +90,9 @@ export const PageTransition = ({
 				initial="initial"
 				animate="in"
 				exit="out"
-				variants={variants}
+				variants={variantsMap[type]}
 				transition={pageTransition}
-				className={isAdminRoute ? 'dark bg-background' : 'bg-background'}
+				className="bg-background"
 			>
 				{children}
 			</motion.div>

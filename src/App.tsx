@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense } from 'react'
 import {
 	BrowserRouter,
 	Navigate,
@@ -15,20 +15,6 @@ import LocaleLayout from './components/LocaleLayout'
 import EnglishRedirect from './components/EnglishRedirect'
 import { deLocalizeHref } from './paraglide/runtime'
 import * as m from './paraglide/messages'
-import useAuthStore from './stores/authStore'
-
-// Lazy load admin components (only loaded when admin routes are accessed)
-const AdminLayout = lazy(() => import('./components/admin/AdminLayout'))
-const AdminGuard = lazy(() =>
-	import('./components/AdminGuard').then((module) => ({
-		default: module.AdminGuard,
-	}))
-)
-const Dashboard = lazy(() => import('./pages/Dashboard'))
-const Statistics = lazy(() => import('./pages/Statistics'))
-const ResponseDetail = lazy(() => import('./pages/ResponseDetail'))
-const Admin = lazy(() => import('./pages/Admin'))
-const Login = lazy(() => import('./pages/Login'))
 
 // Lazy load quiz components (only loaded when quiz routes are accessed)
 const Home = lazy(() => import('./pages/Home'))
@@ -75,39 +61,6 @@ function AnimatedRoutes() {
 		<PageTransition>
 			<Suspense fallback={<PageLoader />}>
 				<Routes location={location} key={deLocalizeHref(location.pathname)}>
-					<Route path="/login" element={<Login />} />
-					<Route path="/admin" element={<Admin />} />
-					<Route
-						path="/dashboard"
-						element={
-							<AdminGuard>
-								<AdminLayout>
-									<Dashboard />
-								</AdminLayout>
-							</AdminGuard>
-						}
-					/>
-					<Route
-						path="/dashboard/statistics"
-						element={
-							<AdminGuard>
-								<AdminLayout>
-									<Statistics />
-								</AdminLayout>
-							</AdminGuard>
-						}
-					/>
-					<Route
-						path="/response/:id"
-						element={
-							<AdminGuard>
-								<AdminLayout>
-									<ResponseDetail />
-								</AdminLayout>
-							</AdminGuard>
-						}
-					/>
-
 					<Route path="/es" element={<LocaleLayout />}>
 						{publicRoutes()}
 					</Route>
@@ -134,12 +87,6 @@ function AnimatedRoutes() {
 }
 
 function App() {
-	const checkAuth = useAuthStore((state) => state.checkAuth)
-
-	useEffect(() => {
-		checkAuth()
-	}, [checkAuth])
-
 	return (
 		<BrowserRouter>
 			<LanguageProvider>

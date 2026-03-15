@@ -14,29 +14,19 @@ import { PostHogProvider } from './components/PostHogProvider'
 import LocaleLayout from './components/LocaleLayout'
 import EnglishRedirect from './components/EnglishRedirect'
 import { deLocalizeHref } from './paraglide/runtime'
-import * as m from './paraglide/messages'
+import Home from './pages/Home'
+import QuizStart from './pages/QuizStart'
+import Quiz from './pages/Quiz'
 
-// Lazy load quiz components (only loaded when quiz routes are accessed)
-const Home = lazy(() => import('./pages/Home'))
-const QuizStart = lazy(() => import('./pages/QuizStart'))
-const Quiz = lazy(() => import('./pages/Quiz'))
+// Lazy load heavier pages (PDF renderer, Stripe, analytics)
 const Results = lazy(() =>
 	import('./pages/Results').then((module) => ({ default: module.Results }))
 )
+const EmailResults = lazy(() => import('./pages/EmailResults'))
 const UpgradeSuccess = lazy(() => import('./pages/UpgradeSuccess'))
 const UpgradeCancel = lazy(() => import('./pages/UpgradeCancel'))
 const PDFPreview = lazy(() => import('./pages/PDFPreview'))
 const PostHogTest = lazy(() => import('./pages/PostHogTest'))
-const EmailResults = lazy(() => import('./pages/EmailResults'))
-
-// Loading fallback component
-function PageLoader() {
-	return (
-		<div className="flex items-center justify-center min-h-screen">
-			<div className="text-muted-foreground">{m['common.loading']()}</div>
-		</div>
-	)
-}
 
 function publicRoutes() {
 	return (
@@ -59,7 +49,11 @@ function AnimatedRoutes() {
 
 	return (
 		<PageTransition>
-			<Suspense fallback={<PageLoader />}>
+			<Suspense
+				fallback={
+					<div className="min-h-screen bg-off-white" />
+				}
+			>
 				<Routes location={location} key={deLocalizeHref(location.pathname)}>
 					<Route path="/es" element={<LocaleLayout />}>
 						{publicRoutes()}

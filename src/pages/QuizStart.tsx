@@ -17,11 +17,14 @@ const QuizStart = () => {
 	const navigate = useLocaleNavigate()
 	const setUserData = useQuizStore((state) => state.setUserData)
 	const resetQuiz = useQuizStore((state) => state.resetQuiz)
+	const fetchQuestions = useQuizStore((state) => state.fetchQuestions)
 
-	// Reset quiz when component mounts to ensure clean state
+	// Reset quiz when component mounts to ensure clean state,
+	// then prefetch questions so they're ready when the user submits the form
 	useEffect(() => {
 		resetQuiz()
-	}, [resetQuiz])
+		fetchQuestions()
+	}, [resetQuiz, fetchQuestions])
 
 	const handleFormSubmit = (data: FormData) => {
 		// Map form data to UserData type and store in zustand

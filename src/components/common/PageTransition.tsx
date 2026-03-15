@@ -9,13 +9,13 @@ interface PageTransitionProps {
 
 const fadeVariants = {
 	initial: {
-		opacity: 0.8,
+		opacity: 0,
 	},
 	in: {
 		opacity: 1,
 	},
 	out: {
-		opacity: 0.8,
+		opacity: 0,
 	},
 }
 

@@ -1,29 +1,20 @@
 /**
- * HTTP API clients and service methods for quiz and admin operations.
+ * HTTP API client and service methods for quiz operations.
  *
- * Provides two pre-configured Ky clients:
+ * Provides a pre-configured Ky client:
  *   - publicApi: Unauthenticated endpoints (quiz questions, license validation)
- *   - adminApi: JWT-authenticated endpoints (admin dashboard, license generation)
  *
  * Key features:
- *   - Automatic JWT injection via adminApi beforeRequest hook
- *   - Auto-logout on 401 (session expired)
- *   - Content-type validation for binary responses (CSV downloads)
  *   - Retry logic for transient failures (2 attempts, GET only)
- *
- * The adminApi client fetches fresh tokens from authStore on every request,
- * ensuring expired tokens are automatically refreshed before API calls.
+ *   - 30s timeout
  */
 import ky, { type KyInstance } from 'ky'
-import type { AdminResponse, UpdateUserDataParams } from '../types/admin.types'
 import type {
 	EmailResultsResponse,
 	Question,
 	QuizResponse,
 	QuizResponseCreate,
 } from '../types/quiz.types'
-import useAuthStore from '../stores/authStore'
-import type { LicenseTier } from './licenseApi'
 import { toast } from 'sonner'
 
 interface LicenseValidationResponse {
@@ -85,62 +76,6 @@ export const publicApi: KyInstance = ky.create({
 	timeout: 30000,
 })
 
-export const adminApi: KyInstance = ky.create({
-	prefixUrl: API_URL,
-	headers: {
-		'Content-Type': 'application/json',
-	},
-	hooks: {
-		beforeRequest: [
-			async (request) => {
-				// Get fresh token from auth store
-				const token = await useAuthStore.getState().getAccessToken()
-				if (!token) {
-					throw new Error('Authentication required')
-				}
-				request.headers.set('Authorization', `Bearer ${token}`)
-
-				if (API_KEY) {
-					request.headers.set('x-api-key', API_KEY)
-				}
-			},
-		],
-		afterResponse: [
-			async (_request, _options, response) => {
-				// Handle authentication errors
-				if (response.status === 401) {
-					// Sign out and redirect
-					await useAuthStore.getState().signOut()
-					window.location.href = '/'
-					throw new Error('Unauthorized - Please login again')
-				}
-
-				if (response.status === 503) {
-					toast.error(
-						'Service temporarily unavailable. Please try again later.'
-					)
-				}
-
-				// Handle other API errors
-				if (!response.ok) {
-					const error = (await response
-						.json()
-						.catch(() => ({ message: 'An error occurred' }))) as {
-						message?: string
-					}
-					throw new Error(error.message || `HTTP ${response.status}`)
-				}
-			},
-		],
-	},
-	retry: {
-		limit: 2,
-		methods: ['get'],
-		statusCodes: [408, 413, 429, 500, 502, 503, 504],
-	},
-	timeout: 30000,
-})
-
 // Error handler helper
 export const handleApiError = (error: unknown): string => {
 	if (error instanceof Error) {
@@ -177,77 +112,10 @@ export const apiService = {
 		}
 	},
 
-	// Admin endpoints (using adminApi with JWT)
-	getResponses: async (): Promise<AdminResponse[]> => {
-		return await adminApi.get('responses').json()
-	},
-
-	getResponseById: async (id: number): Promise<AdminResponse> => {
-		return await adminApi.get(`response/${id}`).json()
-	},
-
-	updateResponse: async (
-		params: UpdateUserDataParams
-	): Promise<AdminResponse> => {
-		const { responseId, ...userData } = params
-		return await adminApi
-			.put(`response/${responseId}`, { json: userData })
-			.json()
-	},
-
-	/**
-	 * Generate license codes and return as CSV blob.
-	 *
-	 * Requires admin authentication (JWT via adminApi). Content-type validation
-	 * prevents silent failures when API returns error JSON instead of CSV.
-	 *
-	 * @param amount Number of license codes to generate (1-10,000)
-	 * @param licenseTier Tier level (1, 3, or 7)
-	 * @returns CSV blob with headers "code,license_tier"
-	 * @throws Error if content-type is not CSV (indicates API error)
-	 *
-	 * Example:
-	 *   const blob = await apiService.generateLicenses(100, LicenseTier.TIER_3)
-	 *   downloadBlob(blob, 'license_codes_2025-01-15.csv')
-	 */
-	generateLicenses: async (
-		amount: number,
-		licenseTier: LicenseTier
-	): Promise<Blob> => {
-		const response = await adminApi.post('tac-generate-codes', {
-			json: { amount, licenseTier },
-		})
-
-		// Validate content-type to detect API errors returned as JSON instead of CSV
-		const contentType = response.headers.get('content-type')
-		if (
-			!contentType?.includes('text/csv') &&
-			!contentType?.includes('application/octet-stream')
-		) {
-			const text = await response.text()
-			throw new Error(
-				`Expected CSV file but received: ${text.substring(0, 100)}`
-			)
-		}
-
-		return response.blob()
-	},
-
 	getResponseByToken: async (token: string): Promise<EmailResultsResponse> => {
 		return await publicApi.get(`responses/by-token/${token}`).json()
 	},
-
-	// resendEmail: async (responseId: number): Promise<ResendEmailResult> => {
-	// 	const response = await adminApi
-	// 		.post('send-response', { json: { responseId } })
-	// 		.json<any>()
-	// 	// Parse the body if it's a string (Lambda response format)
-	// 	if (response.body && typeof response.body === 'string') {
-	// 		return JSON.parse(response.body)
-	// 	}
-	// 	return response
-	// },
 }
 
-// Export both API clients for direct use if needed
+// Export API client for direct use if needed
 export default publicApi

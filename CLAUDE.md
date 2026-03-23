@@ -1,4 +1,4 @@
-# taoc-front — Quiz & Admin Dashboard
+# taoc-front — Quiz Frontend
 
 ## Quick Reference
 
@@ -15,7 +15,7 @@ npm run machine-translate  # Auto-translate missing keys
 ```
 src/
 ├── App.tsx                     # React Router v7 routes (lazy-loaded)
-├── main.tsx                    # Entry: AWS Amplify init
+├── main.tsx                    # Entry point
 │
 ├── pages/
 │   ├── Home.tsx                # Landing hero → /quiz-start
@@ -23,13 +23,10 @@ src/
 │   ├── Quiz.tsx                # Question loop orchestrator
 │   ├── Results.tsx             # Frequency results + PDF download
 │   ├── EmailResults.tsx        # Token-based public results view
-│   ├── Login.tsx               # Cognito admin login + new password challenge
-│   ├── Admin.tsx               # Auth check → redirect to /login or /dashboard
-│   ├── Dashboard.tsx           # Admin response grid + filters + license CSV
-│   ├── Statistics.tsx          # 5 Recharts analytics views
-│   ├── ResponseDetail.tsx      # Single response: edit, tier, PDF, email, freq map
 │   ├── UpgradeSuccess.tsx      # Stripe success page
-│   └── UpgradeCancel.tsx       # Stripe cancel page
+│   ├── UpgradeCancel.tsx       # Stripe cancel page
+│   ├── PDFPreview.tsx          # Debug/test page for PDF rendering
+│   └── PostHogTest.tsx         # Debug/test page for analytics events
 │
 ├── components/
 │   ├── quiz/                   # Quiz flow components
@@ -39,22 +36,12 @@ src/
 │   │   ├── FrequencyMap.tsx    # Triangular visualization (html2canvas capture)
 │   │   ├── ResultsPDF.tsx      # @react-pdf/renderer document
 │   │   ├── HeroSection.tsx     # Home page hero
-│   │   └── QuizProgressBar.tsx
-│   │
-│   ├── admin/                  # Admin dashboard components
-│   │   ├── AdminLayout.tsx     # Admin page wrapper
-│   │   ├── AdminDataGrid.tsx   # @tanstack/react-table responses grid
-│   │   ├── AdminFilters.tsx    # Search, email, license, date filters
-│   │   ├── UserDataCard.tsx    # Edit user modal
-│   │   ├── ManageLicensesDialog.tsx  # Generate + download CSV
-│   │   ├── FrequencyBreakdownDialog.tsx
-│   │   ├── StatisticsDateFilter.tsx
-│   │   └── charts/            # 5 Recharts components
-│   │       ├── FrequencyAverageScoresChart.tsx
-│   │       ├── FrequencyUserCountChart.tsx
-│   │       ├── LanguageDistributionChart.tsx
-│   │       ├── MonthlyTrendsChart.tsx
-│   │       └── TimeSpentChart.tsx
+│   │   ├── QuizProgressBar.tsx
+│   │   ├── QuizButton.tsx      # Styled quiz action button
+│   │   ├── QuizHeader.tsx      # Quiz page header
+│   │   ├── QuizFooter.tsx      # Quiz page footer
+│   │   ├── QuizLayout.tsx      # Quiz page layout wrapper
+│   │   └── frequencyMapTemplate.ts  # HTML template for frequency visualization
 │   │
 │   ├── checkout/               # Stripe upgrade flow
 │   │   ├── UpgradeCard.tsx
@@ -68,6 +55,9 @@ src/
 │   │   ├── PageTransition.tsx  # Route transition animation
 │   │   └── ProgressBar.tsx
 │   │
+│   ├── layout/                 # App-level layout
+│   │   └── MainLayout.tsx      # Header/nav/footer wrapper
+│   │
 │   ├── ui/                     # shadcn/ui primitives
 │   │   ├── button, card, input, label, select, table, dialog
 │   │   ├── popover, alert, calendar, command, scroll-area
@@ -75,38 +65,35 @@ src/
 │   │   └── (Radix UI based, installed via shadcn CLI)
 │   │
 │   ├── LanguageProvider.tsx    # Paraglide i18n context
+│   ├── LanguageSelector.tsx    # Language dropdown switcher
 │   ├── PostHogProvider.tsx     # Analytics init
-│   ├── AdminGuard.tsx          # isAuthenticated + isAdmin check
+│   ├── ThemeProvider.tsx       # Dark/light mode theme context
+│   ├── EnglishRedirect.tsx     # /en/* → /* path normalization
 │   ├── LocaleLink.tsx          # Auto-localizes href
 │   └── LocaleLayout.tsx        # Locale route wrapper
 │
 ├── stores/                     # Zustand state management
-│   ├── authStore.ts            # Cognito auth (persisted → localStorage)
-│   ├── quizStore.ts            # Quiz state (persisted → sessionStorage)
-│   └── adminStore.ts           # Admin responses + stats (NOT persisted)
+│   └── quizStore.ts            # Quiz state (persisted → sessionStorage)
 │
 ├── services/
-│   ├── api.ts                  # Ky HTTP clients (publicApi + adminApi)
+│   ├── api.ts                  # Ky HTTP client (publicApi with x-api-key)
 │   ├── licenseApi.ts           # License validation
 │   ├── posthog.ts              # Event tracking helpers
 │   └── stripeService.ts        # Checkout session creation
 │
 ├── types/
-│   ├── quiz.types.ts           # Question, Answer, UserData, Frequency, QuizResponse
-│   ├── auth.types.ts           # User, CognitoIdTokenPayload
-│   └── admin.types.ts          # AdminResponse, ResponseFilters, StatisticsResponse
+│   └── quiz.types.ts           # Question, Answer, UserData, Frequency, QuizResponse
 │
 ├── hooks/
 │   ├── useLanguage.ts          # Current language + changeLanguage()
-│   └── useLocaleNavigate.ts    # Navigate with locale prefix
+│   ├── useLocaleNavigate.ts    # Navigate with locale prefix
+│   └── useTranslation.ts       # Wrapper around paraglide messages
 │
 ├── utils/
 │   ├── chartUtils.ts           # Frequency color mapping
-│   ├── responseDetailUtils.ts  # Response data transformations
 │   ├── captureFrequencyMap.tsx  # html2canvas → base64 PNG
 │   └── lib/utils.ts            # cn() utility + language constants
 │
-├── config/cognito.ts           # AWS Amplify Cognito config
 ├── paraglide/                  # Generated i18n (DO NOT edit manually)
 │   ├── runtime.ts              # Locale detection, localizeHref, setLocale
 │   └── messages.ts             # Typed message functions
@@ -121,7 +108,7 @@ src/
 ## Routing
 
 ```
-# Locale-aware: /es/quiz, /en/quiz → redirects to /quiz, /quiz (default en)
+# Locale-aware: /es/quiz, /en/quiz → redirects via EnglishRedirect
 # LocaleLayout wraps all quiz routes
 
 # Public (quiz flow)
@@ -133,29 +120,12 @@ src/
 /{locale}/upgrade/success     → Stripe success
 /{locale}/upgrade/cancel      → Stripe cancel
 
-# Admin (NOT locale-wrapped, AdminGuard protected)
-/login                        → Login (Cognito)
-/admin                        → Auth check → /login or /dashboard
-/dashboard                    → Response grid
-/dashboard/statistics         → Analytics charts
-/response/:id                 → Response detail
+# Debug (lazy-loaded, no locale)
+/pdf-preview                  → PDFPreview (PDF rendering test)
+/posthog-test                 → PostHogTest (analytics test)
 ```
 
 ## State Management (Zustand)
-
-### authStore (persisted → localStorage `taoc-front-auth`)
-```ts
-// State
-user: User | null, isAuthenticated, isLoading, error, isAdmin
-needsNewPassword, pendingEmail, sessionExpired, accessToken
-
-// Key actions
-login(email, password)           // Cognito signIn → fetch session → decode JWT
-completeNewPassword(newPassword) // First-login password change
-signOut()                        // Amplify signOut
-checkAuth()                      // Restore session on mount
-getAccessToken()                 // Fresh token (Cognito auto-refresh)
-```
 
 ### quizStore (persisted → sessionStorage `quiz-storage`)
 ```ts
@@ -175,33 +145,15 @@ resetQuiz()                      // Clears everything + sessionStorage
 progress(), currentQuestion(), isComplete(), canGoBack(), canGoForward()
 ```
 
-### adminStore (NOT persisted — fresh fetch each session)
-```ts
-// State
-responses, filters: ResponseFilters, pagination, isLoading
-statistics, isLoadingStatistics
-
-// Key actions
-fetchResponses(page?)            // Server-side pagination + filters
-updateUserData(params)           // PUT /responses/:id
-fetchStatistics(filters?)        // GET /responses/statistics
-setFilter(filters)               // Updates filters, resets to page 1
-```
-
 ## API Layer (Ky HTTP Client)
 
-Two Ky instances in `services/api.ts`:
+Single Ky instance in `services/api.ts`:
 
 | Client | Auth | Use |
 |--------|------|-----|
 | `publicApi` | `x-api-key` header | Quiz endpoints (questions, responses, license check) |
-| `adminApi` | `Bearer` JWT (auto-injected per request) | Admin endpoints (dashboard, statistics) |
 
-Both: retry 2x on GET (408, 429, 5xx), 30s timeout.
-
-`adminApi` hooks:
-- `beforeRequest`: calls `authStore.getAccessToken()` for fresh token
-- `afterResponse`: 401 → auto-logout + redirect to `/`
+Retry 2x on GET (408, 429, 5xx), 30s timeout.
 
 ## i18n — Paraglide.js
 
@@ -245,7 +197,6 @@ import * as m from '@/paraglide/messages'
 
 ### Forms
 - GreetingForm: local state + manual validation (no Zod), debounced license check (500ms)
-- Admin forms: controlled inputs, errors below fields
 - Disabled submit until all validations pass
 
 ### Loading / Error / Empty states
@@ -259,13 +210,6 @@ import * as m from '@/paraglide/messages'
 - Optional 2nd page: frequency map (captured via html2canvas)
 - Download: blob URL → click link → revoke URL
 
-### Admin Auth Flow
-1. Login.tsx → `authStore.login()` → Cognito signIn
-2. New password challenge → show password form
-3. Success → decode JWT, check `cognito:groups` for 'admins'
-4. AdminGuard wraps admin routes: `isAuthenticated && isAdmin`
-5. adminApi injects fresh Bearer token on every request
-
 ### Quiz Flow
 1. Home → /quiz-start → GreetingForm (license + user data)
 2. Quiz → QuestionCard × N with slide animation (200ms transition)
@@ -277,11 +221,6 @@ import * as m from '@/paraglide/messages'
 ```
 VITE_API_URL                    # Backend API base URL
 VITE_API_KEY                    # API key for publicApi
-VITE_USER_POOL_ID               # Cognito user pool
-VITE_CLIENT_ID                  # Cognito app client
-VITE_REDIRECT_SIGN_IN           # OAuth redirect
-VITE_REDIRECT_SIGN_OUT          # Logout redirect
-VITE_APP_WEB_DOMAIN             # Cognito domain (optional)
 VITE_PUBLIC_POSTHOG_KEY         # PostHog API key (optional)
 VITE_PUBLIC_POSTHOG_HOST        # PostHog host (optional)
 ```
@@ -298,10 +237,10 @@ VITE_PUBLIC_POSTHOG_HOST        # PostHog host (optional)
 ## Adding a New Page — Checklist
 
 1. Create page component in `pages/` with loading + error + empty states
-2. Add lazy-loaded route in `App.tsx` (inside LocaleLayout for public, AdminGuard for admin)
+2. Add lazy-loaded route in `App.tsx` (inside LocaleLayout for public)
 3. Add i18n keys to `messages/en.json` + `messages/es.json`
 4. Run `npm run paraglide:compile` to regenerate runtime
 5. Use existing stores or create new Zustand store if needed
-6. Use `publicApi` or `adminApi` from `services/api.ts`
+6. Use `publicApi` from `services/api.ts`
 7. Follow existing component patterns (Props interface, cn() for classnames)
 8. Run `npx tsc --noEmit`

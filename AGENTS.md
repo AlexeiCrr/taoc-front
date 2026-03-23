@@ -26,20 +26,16 @@ Must pass with zero errors before approving.
 - [ ] `isLoading` set to `true` before async call, `false` in finally
 - [ ] Store actions don't call other stores directly — use component-level coordination
 - [ ] quizStore: answers array is sparse (indexed by question) — no off-by-one bugs
-- [ ] authStore: `getAccessToken()` used (not raw `accessToken`) for fresh Cognito tokens
 
 ### API Layer (Ky)
 
-- [ ] Quiz/public endpoints use `publicApi` (API key auth)
-- [ ] Admin endpoints use `adminApi` (JWT Bearer auth)
-- [ ] No manual token injection — `adminApi` beforeRequest hook handles it
+- [ ] All endpoints use `publicApi` (API key auth) — there is no admin API in this project
 - [ ] Error responses handled — not just swallowed
 - [ ] Response types match backend DTOs
 
 ### Routing
 
 - [ ] Public quiz routes inside `LocaleLayout` wrapper
-- [ ] Admin routes inside `AdminGuard` wrapper
 - [ ] Lazy-loaded with `React.lazy()` + `Suspense`
 - [ ] Navigation uses `useLocaleNavigate()` for quiz routes (preserves locale prefix)
 - [ ] No hardcoded locale paths (use `localizeHref()` or `LocaleLink`)
@@ -61,7 +57,7 @@ Must pass with zero errors before approving.
 
 ### PDF Generation
 
-- [ ] Uses `@react-pdf/renderer` (not jsPDF)
+- [ ] Uses `@react-pdf/renderer`
 - [ ] Contact footer shows `info@thesevenfrequencies.com`
 - [ ] Frequency images from S3 base URL — not local assets
 - [ ] Workbook links tier-aware (tier 1/3: frequency-specific, tier 7: full workbook)
@@ -69,7 +65,6 @@ Must pass with zero errors before approving.
 ### Security
 
 - [ ] No secrets in client code (API keys via `VITE_*` env vars only)
-- [ ] Admin routes protected by AdminGuard — not just hidden UI
 - [ ] Access tokens from URL params (quiz results) validated server-side
 - [ ] No `dangerouslySetInnerHTML` without sanitization
 
@@ -113,10 +108,9 @@ navigate('/results');  // auto-prefixes with current locale
 | New page | `src/pages/{Name}.tsx` + route in `App.tsx` |
 | New shared component | `src/components/common/{Name}.tsx` |
 | Quiz component | `src/components/quiz/{Name}.tsx` |
-| Admin component | `src/components/admin/{Name}.tsx` |
+| Layout component | `src/components/layout/{Name}.tsx` |
 | shadcn primitive | `src/components/ui/{name}.tsx` (via CLI) |
 | New store | `src/stores/{name}Store.ts` |
 | API function | `src/services/api.ts` or new file in `src/services/` |
 | Type definition | `src/types/{domain}.types.ts` |
 | i18n keys | `messages/en.json` + `messages/es.json` |
-| Chart component | `src/components/admin/charts/{Name}Chart.tsx` |
